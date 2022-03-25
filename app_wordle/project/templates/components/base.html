@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+{% block css %}
+{% endblock %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}"/>
+<head>
+    <title>
+        Nom du projet
+    </title>
+</head>
+<body>
+{#{% include 'components/header.html' %}#}
+<div><h1>
+    {% block title %}
+        Nom du projet
+    {% endblock %}
+</h1></div>
+<div id="content">
+    {% block content %}
+    {% endblock %}
+</div>
+{#{% include 'components/footer.html' %}#}
+{% block js %}
+{% endblock %}
+</body>
+</html>
