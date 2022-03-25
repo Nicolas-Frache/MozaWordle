@@ -23,7 +23,31 @@ Puis dans un second temps, d'un solveur en C qui mettra à contribution des stru
 
 ## Instructions d'installation :
 
-*à faire*
+1. Cloner ou télécharger le projet sur son ordinateur.
+
+
+2. Dans le dossier du projet ```./app_wordle/```, creer un environnement virtuel avec la commande :
+   ```python3 -m venv ./venv```.
+
+
+3. Rentrer dans l'environnement virtuel :
+    - Sur linux ou équivalent: ```source ./venv/bin/activate```
+    - Sur windows: ```.\venv\Scripts\activate.bat```
+
+
+4. Installer les dépendances: ```pip install -r requirement.txt```.
+
+
+5. Initialiser la base de données : ```TODO```.
+
+
+6. Demarrer l'application. Pour cela deux méthodes :
+    - Méthode 1: ```flask run -p 3000```
+    - Méthode 2: ```python3 app.py```, cette seconde solution ne permet pas de choisir le port.
+
+
+7. Enfin pour tester l'application en local, accèder à l'url: http://localhost:3000/.
+
 
 ## Conventions pour les messages de commits
 
