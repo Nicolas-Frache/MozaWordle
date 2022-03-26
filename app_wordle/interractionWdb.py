@@ -24,9 +24,12 @@ def Create_DB():
         connexion = sqlite3.connect(database)
         cursor = connexion.cursor()
 
+        # Création  des tables
         with open("project/database/schema.sql") as file:
             sql = file.read()
             cursor.executescript(sql)
+        
+        #Insertion des données
         
         cursor.close()
         connexion.close()

@@ -15,9 +15,15 @@ def hello_world():
 def test():
     return 'test'
 
+@app.route('/login')
+def loginPage():
+    return render_template("pages/login.html")
+
 
 # Pour l'execution en ligne de commande directement avec 'Python3 app.py'
 if __name__ == '__main__':
+
     interractionWdb.Create_DB()
+    
     app.run()
     
