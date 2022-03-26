@@ -1,16 +1,18 @@
-#import
 import sqlite3
 import string
 
-#DB name
-database = "project/database/database.db"
+# Emplacement du fichier de la base de données
+DB_FILE = "project/database/database.db"
+SCHEMA_FILE = "project/database/schema.sql"
 
-def Basic_Query(sql, param_sql, error_msg):
+
+# Requêtes basiques sur la base de données
+def basic_query(sql, param_sql, error_msg):
     try:
-        connexion = sqlite3.connect(database)
+        connexion = sqlite3.connect(DB_FILE)
         cursor = connexion.cursor()
 
-        cursor.execute(sql,param_sql)
+        cursor.execute(sql, param_sql)
         query = cursor.fetchall()
 
         cursor.close()
@@ -19,13 +21,13 @@ def Basic_Query(sql, param_sql, error_msg):
     except sqlite3.Error as error:
         print(error_msg, error)
 
-def Generate_Max_Id(tables : string) -> int:
+
+def generate_max_id(tables: string) -> int:
     try:
-        connexion = sqlite3.connect(database)
+        connexion = sqlite3.connect(DB_FILE)
         cursor = connexion.cursor()
 
-        
-        cursor.execute("SELECT max(id) FROM " +  tables) ## la la la les injections SQL ca existe pas
+        cursor.execute("SELECT max(id) FROM " + tables) # TODO: Rendre robuste aux injections sql
         new_id = cursor.fetchone()
 
         if new_id == None:
@@ -38,21 +40,17 @@ def Generate_Max_Id(tables : string) -> int:
         print("Erreur lors de la génération d'un id max : ", error)
 
 
-
-def Create_DB():
+def create_db():
     try:
-        connexion = sqlite3.connect(database)
+        connexion = sqlite3.connect(DB_FILE)
         cursor = connexion.cursor()
 
         # Création  des tables
-        with open("project/database/schema.sql") as file:
+        with open(SCHEMA_FILE) as file:
             sql = file.read()
             cursor.executescript(sql)
-        
-        #Insertion des données
 
-
-        
+        # Insertion des données
         cursor.close()
         connexion.close()
         return None

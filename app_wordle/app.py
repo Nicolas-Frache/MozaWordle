@@ -1,5 +1,6 @@
 from flask import Flask, render_template
-import interractionWdb
+from project.database import db_tools
+
 # Création de l'instance de l'application Flask et définition
 # du chemin du dossier contenant les templates et les fichiers statics
 app = Flask(__name__, template_folder='project/templates', static_folder='project/static')
@@ -15,15 +16,19 @@ def hello_world():
 def test():
     return 'test'
 
+
 @app.route('/login')
 def loginPage():
     return render_template("pages/login.html")
 
 
+@app.cli.command('initdb')
+def initdb_command():
+    # Initialisation de la base de données
+    db_tools.create_db()
+    print('Initialized the database.')
+
+
 # Pour l'execution en ligne de commande directement avec 'Python3 app.py'
 if __name__ == '__main__':
-
-    interractionWdb.Create_DB()
-    
     app.run()
-    
