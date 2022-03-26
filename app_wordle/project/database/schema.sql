@@ -17,7 +17,7 @@ CREATE TABLE partie (
     date DATE,
     tourActuel INTEGER,
     aGagne INTEGER,
-    CONSTRAINT idPartir_PK PRIMARY KEY (idPartie),
+    CONSTRAINT idPartie_PK PRIMARY KEY (idPartie),
     CONSTRAINT parametre_FK FOREIGN KEY (parametre) REFERENCES parametre(id),
     CONSTRAINT motATrouver_FK FOREIGN KEY (motATrouver) REFERENCES dictionnaire(idMot)
 );

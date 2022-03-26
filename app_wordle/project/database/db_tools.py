@@ -58,8 +58,8 @@ def create_db():
     except sqlite3.Error as error:
         print("Erreur lors de la création de DB : ", error)
 
-## Convention uc = unencrypted, ec = encrypted
 
+## Convention uc = unencrypted, ec = encrypted
 
 def Valid_Inscription(pseudo: str,uc_password : str) -> bool:
     PseudoAvalaible = basic_query("SELECT * FROM utilisateurs WHERE pseudo =?",(pseudo,),"Confirmation de l'unicité du pseudo") == []
