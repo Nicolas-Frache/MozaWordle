@@ -9,17 +9,12 @@
     </title>
 </head>
 <body>
-{#{% include 'components/header.html' %}#}
-<div><h1>
-    {% block title %}
-        Nom du projet
-    {% endblock %}
-</h1></div>
-<div id="content">
+{% include 'components/header.html' %}
+<main id="content">
     {% block content %}
     {% endblock %}
-</div>
-{#{% include 'components/footer.html' %}#}
+</main>
+{% include 'components/footer.html' %}
 {% block js %}
 {% endblock %}
 </body>

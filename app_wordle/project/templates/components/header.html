@@ -1,0 +1,13 @@
+<header> <!--ceci est l'entête du site-->
+    <nav class="inheader">
+        <li><a href="">Règles</a></li>
+        <li><a href="">Parametres</a></li>
+        <li><a href="">Leaderboard</a></li>
+        <a href=""></a>
+        {%if not session.mail%}
+        <li><a href="/login" class="logbutton">Login</a></li>
+            {% else %}
+        <li><a href="/logout" class="logbutton">Logout of {{session.fname}}</a></li>
+        {% endif %}
+    </nav>
+</header>
