@@ -30,7 +30,8 @@ CREATE TABLE parametre (
 );
 
 CREATE TABLE utilisateur (
-    idJoueur INTEGER,
+    pseudo VARCHAR(50),
+    pwd VARCHAR(50),
     parametreDernierePartie INTEGER,
     partieEnCours INTEGER,
     CONSTRAINT idJoueur_PK PRIMARY KEY (idJoueur),
