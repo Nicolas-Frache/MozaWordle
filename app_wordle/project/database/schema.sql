@@ -3,8 +3,7 @@ CREATE TABLE tentative (
     idPartie INTEGER,
     numLigne INTEGER,
     mot VARCHAR(50),
-    CONSTRAINT idPartie_PK PRIMARY KEY (idPartie),
-    CONSTRAINT numLigne_PK PRIMARY KEY (numLigne),
+    CONSTRAINT idPartie_PK PRIMARY KEY (idPartie, numLigne),
     CONSTRAINT idPartie_FK FOREIGN KEY (idPartie) REFERENCES partie(idPartie),
     CONSTRAINT mot_FK FOREIGN KEY (mot) REFERENCES dictionnaire(idMot)
 );
