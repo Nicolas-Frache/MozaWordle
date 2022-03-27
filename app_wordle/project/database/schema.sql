@@ -40,9 +40,8 @@ CREATE TABLE utilisateur (
 
 CREATE TABLE dictionnaire (
     idMot INTEGER,
-    type VARCHAR(50),
     mot VARCHAR(50),
     longueur INTEGER,
-    langue VARCHAR(50),
+    frequence INTEGER,
     CONSTRAINT idMot_PK PRIMARY KEY (idMot)
 );

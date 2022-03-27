@@ -30,7 +30,6 @@ def loginPage():
 def initdb_command():
     # Initialisation de la base de données
     db_tools.create_db()
-    print('Initialized the database.')
 
 
 # Pour l'execution en ligne de commande directement avec 'Python3 app.py'
