@@ -38,7 +38,7 @@ Puis dans un second temps, d'un solveur en C qui mettra à contribution des stru
 4. Installer les dépendances: ```pip install -r requirement.txt```.
 
 
-5. Initialiser la base de données : ```TODO```.
+5. Initialiser la base de données avec la commande : ```flask initdb```.
 
 
 6. Demarrer l'application. Pour cela deux méthodes :
@@ -47,6 +47,11 @@ Puis dans un second temps, d'un solveur en C qui mettra à contribution des stru
 
 
 7. Enfin pour tester l'application en local, accèder à l'url: http://localhost:3000/.
+
+
+### Lancement des tests :
+
+- Lancer les tests avec la commande : ```pytest```.
 
 
 ## Conventions pour les messages de commits

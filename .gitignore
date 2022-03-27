@@ -335,3 +335,5 @@ $RECYCLE.BIN/
 
 
 *.bak
+
+identifier.sqlite
