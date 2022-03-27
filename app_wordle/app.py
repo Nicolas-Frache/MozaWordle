@@ -8,9 +8,13 @@ app = Flask(__name__, template_folder='project/templates', static_folder='projec
 
 @app.route('/')
 @app.route('/home')
+@app.route('/menu')
 def hello_world():
-    return render_template("pages/home.html")
+    return render_template("pages/Menu.html")
 
+@app.route('/jeu')
+def jeu():
+    return render_template("pages/Jeu.html")
 
 @app.route('/test')
 def test():

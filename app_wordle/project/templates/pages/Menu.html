@@ -7,5 +7,29 @@
 {% block content %}
     <p><b>Bienvenue sur notre application !</b></p>
 
-    <p>! TODO !</p>
+    <table class="center">
+        <tbody>
+            <tr>
+                <td><input type="range" id="taille" name="taille" style="width: 100vh;"
+                    value="6" min="3" max="15" oninput="this.nextElementSibling.value = this.value">
+                    Mots de <output>6</output> lettres
+                </td>
+            </tr>
+            <tr>
+                <td><input type="range" id="tentatives" name="tentatives" style="width: 100vh;"
+                    value="6" min="3" max="15" oninput="this.nextElementSibling.value = this.value">
+                    <output>6</output> tentatives
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <button class="playbutton centerbox"
+                        type="button">
+                        Jouer
+                     </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
 {% endblock %}
