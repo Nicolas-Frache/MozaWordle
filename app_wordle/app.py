@@ -16,6 +16,14 @@ def hello_world():
 def jeu():
     return render_template("pages/Jeu.html")
 
+@app.route('/regles')
+def regles():
+    return render_template("pages/Regles.html")
+
+@app.route('/leaderboard')
+def leaderboard():
+    return render_template("pages/Leaderboard.html")
+
 @app.route('/test')
 def test():
     return 'test'
