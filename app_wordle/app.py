@@ -1,5 +1,6 @@
 from flask import Flask, render_template
-from project.database import db_tools
+
+from project.database import dict_tools, db_tools
 
 # Création de l'instance de l'application Flask et définition
 # du chemin du dossier contenant les templates et les fichiers statics
