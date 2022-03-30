@@ -1,5 +1,6 @@
 import traceback
 from flask import Flask, render_template
+
 from project.database import db_tools, dict_tools
 
 # Création de l'instance de l'application Flask et définition

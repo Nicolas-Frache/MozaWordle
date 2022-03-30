@@ -6,7 +6,8 @@ from exceptions import *
 from project.database import dict_creator
 
 # Emplacement du fichier de la base de données
-DB_FILE = "database.db"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_FILE = os.path.join(BASE_DIR, "database.db")
 DB_FILE_FROM_PROJECT = f"project{os.sep}database{os.sep}" + DB_FILE
 
 SCHEMA_FILE = f"project{os.sep}database{os.sep}schema.sql"
