@@ -1,6 +1,8 @@
 import os
 import sqlite3
 import string
+
+from exceptions import *
 from project.database import dict_creator
 
 # Emplacement du fichier de la base de données
@@ -12,20 +14,28 @@ DICT_FILE = f"project{os.sep}database{os.sep}dictionnaire_data.sql"
 
 
 # Requêtes basiques sur la base de données
-def basic_query(sql, param_sql, disable_dict_factory=False):
-    connexion = get_db(disable_dict_factory)
-    cursor = connexion.cursor()
-
-    cursor.execute(sql, param_sql)
-    query = cursor.fetchall()
-
+def basic_query(sql, param_sql, disable_dict_factory=False, one_row=False):
+    global cursor
+    try:
+        connexion = get_db(disable_dict_factory)
+    except sqlite3.Error as error:
+        connexionBaseDeDonneeError()
+    try:
+        cursor = connexion.cursor()
+        cursor.execute(sql, param_sql)
+        if one_row:
+            query = cursor.fetchone()
+        else:
+            query = cursor.fetchall()
+    except sqlite3.Error as error:
+        requetageBaseDeDonneeError()
     cursor.close()
     connexion.close()
     return query
 
 
 def get_db(disable_dict_factory=False):
-    db = sqlite3.connect(DB_FILE)
+    db = sqlite3.connect(DB_FILE_FROM_PROJECT)
     if not disable_dict_factory:
         db.row_factory = dict_factory
     return db
@@ -41,24 +51,18 @@ def dict_factory(cursor, row):
 
 def generate_max_id(tables: string) -> int:
     try:
-        connexion = sqlite3.connect(DB_FILE)
-        cursor = connexion.cursor()
+        new_id = basic_query("SELECT MAX(id) FROM " + tables, [], one_row=True)
 
-        cursor.execute("SELECT max(id) FROM " + tables)  # TODO: Rendre robuste aux injections sql
-        new_id = cursor.fetchone()
-
-        if new_id == None:
+        if new_id is None:
             new_id = [0]
 
-        cursor.close()
-        connexion.close()
         return new_id + 1
     except sqlite3.Error as error:
         print("Erreur lors de la génération d'un id max : ", error)
 
 
 def create_db():
-    connexion = sqlite3.connect(DB_FILE)
+    connexion = sqlite3.connect(DB_FILE_FROM_PROJECT)
     cursor = connexion.cursor()
 
     # Création  des tables

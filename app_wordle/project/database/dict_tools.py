@@ -1,4 +1,4 @@
-from db_tools import basic_query, get_db
+from project.database.db_tools import basic_query
 
 
 def est_dans_dict(mot: str):
@@ -7,5 +7,6 @@ def est_dans_dict(mot: str):
     """
     x = basic_query("Select count(*)=1 from dictionnaire where mot = ?",
                     (mot,),
+                    one_row=True,
                     disable_dict_factory=True)
-    return x[0][0] == 1
+    return x[0] == 1

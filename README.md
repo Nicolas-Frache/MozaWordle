@@ -35,7 +35,7 @@ Puis dans un second temps, d'un solveur en C qui mettra à contribution des stru
     - Sur windows: ```.\venv\Scripts\activate.bat```
 
 
-4. Installer les dépendances: ```pip install -r requirement.txt```.
+4. Installer les dépendances: ```pip install -r requirements.txt```.
 
 
 5. Initialiser la base de données avec la commande : ```flask initdb```.
