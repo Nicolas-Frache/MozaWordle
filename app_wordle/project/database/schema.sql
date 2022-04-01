@@ -30,11 +30,12 @@ CREATE TABLE parametre (
 );
 
 CREATE TABLE utilisateur (
+    idUtilisateur INTEGER,
     pseudo VARCHAR(50),
-    pwd VARCHAR(50),
+    password VARCHAR(50),
     parametreDernierePartie INTEGER,
     partieEnCours INTEGER,
-    CONSTRAINT idJoueur_PK PRIMARY KEY (idJoueur),
+    CONSTRAINT idJoueur_PK PRIMARY KEY (idUtilisateur),
     CONSTRAINT parametreDernierePartie_FK FOREIGN KEY (parametreDernierePartie) REFERENCES partie(idPartie),
     CONSTRAINT partieEnCours_FK FOREIGN KEY (partieEnCours) REFERENCES partie(idPartie)
 );

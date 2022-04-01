@@ -64,7 +64,7 @@ def generate_max_id(tables: string) -> int:
 
 
 def create_db():
-    connexion = sqlite3.connect(DB_FILE_FROM_PROJECT)
+    connexion = sqlite3.connect(DB_FILE)
     cursor = connexion.cursor()
 
     # Création  des tables
