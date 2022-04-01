@@ -30,12 +30,19 @@ header {
     -position: sticky; /*le header suit le défilement, utile pour les longues pages*/
     top: 0;
     z-index: 10000;
+    text-align: center;
 }
 
 header .inheader {
     width: 100%;
     height: 100%;
-    display: block;
+    display: block; /*je ne vois pas à quoi ça sert ça*/
+}
+
+#titre_jeu {
+    position: absolute; /*je ne comprends pas pourquoi le absolute retire la propriété text-align center*/
+    font-size: 2em;
+    color: white;
 }
 
 header nav li {
@@ -44,17 +51,19 @@ header nav li {
     float: left;
     margin-right: 30px;
     font-family: Verdana;
+    text-decoration: none;
 }
 
 header nav li:last-of-type {
     float: right;
-    margin-right: 20px;
+    margin-right: 5px;
 }
 
 header nav li a {
     display: table-cell;
     vertical-align: middle;
     color: white;
+    text-decoration: none;
 }
 
 header nav li a.logbutton {
@@ -133,13 +142,6 @@ main {
     align-items: center;
 }
 
-#titre_jeu {
-    font-size: 4em;
-    text-align: center;
-    padding-bottom: 5px;
-    color: white;
-}
-
 .lettre, .control_btn {
     width: 50px;
     height: 45px;
@@ -175,20 +177,19 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-spacing: 0;
+    border-spacing: 4px;
 }
 
 .grille_jeu tr td {
     height: 50px;
     width: 50px;
-    border: 2px solid white;
     margin: 0;
     padding: 0;
     background-color: var(--grille_jeu_neutral);
 
     text-align: center;
     font-size: 2em;
-
+    border-radius: 5px;
 }
 
 
