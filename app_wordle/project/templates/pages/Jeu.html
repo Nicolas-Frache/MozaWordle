@@ -4,48 +4,38 @@
     Page d'accueil
 {% endblock %}
 
+
 {% block content %}
+    <span id="titre_jeu">
+        MOZA
+    </span>
     <div id="tableau" class="tableau">
-        <table>
-            <tr></tr>
-            <tr></tr>  <!--LOOP JINJA-->
-            <tr></tr>
+        <table class="grille_jeu">
+            {% for ligne in range(0, nb_essais) %}
+                <tr>
+                {% for ligne in range(0, nb_lettres) %}
+                    <td>
+                        X
+                    </td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
         </table>
     </div>
-    <div id="Interface Clavier">
-        <div id="ligne1" class="ligne-clavier">
-            <div class="lettre-bien-place">A</div>
-            <div class="lettre-mal-place">Z</div>
-            <div class="lettre-non-trouvee">E</div>
-            <div class="lettre-non-valide">R</div>
-            <div class="lettre">T</div>
-            <div class="lettre-non-trouvee">Y</div>
-            <div class="lettre-non-trouvee">U</div>
-            <div class="lettre-non-trouvee">I</div>
-            <div class="lettre-non-trouvee">O</div>
-            <div class="lettre-bien-placee">P</div>
-        </div>
-        <div id="ligne2" class="ligne-clavier">
-            <div class="lettre-non-trouve">Q</div>
-            <div class="lettre-non-trouve">S</div>
-            <div class="lettre-non-trouve">D</div>
-            <div class="lettre-non-trouve">F</div>
-            <div class="lettre-non-trouve">G</div>
-            <div class="lettre-non-trouve">H</div>
-            <div class="lettre-non-trouve">J</div>
-            <div class="lettre-non-trouve">K</div>
-            <div class="lettre-non-trouve">L</div>
-            <div class="lettre-non-trouve">M</div>
-        </div>
-        <div id="ligne3" class="ligne-clavier">
-            <div class="lettre-non-trouve">W</div>
-            <div class="lettre-non-trouve">X</div>
-            <div class="lettre-non-trouve">C</div>
-            <div class="lettre-non-trouve">V</div>
-            <div class="lettre-non-trouve">B</div>
-            <div class="lettre-non-trouve">N</div>
-            <div class="">Retour</div>
-            <div class="">Valider</div>
+    <div id="clavier">
+        {% set clavier = ['A','Z','E','R','T','Y','U','I','O','P'],
+        ['Q','S','D','F','G','H','J','K','L','M'],
+        ['W','X','C','V','B','N'] %}
+        {% for ligne in clavier %}
+            <div class="ligne">
+                {% for lettre in ligne %}
+                    <div class="lettre" key_id="{{ lettre }}">  {{ lettre }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <div class="ligne">
+            <div class="control_btn">Valider</div>
+            <div class="control_btn">⌫</div>
         </div>
     </div>
     <div id="Erreurs" style="display: none"></div>

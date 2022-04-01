@@ -35,7 +35,7 @@ def home():
 
 @app.route('/jeu')
 def jeu():
-    return render_template("pages/Jeu.html")
+    return render_template("pages/Jeu.html", nb_essais=6, nb_lettres=7)
 
 
 @app.route('/regles')

@@ -37,7 +37,7 @@ def basic_query(sql, param_sql, disable_dict_factory=False, one_row=False):
 
 
 def get_db(disable_dict_factory=False):
-    db = sqlite3.connect(DB_FILE_FROM_PROJECT)
+    db = sqlite3.connect(DB_FILE)
     if not disable_dict_factory:
         db.row_factory = dict_factory
     return db
