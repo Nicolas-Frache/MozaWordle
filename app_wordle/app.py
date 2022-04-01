@@ -1,4 +1,4 @@
-from crypt import methods
+# from crypt import methods
 import traceback
 from flask import Flask, render_template, redirect, request,session
 from flask_session import Session
@@ -72,7 +72,7 @@ def loginPage():
     else :
         return render_template("pages/Login.html")
 
-@app.route('inscription', methods=["POST"])
+@app.route('/inscription', methods=["POST"])
 def Inscription():
     if request.method == "POST":
         #Handle inscription
