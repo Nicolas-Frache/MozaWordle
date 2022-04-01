@@ -1,3 +1,4 @@
+from crypt import methods
 import traceback
 from flask import Flask, render_template, redirect, request,session
 from flask_session import Session
@@ -61,18 +62,36 @@ def test():
 def loginPage():
     if request.method == "POST":
         pseudo, password = request.form.get("pseudo"),request.form.get("password")
-        if db_tools.GoodPassword(pseudo,password) and session["name"] == None:
-            session["name"],session["paramLastGame"],session["currentGame"] = db_tools.Connect(pseudo)
+        passwordVerification = db_tools.GoodPassword(pseudo,password)
+        if passwordVerification[0] and (("idJoueur" in session and session["idJoueur"] == None) or not "idJoueur" in session):
+            session["idJoueur"],session["pseudo"],session["paramLastGame"],session["currentGame"] = db_tools.Connect(pseudo)
             return redirect("/")
         else :
             #TODO repport sur la page login avec un message d'erreur
-            return
+            return handle_error("Mauvais identificateur") # Temporaire
     else :
         return render_template("pages/Login.html")
 
+@app.route('inscription', methods=["POST"])
+def Inscription():
+    if request.method == "POST":
+        #Handle inscription
+        pseudo, password = request.form.get("pseudo"),request.form.get("password")
+
+        if (db_tools.Valid_Inscription(pseudo,password)):
+            Inscription(pseudo,password)
+            return redirect("/")
+        else :
+            return handle_error("Inscription non valide") #Ajouter message d'erreur custom si pseudo déjà pris / mauvais password
+
+    else :
+        return handle_error("Accès à la page d'inscription avec requête GET")
+
+
 @app.route('/logout')
 def logout():
-    session["name"] = None 
+    session["idJoueur"] = None
+    session["pseudo"] = None 
     session["paramLastGame"] = None
     session["currentGame"] = None
     return redirect("/")
