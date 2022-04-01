@@ -96,7 +96,7 @@ def Inscription(pseudo: str,uc_password : str) -> None:
 
 def GoodPassword(pseudo : str, uc_password : str): # -> bool,string:
 
-    querry = basic_query("SELECT pwd FROM utilisateur WHERE pseudo = ?",(pseudo,),"Erreur lors de la écupération du mot de passe pour vérifier que celui fourni est bon :")
+    querry = basic_query("SELECT pwd FROM utilisateur WHERE pseudo = ?",(pseudo,),"Erreur lors de la récupération du mot de passe pour vérifier que celui fourni est bon :")
 
     if (querry == []):
         return False,"Joueur non répertorié dans la base de donnée"
@@ -108,4 +108,4 @@ def GoodPassword(pseudo : str, uc_password : str): # -> bool,string:
 def Connect(pseudo : str):
     querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?",(pseudo,),"Erreur lors de la récupération des données lors de la conenxion :")
 
-    return querry[0],querry[2],querry[4] # renvoie pseudo, paramètre derniere partie et partie en cours
+    return querry[0],querry[2],querry[3] # renvoie pseudo, paramètre derniere partie et partie en cours

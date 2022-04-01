@@ -7,7 +7,13 @@
 {% block content %}
     <p><b>C'est pareil sauf que c'est différent</b></p>
 
-    <p>! TODO !</p>
+    <p>! RENDRE BEAU !</p>
+    <p><form action="/login" method ="POST">
+        <input autocomplete="off" autofocus name="mail" placeholder="pseudo" type="text">
+        <input type="password" name="password" placeholder="password" type="text">
+        <input type="submit" value="Login">
+    </form>
+</p>
 {% endblock %}
 
 
