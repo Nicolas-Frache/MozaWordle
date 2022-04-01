@@ -3,7 +3,7 @@ import sqlite3
 import string
 import fonctions
 
-from exceptions import *
+from project.exceptions import *
 from project.database import dict_creator
 
 # Emplacement du fichier de la base de données
@@ -109,8 +109,3 @@ def Connect(pseudo : str):
     querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?",(pseudo,),"Erreur lors de la récupération des données lors de la conenxion :")
 
     return querry[0],querry[2],querry[4] # renvoie pseudo, paramètre derniere partie et partie en cours
-    # Insertion des données
-    cursor.close()
-    connexion.close()
-    print("** Base de données créée avec succès ! **")
-    return None

@@ -55,7 +55,7 @@ def test():
 
 @app.route('/login')
 def loginPage():
-    return render_template("pages/login.html")
+    return render_template("pages/Login.html")
 
 
 @app.cli.command('initdb')
