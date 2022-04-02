@@ -32,7 +32,7 @@
         {% for ligne in clavier %}
             <div class="ligne">
                 {% for lettre in ligne %}
-                    <div class="lettre" key_id="{{ lettre }}">  {{ lettre }}</div>
+                    <div class="lettre" key_id="{{ lettre }}" id="{{ lettre }}">  {{ lettre }}</div>
                 {% endfor %}
             </div>
         {% endfor %}
