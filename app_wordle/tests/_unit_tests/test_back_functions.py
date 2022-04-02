@@ -1,5 +1,5 @@
 import fonctions
-from database.dict_tools import get_random_word
+# from database.dict_tools import get_random_word
 
 
 def test_Valid_Password():

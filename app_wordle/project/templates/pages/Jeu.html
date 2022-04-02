@@ -6,20 +6,23 @@
 
 
 {% block content %}
+    <script type="text/javascript" src="../../static/js/Jeu.js"></script>
     <span id="titre_jeu">
         MOZA
     </span>
     <div id="tableau" class="tableau">
         <table class="grille_jeu">
+            <tbody id="table">
             {% for ligne in range(0, nb_essais) %}
-                <tr>
-                {% for ligne in range(0, nb_lettres) %}
-                    <td>
+                <tr id="ligne{{ ligne }}">
+                {% for colonne in range(0, nb_lettres) %}
+                    <td id="l{{ ligne }}c{{ colonne }}"> <!-- id de la case de ligne x colonne y : lxcy -->
                         X
                     </td>
                 {% endfor %}
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     </div>
     <div id="clavier">
