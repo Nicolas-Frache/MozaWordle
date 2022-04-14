@@ -15,6 +15,21 @@ window.onload = function () {
         })
     }
 
+    document.getElementById('BACKSPACE').addEventListener('mousedown', () => {
+        press_key('Backspace');
+        backspace();
+    })
+    document.getElementById('BACKSPACE').addEventListener('mouseup', () => {
+        release_key('Backspace');
+    })
+    document.getElementById('ENTER').addEventListener('mousedown', () => {
+        press_key('Enter');
+        enter();
+    })
+    document.getElementById('ENTER').addEventListener('mouseup', () => {
+        release_key('Enter');
+    })
+
     document.addEventListener("keydown", (e) => {
         if (e.keyCode >= 65 && e.keyCode <= 90){ // S'il s'agit d'une lettre sur le clavier
             press_key(e.key);
@@ -56,5 +71,11 @@ window.onload = function () {
     function enter() {
         // Declenchee lors d'un appui sur la touche enter
         console.log("Enter");
+    }
+
+    function write(tentative, lettre, toWrite) {
+        document.getElementById('l'+tentative+'c'+lettre).innerText=toWrite;
+        document.getElementById('l'+tentative+'c'+lettre).style.backgroundColor="yellow";
+        // Temporaire
     }
 }
