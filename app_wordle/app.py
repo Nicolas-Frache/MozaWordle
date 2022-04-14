@@ -73,13 +73,14 @@ def loginPage():
         return render_template("pages/Login.html")
 
 @app.route('/inscription', methods=["POST"])
-def Inscription():
+def InscriptionPage():
     if request.method == "POST":
         #Handle inscription
         pseudo, password = request.form.get("pseudo"),request.form.get("password")
 
         if (db_tools.Valid_Inscription(pseudo,password)):
-            Inscription(pseudo,password)
+            db_tools.Inscription(pseudo,password)
+            session["idJoueur"],session["pseudo"],session["paramLastGame"],session["currentGame"] = db_tools.Connect(pseudo)
             return redirect("/")
         else :
             return handle_error("Inscription non valide") #Ajouter message d'erreur custom si pseudo déjà pris / mauvais password
