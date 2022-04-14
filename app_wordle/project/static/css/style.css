@@ -43,6 +43,7 @@ header .inheader {
     position: absolute; /*je ne comprends pas pourquoi le absolute retire la propriété text-align center*/
     font-size: 2em;
     color: white;
+    margin: 0px -50px;
 }
 
 header nav li {
