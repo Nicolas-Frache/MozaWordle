@@ -7,9 +7,6 @@
 
 {% block content %}
     <script type="text/javascript" src="../../static/js/Jeu.js"></script>
-    <span id="titre_jeu">
-        MOZA
-    </span>
     <div id="tableau" class="tableau">
         <table class="grille_jeu">
             <tbody id="table">
@@ -32,13 +29,13 @@
         {% for ligne in clavier %}
             <div class="ligne">
                 {% for lettre in ligne %}
-                    <div class="lettre" key_id="{{ lettre }}" id="{{ lettre }}">  {{ lettre }}</div>
+                    <div class="lettre" key_id="{{ lettre }}">  {{ lettre }}</div>
                 {% endfor %}
             </div>
         {% endfor %}
         <div class="ligne">
-            <div class="control_btn" id="ENTER">Valider</div>
-            <div class="control_btn" id="BACKSPACE">⌫</div>
+            <div class="control_btn">Valider</div>
+            <div class="control_btn">⌫</div>
         </div>
     </div>
     <div id="Erreurs" style="display: none"></div>
