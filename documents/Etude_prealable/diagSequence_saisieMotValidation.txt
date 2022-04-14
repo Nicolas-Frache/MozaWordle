@@ -1,0 +1,78 @@
+
+@startuml
+
+title Saisit d'un mot valide non-solution
+
+actor "utilisateur" as user
+boundary "interface" as ui
+participant "front: app JS" as js
+participant "back: app Flask" as back
+database "Base de donnée" as db
+
+activate user #DarkSalmon
+== Saisit du mot ==
+
+loop //Tant qu<U+2019>il reste des lettres à ajouter//     
+    user -> ui : saisit d<U+2019>une lettre
+    activate ui #FFBBBB
+    ui -> js : Déclenchement handler
+    activate js #FFBBBB
+    js -> js : Prise en compte \nnouvelle lettre
+    activate js #DarkSalmon
+    deactivate js
+    ui <- js : Modification DOM pour\nAffichage de la lettre
+    deactivate js
+    deactivate ui
+end
+
+== Test de validité du mot et enregistrement tentative ==
+user -> ui : Bouton validation
+activate ui #FFBBBB
+ui -> js : Déclenchement handler
+activate js #FFBBBB
+note over js
+    Le JS teste si le mot est de la bonne
+    longueur et s<U+2019>il n<U+2019>est pas solution
+    avant d<U+2019>aller plus loin.
+    Ici, les 2 conditions sont respectées
+end note
+
+js -> back : //<<Appel Fetch>>//\n testExistenceMot(mot)
+activate back #FFBBBB
+back -> back : est_dans_dict(mot)
+note over back
+    La méthode de route de
+    //app.py// passe par //dict_tools.py//
+    pour requêter la base de données
+end note
+activate back #DarkSalmon
+
+back -> db : Select count(*)=1 from\n **dictionnaire** where mot = mot
+activate db #Yellow
+
+alt Si mot est dans le dictionnaire
+
+    note left of db
+        Ici le mot est bien dans
+        la base de données
+    end note
+    
+    back <-- db : 1
+    deactivate db
+    back --> back : true
+    deactivate back
+    back -> db : insert into **tentative ...**
+    activate db #Yellow
+    deactivate db
+    js <-- back : true
+    deactivate back
+    js -> js : màj des données pour \nla //coloration// du mot
+    activate js #DarkSalmon
+    deactivate js
+else sinon
+    ...
+end
+
+ui <- js : Modification du DOM
+deactivate js
+deactivate ui
