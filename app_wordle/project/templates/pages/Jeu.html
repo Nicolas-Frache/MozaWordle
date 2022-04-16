@@ -6,16 +6,14 @@
 
 
 {% block content %}
-    <script type="text/javascript" src="../../static/js/Jeu.js"></script>
+    <script type="module" src="{{ url_for('static', filename='js/jeu/app.js') }}"></script>
     <div id="tableau" class="tableau">
         <table class="grille_jeu">
             <tbody id="table">
             {% for ligne in range(0, nb_essais) %}
                 <tr id="ligne{{ ligne }}">
                 {% for colonne in range(0, nb_lettres) %}
-                    <td id="l{{ ligne }}c{{ colonne }}"> <!-- id de la case de ligne x colonne y : lxcy -->
-
-                    </td>
+                    <td id="l{{ ligne }}c{{ colonne }}"></td>
                 {% endfor %}
                 </tr>
             {% endfor %}
@@ -38,6 +36,7 @@
             <div class="control_btn" id="BACKSPACE">⌫</div>
         </div>
     </div>
+    <div id="solution" style="display: none">carotte</div>
     <div id="Erreurs" style="display: none"></div>
 
 {% endblock %}

@@ -8,7 +8,7 @@
 
     --grille_jeu_neutral: #595959;
     --_header-bg: #184010;
-    --header-bg: #334a94;
+    --header-bg: #404ba6;
 }
 
 html, body {
@@ -178,7 +178,8 @@ main {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    border-spacing: 4px;
+    border-spacing: 5px 8px;
+    margin-top: 20px;
 }
 
 .grille_jeu tr td {
@@ -191,6 +192,8 @@ main {
     text-align: center;
     font-size: 2em;
     border-radius: 5px;
+
+    color: white;
 }
 
 .body{
