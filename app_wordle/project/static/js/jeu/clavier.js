@@ -14,15 +14,16 @@ const press_key = (value) => {
 const release_key = (value) => {
     document.getElementById(value.toUpperCase()).style.backgroundColor = '#25C9C973';
 
-    //TODO : regarder si c'est une lettre ou une des autres touches
-    // SI LETTRE :
-    grille.ecrire(value);
-
-    // SI ENTER :
-    // grille.valider_ligne();
-
-    // SI DELETE :
-    // grille.supprimer();
+    switch (value) {
+        case 'ENTER': // Si ENTER
+            grille.valider_ligne();
+            break;
+        case 'BACKSPACE': // Si BACKSPACE
+            grille.supprimer();
+            break;
+        default: // Si LETTRE
+            grille.ecrire(value);
+    }
 }
 
 export default {
