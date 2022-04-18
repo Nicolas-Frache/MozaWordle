@@ -242,6 +242,9 @@ form .btn {
     font-size: 17px;
 }
 
-
-
-
+.text {
+    margin-top: 20px;
+    margin-left: 20%;
+    position: relative;
+    color: white;
+    font-family: Verdana;}

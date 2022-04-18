@@ -5,7 +5,112 @@
 {% endblock %}
 
 {% block content %}
-    <p><b>Voici les regles :</b></p>
+    <p class="text"><b>Règles du jeu :</b></p>
+    <p class="text">
+    Vous disposez d'un certain nombre de tentatives pour trouver un mot mystère.<br>
+    À chaque tentative, vous obtenez des indices sur le mot à trouver :<br><br>
+    • Une lettre se colore en rouge si elle est bien placée<br>
+    • Une lettre se colore en jaune si elle est présente dans le mot, mais qu'elle n'est pas à la bonne place<br><br>
+    Exemple avec le mot "CAROTTE" :
+    </p>
 
-    <p>! TODO !</p>
+    <table class="grille_jeu">
+            <tbody id="table">
+
+                <tr >
+
+                    <td >M</td>
+
+                    <td >I</td>
+
+                    <td >S</td>
+
+                    <td  style="background-color: rgb(237, 176, 44);">E</td>
+
+                    <td  style="background-color: rgb(237, 176, 44);">R</td>
+
+                    <td >E</td>
+
+                    <td >S</td>
+
+                </tr>
+
+                <tr >
+
+                    <td >M</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">A</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">R</td>
+
+                    <td >I</td>
+
+                    <td >A</td>
+
+                    <td >G</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">E</td>
+
+                </tr>
+
+                <tr >
+
+                    <td  style="background-color: rgb(182, 0, 0);">C</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">A</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">R</td>
+
+                    <td  style="background-color: rgb(237, 176, 44);">T</td>
+
+                    <td  style="background-color: rgb(237, 176, 44);">O</td>
+
+                    <td >N</td>
+
+                    <td >S</td>
+
+                </tr>
+
+                <tr >
+
+                    <td  style="background-color: rgb(182, 0, 0);">C</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">A</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">R</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">O</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">T</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">T</td>
+
+                    <td  style="background-color: rgb(182, 0, 0);">E</td>
+
+                </tr>
+
+                <tr >
+
+                    <td ></td>
+
+                    <td ></td>
+
+                    <td ></td>
+
+                    <td ></td>
+
+                    <td ></td>
+
+                    <td ></td>
+
+                    <td ></td>
+
+                </tr>
+
+            </tbody>
+        </table>
+
+    <p class="text">
+    À vous de trouver le mot en un minimum de tentatives !
+    </p>
 {% endblock %}

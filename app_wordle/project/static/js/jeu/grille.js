@@ -138,10 +138,10 @@ function colorier_ligne(numLigne) {
         for (let i = 0; i<nb_lettres; i++) {
             switch (result[i]) {
                 case 1:
-                    document.getElementById('l'+ numLigne +'c'+ i).style.backgroundColor="yellow";
+                    document.getElementById('l'+ numLigne +'c'+ i).style.backgroundColor="#edb02c";
                     break;
                 case 2:
-                    document.getElementById('l'+ numLigne +'c'+ i).style.backgroundColor="red";
+                    document.getElementById('l'+ numLigne +'c'+ i).style.backgroundColor="#b60000";
                     break;
             }
         }
