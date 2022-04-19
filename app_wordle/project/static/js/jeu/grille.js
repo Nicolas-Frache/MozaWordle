@@ -3,21 +3,24 @@ let grille,
     ligne_actuelle = 0,
     colonne_actuelle = 0,
     nb_lettres,
-    solution;
+    solution,
+    nb_essais,
+    mot_complet = false; // true si le mot de la ligne actuelle comporte assez de lettres, false sinon
 
-function init(nb_essais, nb_lettres_param, solution_param) {
+function init(nb_essais_param, nb_lettres_param, solution_param) {
     nb_lettres = nb_lettres_param;
     solution = solution_param;
+    nb_essais = nb_essais_param;
 
     // Initialisation de la grille vide
-    grille = new Array(nb_essais);
+    grille = new Array(nb_essais_param);
     for (let i = 0; i < nb_lettres; i++) {
         grille[i] = new Array(nb_lettres);
     }
 
     // Il est possible que la grille soit déjà partiellement remplie donc on
     // synchronise avec l'html au cas où
-    for (let i = 0; i < nb_essais; i++) {
+    for (let i = 0; i < nb_essais_param; i++) {
         for (let j = 0; j < nb_lettres; j++) {
             if (document.getElementById("l" + i + "c" + j).innerHTML !== "") {
                 grille[i][j] = document.getElementById("l" + i + "c" + j).innerHTML;
@@ -28,7 +31,7 @@ function init(nb_essais, nb_lettres_param, solution_param) {
 
     // On finit l'initialisation en coloriant toute les lignes (sans tester si les mots sont dans le dictionnaire
     // car cela a déjà été fait quand le joueur a commencé la partie)
-    for (let i = 0; i < nb_essais; i++) {
+    for (let i = 0; i < nb_essais_param; i++) {
         colorier_ligne(i, solution)
     }
 }
@@ -39,6 +42,9 @@ function init(nb_essais, nb_lettres_param, solution_param) {
 function ecrire(lettre) {
     document.getElementById('l' + ligne_actuelle + 'c' + colonne_actuelle).innerText = lettre;
     grille[ligne_actuelle][colonne_actuelle] = lettre;
+    if (colonne_actuelle === nb_lettres - 1) { // Si on se trouve à la dernière colonne
+        mot_complet = true;
+    }
     if (colonne_actuelle < nb_lettres - 1) {
         colonne_actuelle++;
     }
@@ -48,41 +54,30 @@ function ecrire(lettre) {
  * Supprimer une lettre de la grille et décale la colonne actuelle
  */
 function supprimer() {
-    if(colonne_actuelle >= 1){
+    if(colonne_actuelle >= 1 && !mot_complet){
         colonne_actuelle--;
         document.getElementById('l' + ligne_actuelle + 'c' + colonne_actuelle).innerText = "";
         grille[ligne_actuelle][colonne_actuelle] = undefined;
     }
+    if (mot_complet) {
+        document.getElementById('l' + ligne_actuelle + 'c' + colonne_actuelle).innerText = "";
+        grille[ligne_actuelle][colonne_actuelle + 1] = undefined;
+    }
+    mot_complet = false;
 }
 
 function valider_ligne() {
-    let victoire = true;
     let valide = true;
-
-    //On vérifie que le mot de ligne actuelle soit de la bonne longueur
-    if(mot(ligne_actuelle).length !== solution.length) {
-        valide = false;
-    }
 
     //TODO 2 : vérifier si le mot de ligne actuelle est dans le dictionnaire (appel fetch)
     // SI OUI :
-    if(valide) {
+    if(mot_complet && valide) {
         colorier_ligne(ligne_actuelle, true);
+        if (mot(ligne_actuelle) === solution) { victoire(); } // Test de la victoire
+        if (mot(ligne_actuelle) !== solution && ligne_actuelle + 1 >= nb_essais) { defaite(); } // Test de la defaite
         ligne_actuelle++;
+        mot_complet = false;
         colonne_actuelle = 0;
-    }
-
-    // Test de la victoire
-    for (let i = 0; i < nb_lettres; i++) {
-        if (grille[ligne_actuelle-1][i] !== solution[i]) {
-            victoire = false;
-        }
-    }
-    if (victoire) {
-        //TODO : Annonce de la victoire
-        console.log("Victoire");
-    } else {
-
     }
 }
 
@@ -111,7 +106,7 @@ function resultat (proposition, solution) {
     for (let i = 0; i<proposition.length; i++) {
         if (result[i] !== 2) {
             for (let j = 0; j<solution.length; j++) {
-                if (i!==j && proposition[i] === solution[j] && tested[j] === false) {
+                if (i!==j && proposition[i] === solution[j] && !tested[j]) {
                     result[i] = 1;
                     tested[j] = true;
                     break;
@@ -157,6 +152,16 @@ function mot(numLigne) {
         proposition = proposition + grille[numLigne][i];
     }
     return proposition
+}
+
+function victoire() {
+    // TODO : Annoncer la victoire et arrêter la partie
+    console.log("Victoire");
+}
+
+function defaite() {
+    // TODO : Annoncer la defaite et arrêter la partie
+    console.log("Défaite");
 }
 
 export default {
