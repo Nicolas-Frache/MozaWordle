@@ -14,7 +14,7 @@ function init(nb_essais_param, nb_lettres_param, solution_param) {
 
     // Initialisation de la grille vide
     grille = new Array(nb_essais_param);
-    for (let i = 0; i < nb_lettres; i++) {
+    for (let i = 0; i < nb_essais_param; i++) {
         grille[i] = new Array(nb_lettres);
     }
 
@@ -29,7 +29,7 @@ function init(nb_essais_param, nb_lettres_param, solution_param) {
         }
     }
 
-    // On finit l'initialisation en coloriant toute les lignes (sans tester si les mots sont dans le dictionnaire
+    // On finit l'initialisation en coloriant toutes les lignes (sans tester si les mots sont dans le dictionnaire
     // car cela a déjà été fait quand le joueur a commencé la partie)
     for (let i = 0; i < nb_essais_param; i++) {
         colorier_ligne(i, solution)
