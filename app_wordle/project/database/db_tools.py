@@ -85,6 +85,13 @@ def generate_max_id(tables: string) -> int:
         print("Erreur lors de la génération d'un id max : ", error)
 
 
+def random_Word(taille : int) -> str:
+
+    mot = basic_query("SELECT mot FROM dictionnaire WHERE longueur = ? ORDER BY RANDOM()",(taille,),True,True)
+    if (mot == "" or mot ==[]):
+        requetageBaseDeDonneeError()
+    return mot
+
 def create_db():
     connexion = sqlite3.connect(DB_FILE)
     cursor = connexion.cursor()

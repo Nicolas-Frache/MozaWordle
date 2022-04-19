@@ -27,11 +27,18 @@ def handle_error(error):
     return render_template("pages/error.html", error=message)
 
 
-@app.route('/')
+@app.route('/',methods = ["GET","POST"])
 @app.route('/home')
 @app.route('/menu')
 def home():
-    return render_template("pages/Menu.html")
+    if request.method == "GET":
+        return render_template("pages/Menu.html")
+    elif request.method == "POST":
+        _nb_essais,_nb_lettres = int(request.form.get("tentatives")),int(request.form.get("taille"))
+        _mot = db_tools.random_Word(_nb_lettres)[0]
+        print(f"Nb essais = {_nb_essais}, nb_lettres = {_nb_lettres}, mot random = {_mot}")
+        return render_template("pages/Jeu.html",nb_essais=_nb_essais,nb_lettres=_nb_lettres,mot=_mot)
+
 
 
 @app.route('/jeu')
