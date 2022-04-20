@@ -1,6 +1,6 @@
 # from crypt import methods
 import traceback
-from flask import Flask, render_template, redirect, request,session
+from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
 
 from project.database import db_tools, dict_tools
@@ -65,44 +65,61 @@ def test():
     return 'test'
 
 
-@app.route('/login', methods=["GET","POST"])
+@app.route('/login', methods=["GET", "POST"])
 def loginPage():
     if request.method == "POST":
-        pseudo, password = request.form.get("pseudo"),request.form.get("password")
-        passwordVerification = db_tools.GoodPassword(pseudo,password)
-        if passwordVerification[0] and (("idJoueur" in session and session["idJoueur"] == None) or not "idJoueur" in session):
-            session["idJoueur"],session["pseudo"],session["paramLastGame"],session["currentGame"] = db_tools.Connect(pseudo)
+        pseudo, password = request.form.get("pseudo"), request.form.get("password")
+        passwordVerification = db_tools.GoodPassword(pseudo, password)
+        if passwordVerification[0] and (
+                ("idJoueur" in session and session["idJoueur"] is None) or not "idJoueur" in session):
+            session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.Connect(
+                pseudo)
             return redirect("/")
-        else :
-            #TODO repport sur la page login avec un message d'erreur
-            return handle_error("Mauvais identificateur") # Temporaire
-    else :
+        else:
+            # TODO repport sur la page login avec un message d'erreur
+            return handle_error("Mauvais identificateur")  # Temporaire
+    else:
         return render_template("pages/Login.html")
+
 
 @app.route('/inscription', methods=["POST"])
 def InscriptionPage():
-    if request.method == "POST":
-        #Handle inscription
-        pseudo, password = request.form.get("pseudo"),request.form.get("password")
+    # Handle inscription
+    pseudo, password = request.form.get("pseudo"), request.form.get("password")
 
-        if (db_tools.Valid_Inscription(pseudo,password)):
-            db_tools.Inscription(pseudo,password)
+    if (db_tools.Valid_Inscription(pseudo, password)):
+            Inscription(pseudo,password)
             session["idJoueur"],session["pseudo"],session["paramLastGame"],session["currentGame"] = db_tools.Connect(pseudo)
-            return redirect("/")
-        else :
-            return handle_error("Inscription non valide") #Ajouter message d'erreur custom si pseudo déjà pris / mauvais password
-
-    else :
-        return handle_error("Accès à la page d'inscription avec requête GET")
+        return redirect("/")
+    else:
+        return handle_error(
+            "Inscription non valide")  # Ajouter message d'erreur custom si pseudo déjà pris / mauvais password
 
 
 @app.route('/logout')
 def logout():
     session["idJoueur"] = None
-    session["pseudo"] = None 
+    session["pseudo"] = None
     session["paramLastGame"] = None
     session["currentGame"] = None
     return redirect("/")
+
+
+@app.route('/api/estValideMot/<mot>', methods=["GET"])
+def estValideMot(mot):
+    """
+    Endpoint permettant de vérifier si un mot est dans le dictionnaire
+    :param mot:
+    :return:
+    """
+    try:
+        value = dict_tools.est_dans_dict(mot)
+    except Exception as e:
+        return jsonify({"status": "error"})
+    return jsonify({
+        "status": "success",
+        "estValide": value
+    })
 
 
 @app.cli.command('initdb')
@@ -113,4 +130,4 @@ def initdb_command():
 
 # Pour l'execution en ligne de commande directement avec 'Python3 app.py'
 if __name__ == '__main__':
-    app.run(debug=1)
+    app.run(debug=True)
