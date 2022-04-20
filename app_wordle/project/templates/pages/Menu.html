@@ -8,7 +8,7 @@
     <p><b>Bienvenue sur notre application !</b></p>
 
     <table class="center">
-        <tbody>
+        <tbody class="text">
             <form action="/" method="POST">
             <tr>
                 <td><input type="range" id="taille" name="taille" style="width: 100vh;"
@@ -20,6 +20,13 @@
                 <td><input type="range" id="tentatives" name="tentatives" style="width: 100vh;"
                     value="6" min="3" max="15" oninput="this.nextElementSibling.value = this.value">
                     <output>6</output> tentatives
+                </td>
+            </tr>
+            <tr>
+            <tr>
+                <td><input type="range" id="difficulte" name="difficulte" style="width: 100vh;"
+                    value="2" min="1" max="3" oninput="this.nextElementSibling.value = this.value">
+                    Niveau de difficulté : <output>2</output>
                 </td>
             </tr>
             <tr>

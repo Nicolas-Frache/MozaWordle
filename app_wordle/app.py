@@ -34,9 +34,9 @@ def home():
     if request.method == "GET":
         return render_template("pages/Menu.html")
     elif request.method == "POST":
-        _nb_essais,_nb_lettres = int(request.form.get("tentatives")),int(request.form.get("taille"))
-        _mot = db_tools.random_Word(_nb_lettres)[0]
-        print(f"Nb essais = {_nb_essais}, nb_lettres = {_nb_lettres}, mot random = {_mot}")
+        _nb_essais, _nb_lettres, _difficulte = int(request.form.get("tentatives")), int(request.form.get("taille")), (request.form.get("difficulte"))
+        _mot = dict_tools.get_random_word(_nb_lettres, _difficulte)
+        print(f"Nb essais = {_nb_essais}, nb_lettres = {_nb_lettres}, difficulté = {_difficulte}, mot random = {_mot}")
         return render_template("pages/Jeu.html",nb_essais=_nb_essais,nb_lettres=_nb_lettres,mot=_mot)
 
 

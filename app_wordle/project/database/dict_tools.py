@@ -14,10 +14,17 @@ def est_dans_dict(mot: str):
 
 
 # Renvoie un mot aléatoire
-def get_random_word(longueur: int, frequencemin=0, frequencemax=20000):
+def get_random_word(longueur: int, difficulte: int):
     try:
-        words = basic_query("SELECT mot FROM dictionnaire WHERE longueur = ? AND frequence >= ? AND frequence <= ?",
-                            (longueur, frequencemin, frequencemax,), disable_dict_factory=True)
-        return words[randrange(0, len(words))][0]
+        words = basic_query("SELECT mot FROM dictionnaire WHERE longueur = ? ORDER BY frequence",
+                            (longueur,), disable_dict_factory=True)
+
+        if difficulte == 3:
+            return words[randrange(0, len(words) // 3)][0]
+        elif difficulte == 2:
+            return words[randrange(len(words) // 3, 2 * len(words)) // 3][0]
+        elif difficulte == 1:
+            return words[randrange(2 * len(words) // 3, len(words))][0]
+
     except ValueError:
         print("Aucun mot ne correspond aux critères de recherche")
