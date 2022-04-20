@@ -1,14 +1,19 @@
 :root {
-    --_primary_color: #264e2e;
     --primary_color: #334a94;
+
     --keyboard_neutral: #25c9c973;
     --keyboard_wrong_place: #88a524;
     --keyboard_good_place: #ff0404;
     --taille_cote_case: 50px;
 
     --grille_jeu_neutral: #595959;
-    --_header-bg: #184010;
-    --header-bg: #404ba6;
+
+    --header-bg: #424242;
+    --footer-bg: var(--header-bg);
+
+    --log-btn:#47AB11;
+    --ins-btn:#1184E8;
+    --play-btn:#47AB11;
 }
 
 html, body {
@@ -68,7 +73,7 @@ header nav li a {
 }
 
 header nav li a.logbutton {
-    background-color: #47AB11;
+    background-color: var( --log-btn);
     padding: 10px 20px;
     border-radius: 4px;
 }
@@ -83,7 +88,7 @@ main {
 
 .bottom {
     width: 100%;
-    background-color: #333;
+    background-color: var(--footer-bg);
     margin-top: 20px;
     text-align: center !important;
     color: white;
@@ -97,7 +102,7 @@ main {
     color: #fff;
     text-shadow: 1px 1px 1px #000;
     border-radius: 4px;
-    background-color: #1ab26b;
+    background-color: var(--play-btn);
     background-image: linear-gradient(to top left,
     rgba(0, 0, 0, .2),
     rgba(0, 0, 0, .2) 3%,
@@ -224,22 +229,42 @@ form input {
     border: none;
     display: block;
     padding: 0.9rem 0.7rem;
-    box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
+    box-shadow: 0 3px 6px rgb(0 0 0 / 16%);
     font-size: 17px;
     color: #4A4A4A;
 }
 
-form .btn {
+form .log-btn {
     cursor: pointer;
     display: inline-block;
     margin: 0 auto;
     padding: 0.9rem 2.5rem;
     text-align: center;
-    background-color: #47AB11;
+    background-color: var(--log-btn);
     color: #fff;
     border-radius: 4px;
     box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
     font-size: 17px;
+}
+
+form .ins-btn {
+    cursor: pointer;
+    display: inline-block;
+    margin: 0 auto;
+    padding: 0.9rem 2.5rem;
+    text-align: center;
+    background-color: var(--ins-btn);
+    color: #fff;
+    border-radius: 4px;
+    box-shadow: 0px 3px 6px rgb(0 0 0 / 16%);
+    font-size: 17px;
+}
+
+hr.ligne {
+    border-top: 0 solid white;
+    margin-top: 30px !important;
+    margin: auto;
+    width: 400px;
 }
 
 .text {
@@ -248,3 +273,11 @@ form .btn {
     position: relative;
     color: white;
     font-family: Verdana;}
+
+.leaderboard{
+    float: left;
+}
+
+.stats{
+    float: right;
+}
