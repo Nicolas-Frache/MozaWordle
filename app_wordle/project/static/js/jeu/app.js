@@ -1,5 +1,6 @@
 import clavier from './clavier.js';
 import grille from './grille.js';
+import server_requester from './server_requester.js';
 
 window.onload = function () {
     // 1 - Constantes
@@ -30,4 +31,5 @@ window.onload = function () {
 
     // 3 - Initialisation grille
     grille.init(nb_essais, nb_lettres, solution);
+    server_requester.est_dans_dictionnaire("voiture");
 }
