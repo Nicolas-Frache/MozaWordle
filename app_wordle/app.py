@@ -3,11 +3,13 @@ import traceback
 from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
 
-from db_tools import Inscription
+from project.database.db_tools import Inscription
 from project.database import db_tools, dict_tools
 
 # Création de l'instance de l'application Flask et définition
 # du chemin du dossier contenant les templates et les fichiers statics
+from project.database.dict_tools import get_random_word
+
 app = Flask(__name__, template_folder='project/templates', static_folder='project/static')
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
@@ -43,7 +45,8 @@ def home():
 
 @app.route('/jeu')
 def jeu():
-    return render_template("pages/Jeu.html", nb_essais=6, nb_lettres=7, mot="carotte")
+    solution = get_random_word(longueur=7, difficulte=1)
+    return render_template("pages/Jeu.html", nb_essais=6, nb_lettres=7, mot=solution)
 
 
 @app.route('/regles')
