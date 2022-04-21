@@ -13,8 +13,12 @@ window.onload = function () {
     // 2 - HANDLERS
     for (let i in char) { // Ajouts d'evenements lors du clic sur le clavier virtuel
         let touche = document.getElementById(char[i]);
-        touche.addEventListener('mousedown', () => {clavier.press_key(char[i]);})
-        touche.addEventListener('mouseup', () => {clavier.release_key(char[i]);})
+        touche.addEventListener('mousedown', () => {
+            clavier.press_key(char[i]);
+        })
+        touche.addEventListener('mouseup', () => {
+            clavier.release_key(char[i]);
+        })
     }
     document.addEventListener("keydown", (e) => {
         if (char.includes(e.key.toUpperCase())) { // S'il s'agit d'une touche valide
