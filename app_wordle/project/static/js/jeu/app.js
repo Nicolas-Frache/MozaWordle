@@ -1,6 +1,5 @@
 import clavier from './clavier.js';
 import grille from './grille.js';
-import server_requester from './server_requester.js';
 
 window.onload = function () {
     // 1 - Constantes
@@ -14,8 +13,12 @@ window.onload = function () {
     // 2 - HANDLERS
     for (let i in char) { // Ajouts d'evenements lors du clic sur le clavier virtuel
         let touche = document.getElementById(char[i]);
-        touche.addEventListener('mousedown', () => {clavier.press_key(char[i]);})
-        touche.addEventListener('mouseup', () => {clavier.release_key(char[i]);})
+        touche.addEventListener('mousedown', () => {
+            clavier.press_key(char[i]);
+        })
+        touche.addEventListener('mouseup', () => {
+            clavier.release_key(char[i]);
+        })
     }
     document.addEventListener("keydown", (e) => {
         if (char.includes(e.key.toUpperCase())) { // S'il s'agit d'une touche valide
@@ -31,5 +34,4 @@ window.onload = function () {
 
     // 3 - Initialisation grille
     grille.init(nb_essais, nb_lettres, solution);
-    server_requester.est_dans_dictionnaire("voiture");
 }

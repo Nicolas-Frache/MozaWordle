@@ -1,4 +1,7 @@
 // Tableau à plusieurs dimensions contenant les lettres de la grille
+import server_requester from './server_requester.js';
+
+
 let grille,
     ligne_actuelle = 0,
     colonne_actuelle = 0,
@@ -54,7 +57,7 @@ function ecrire(lettre) {
  * Supprimer une lettre de la grille et décale la colonne actuelle
  */
 function supprimer() {
-    if(colonne_actuelle >= 1 && !mot_complet){
+    if (colonne_actuelle >= 1 && !mot_complet) {
         colonne_actuelle--;
         document.getElementById('l' + ligne_actuelle + 'c' + colonne_actuelle).innerText = "";
         grille[ligne_actuelle][colonne_actuelle] = undefined;
@@ -67,18 +70,42 @@ function supprimer() {
 }
 
 function valider_ligne() {
-    let valide = true;
-
-    //TODO 2 : vérifier si le mot de ligne actuelle est dans le dictionnaire (appel fetch)
-    // SI OUI :
-    if(mot_complet && valide) {
-        colorier_ligne(ligne_actuelle, true);
-        if (mot(ligne_actuelle) === solution) { victoire(); } // Test de la victoire
-        if (mot(ligne_actuelle) !== solution && ligne_actuelle + 1 >= nb_essais) { defaite(); } // Test de la defaite
-        ligne_actuelle++;
-        mot_complet = false;
-        colonne_actuelle = 0;
+    let mot = getMot(ligne_actuelle);
+    if (!mot_complet) {
+        return;
     }
+
+    // on vérifie si le mot de ligne actuelle est dans le dictionnaire (appel fetch)
+    server_requester.est_dans_dictionnaire(mot.toLowerCase())
+        .then(response => {
+            // si la requête a réussi :
+            console.log(response);
+
+            if(response === true){
+                // SI VALIDE
+                colorier_ligne(ligne_actuelle);
+                if (mot === solution) {
+                    victoire();
+                } // Test de la victoire
+                if (mot !== solution && ligne_actuelle + 1 >= nb_essais) {
+                    defaite();
+                } // Test de la defaite
+
+                ligne_actuelle++;
+                mot_complet = false;
+                colonne_actuelle = 0;
+            }
+            else {
+                // SI NON VALIDE
+                // TODO - afficher un message indiquant que le mot n'est pas dans le dictionnaire
+            }
+        })
+        .catch(error => {
+            // si la requête a échoué :
+            console.log("erreur: " + error.message)//
+
+            // TODO - Afficher un message d'erreur
+        });
 }
 
 /**
@@ -88,25 +115,29 @@ function valider_ligne() {
  * 1 → lettre présente, mais pas à la bonne place
  * 2 → lettre à la bonne place
  */
-function resultat (proposition, solution) {
+function resultat(proposition, solution) {
     // Precondition : proposition et solution sont de meme longueur
     let result = new Array(solution.length);
-    for (let i = 0; i< result.length; i++) { result[i] = 0; }
+    for (let i = 0; i < result.length; i++) {
+        result[i] = 0;
+    }
     let tested = new Array(solution.length);
-    for (let i = 0; i< tested.length; i++) { tested[i] = false; }
+    for (let i = 0; i < tested.length; i++) {
+        tested[i] = false;
+    }
 
     // Recherche des carracteres à la bonne place
-    for (let i = 0; i<proposition.length; i++) {
+    for (let i = 0; i < proposition.length; i++) {
         if (proposition[i] === solution[i]) {
             result[i] = 2;
             tested[i] = true;
         }
     }
 
-    for (let i = 0; i<proposition.length; i++) {
+    for (let i = 0; i < proposition.length; i++) {
         if (result[i] !== 2) {
-            for (let j = 0; j<solution.length; j++) {
-                if (i!==j && proposition[i] === solution[j] && !tested[j]) {
+            for (let j = 0; j < solution.length; j++) {
+                if (i !== j && proposition[i] === solution[j] && !tested[j]) {
                     result[i] = 1;
                     tested[j] = true;
                     break;
@@ -123,20 +154,20 @@ function resultat (proposition, solution) {
 function colorier_ligne(numLigne) {
     if (typeof grille[numLigne][0] !== 'undefined') { // On ne colorie que si la ligne est bien remplie
 
-        let proposition = mot(numLigne);
+        let proposition = getMot(numLigne);
 
         // On genere les couleurs en comparant la proposition a la reponse
         let result = resultat(proposition, solution);
 
         // On colorie les cases
         // TODO : ameliorer le style
-        for (let i = 0; i<nb_lettres; i++) {
+        for (let i = 0; i < nb_lettres; i++) {
             switch (result[i]) {
                 case 1:
-                    document.getElementById('l'+ numLigne +'c'+ i).style.backgroundColor="#edb02c";
+                    document.getElementById('l' + numLigne + 'c' + i).style.backgroundColor = "#edb02c";
                     break;
                 case 2:
-                    document.getElementById('l'+ numLigne +'c'+ i).style.backgroundColor="#b60000";
+                    document.getElementById('l' + numLigne + 'c' + i).style.backgroundColor = "#b60000";
                     break;
             }
         }
@@ -146,7 +177,7 @@ function colorier_ligne(numLigne) {
 /**
  * Reconstitue le mot proposé à la ligne numLigne à partir de la grille
  */
-function mot(numLigne) {
+function getMot(numLigne) {
     let proposition = "";
     for (let i = 0; i < nb_lettres; i++) {
         proposition = proposition + grille[numLigne][i];

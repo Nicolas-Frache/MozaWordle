@@ -3,6 +3,7 @@ import traceback
 from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
 
+from db_tools import Inscription
 from project.database import db_tools, dict_tools
 
 # Création de l'instance de l'application Flask et définition
@@ -27,7 +28,7 @@ def handle_error(error):
     return render_template("pages/error.html", error=message)
 
 
-@app.route('/',methods = ["GET","POST"])
+@app.route('/', methods=["GET", "POST"])
 @app.route('/home')
 @app.route('/menu')
 def home():
@@ -37,13 +38,12 @@ def home():
         _nb_essais, _nb_lettres, _difficulte = int(request.form.get("tentatives")), int(request.form.get("taille")), int(request.form.get("difficulte"))
         _mot = dict_tools.get_random_word(_nb_lettres, _difficulte)
         print(f"Nb essais = {_nb_essais}, nb_lettres = {_nb_lettres}, difficulté = {_difficulte}, mot random = {_mot}")
-        return render_template("pages/Jeu.html",nb_essais=_nb_essais,nb_lettres=_nb_lettres,mot=_mot)
-
+        return render_template("pages/Jeu.html", nb_essais=_nb_essais, nb_lettres=_nb_lettres, mot=_mot)
 
 
 @app.route('/jeu')
 def jeu():
-    return render_template("pages/Jeu.html", nb_essais=6, nb_lettres=7)
+    return render_template("pages/Jeu.html", nb_essais=6, nb_lettres=7, mot="carotte")
 
 
 @app.route('/regles')
@@ -84,16 +84,19 @@ def loginPage():
 
 @app.route('/inscription', methods=["POST"])
 def InscriptionPage():
-    # Handle inscription
-    pseudo, password = request.form.get("pseudo"), request.form.get("password")
+    try:
+        # Handle inscription
+        pseudo, password = request.form.get("pseudo"), request.form.get("password")
 
-    if (db_tools.Valid_Inscription(pseudo, password)):
-            Inscription(pseudo,password)
-            session["idJoueur"],session["pseudo"],session["paramLastGame"],session["currentGame"] = db_tools.Connect(pseudo)
-        return redirect("/")
-    else:
-        return handle_error(
-            "Inscription non valide")  # Ajouter message d'erreur custom si pseudo déjà pris / mauvais password
+        if db_tools.Valid_Inscription(pseudo, password):
+            Inscription(pseudo, password)
+            session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.Connect(
+                pseudo)
+            return redirect("/")
+        else:
+            raise Exception("Inscription invalide")
+    except Exception as e:
+        return handle_error(e)
 
 
 @app.route('/logout')

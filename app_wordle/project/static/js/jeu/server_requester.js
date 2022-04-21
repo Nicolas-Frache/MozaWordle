@@ -1,29 +1,35 @@
 const host = window.location.host; // Récupère l'url de la page
+const protocol = window.location.protocol; // Récupère l'url de la page
 const est_dans_dict_api_endpoint = "api/estValideMot";
 
-const check_status = (response) => {
-    if (response.ok) {
-        return new Promise.resolve(response);
-    } else {
-        return new Promise.reject(new Error(response.statusText));
-    }
-};
-
 const est_dans_dictionnaire = (mot) => {
-    const url = `${host}/${est_dans_dict_api_endpoint}/${mot}`;
-    console.log(url);
-    fetch(url, {
+    const url = `${protocol}//${host}/${est_dans_dict_api_endpoint}/${mot}`;
+
+    // Abandon de la requête au bout de 5 secondes
+    const controller = new AbortController()
+    setTimeout(() => controller.abort(), 5000)
+
+    return fetch(url, {
         method: "GET",
         headers: {
             "Content-Type": "application/json"
         },
-        credentials: 'include'
+        credentials: 'include',
+        signal: controller.signal
     })
-        .then(check_status)
-        .then(data => {
-            console.log(data);
+        .then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                return Promise.reject(new Error(error.message));
+            }
         })
-        .catch(error => console.log("erreur du réseau: " + error));
+        .then(response => {
+            return response.estValide;
+        })
+        .catch(error => {
+            return Promise.reject(new Error(error.message));
+        });
 };
 
 export default {
