@@ -17,6 +17,7 @@ CREATE TABLE partie (
     date DATE,
     tourActuel INTEGER,
     aGagne INTEGER,
+    scorePartie INTEGER,
     CONSTRAINT idPartie_PK PRIMARY KEY (idPartie),
     CONSTRAINT parametre_FK FOREIGN KEY (parametre) REFERENCES parametre(id),
     CONSTRAINT motATrouver_FK FOREIGN KEY (motATrouver) REFERENCES dictionnaire(idMot)
@@ -35,6 +36,7 @@ CREATE TABLE utilisateur (
     password VARCHAR(50),
     parametreDernierePartie INTEGER,
     partieEnCours INTEGER,
+    scoreUtilisateur INTEGER,
     CONSTRAINT idJoueur_PK PRIMARY KEY (idUtilisateur),
     CONSTRAINT parametreDernierePartie_FK FOREIGN KEY (parametreDernierePartie) REFERENCES partie(idPartie),
     CONSTRAINT partieEnCours_FK FOREIGN KEY (partieEnCours) REFERENCES partie(idPartie)
