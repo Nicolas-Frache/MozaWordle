@@ -274,10 +274,56 @@ hr.ligne {
     color: white;
     font-family: Verdana;}
 
-.leaderboard{
-    float: left;
+.leaderpage{
+    display: grid;
+    grid-template-areas:
+    'leaderboard stats';
+    width: 100%;
+    height: 90%;
+    margin: 30px 300px;
 }
 
 .stats{
-    float: right;
+    grid-area: stats;
+    display: block;
+    width: 500px;
+    height: 100%;
+    background-color: #ffffff;
+}
+
+.leaderboard{
+    grid-area: leaderboard;
+    border-collapse: collapse;
+    width: 15%;
+}
+
+.leaderboard th, td {
+    text-align: center;
+    padding: 10px;
+    font-family: Verdana;
+    font-size: 20px;
+
+}
+
+.leaderboard tr:nth-child(even){background-color: #f2f2f2}
+.leaderboard tr:nth-child(odd){background-color: #fff}
+
+.leaderboard th {
+    background-color: var(--log-btn);
+    color: white;
+}
+
+.leaderboard .Uno {
+    font-weight: bold;
+    color:gold;
+}
+
+.leaderboard .Dos {
+    font-weight: bold;
+    color:silver;
+}
+
+.leaderboard .Tres {
+    font-weight: bold;
+    color:#cd7f32;
 }
