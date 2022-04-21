@@ -70,6 +70,7 @@ def loginPage():
     if request.method == "POST":
         pseudo, password = request.form.get("pseudo"),request.form.get("password")
         passwordVerification = db_tools.GoodPassword(pseudo,password)
+        
         if passwordVerification[0] and (("idJoueur" in session and session["idJoueur"] == None) or not "idJoueur" in session):
             session["idJoueur"],session["pseudo"],session["paramLastGame"],session["currentGame"] = db_tools.Connect(pseudo)
             return redirect("/")

@@ -44,6 +44,11 @@ def basic_insert(sql,param_sql):
     try:
         cursor = connexion.cursor()
         cursor.execute(sql, param_sql)
+        connexion.commit()
+        print("Insertion Effectué")
+        print(sql)
+        print(param_sql)
+        print("---")
     except sqlite3.Error as error:
         requetageBaseDeDonneeError()
     cursor.close()
@@ -114,25 +119,26 @@ def Inscription(pseudo: str,uc_password : str) -> None:
     ec_password = fonctions.Encrypt(uc_password)
     idJoueur = generate_max_id("utilisateur")
 
-    print(f"Id joueur {idJoueur}, pseudo = {pseudo}, ec_password = {ec_password}")
+    basic_insert("INSERT INTO utilisateur (idUtilisateur,pseudo,password) VALUES (?,?,?)",(idJoueur,str(pseudo),str(ec_password)))
 
-    basic_insert("INSERT INTO utilisateur (idUtilisateur,pseudo,password,parametreDernierePartie,partieEnCours) VALUES (?,?,?,?,?)",(idJoueur,pseudo,str(ec_password),-1,-1))
     return None
 
 
 def GoodPassword(pseudo : str, uc_password : str): # -> bool,string:
 
-    querry = basic_query("SELECT password FROM utilisateur WHERE pseudo = ?",(pseudo,),True)
+    querry = basic_query("SELECT password FROM utilisateur WHERE pseudo = ?",(pseudo,),True,True)
+
+    print(querry)
 
     if (querry == [] or querry == None):
         return False,"Joueur non répertorié dans la base de donnée"
-    elif (fonctions.Encrypt(uc_password) == querry):
+    elif (fonctions.Encrypt(uc_password) == querry[0]):
         return True,"Bon identifiant"
     else :
         return False,"Mauvais identifiant"
 
 def Connect(pseudo : str):
-    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?",(pseudo,),True,False)
+    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?",(pseudo,),True,True)
 
     print("Info utilisateur :")
     print(querry)
