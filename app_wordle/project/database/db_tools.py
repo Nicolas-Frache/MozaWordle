@@ -1,3 +1,4 @@
+from operator import ge
 import os
 import sqlite3
 import string
@@ -45,10 +46,6 @@ def basic_insert(sql,param_sql):
         cursor = connexion.cursor()
         cursor.execute(sql, param_sql)
         connexion.commit()
-        print("Insertion Effectué")
-        print(sql)
-        print(param_sql)
-        print("---")
     except sqlite3.Error as error:
         requetageBaseDeDonneeError()
     cursor.close()
@@ -144,3 +141,35 @@ def Connect(pseudo : str):
     print(querry)
 
     return querry[0],querry[1],querry[3],querry[4] # renvoie pseudo, paramètre derniere partie et partie en cours
+
+
+def RegisterGame(motATrouver : string, idParam : int, idJoueur : int = -1) -> int:
+
+    date = basic_query("SELECT CURRENT_TIMESTAMP",[],True,True)[0]
+    idPartie = generate_max_id("partie")
+    querry = "INSERT INTO partie (idPartie, parametre,estEnCours,idJoueur,motATrouver,date,tourActuel,aGagne,scorePartie) VALUES (?,?,?,?,?,?,?,?,?)"
+    param_sql = (idPartie,idParam,1,idJoueur,motATrouver,date,0,0,0)
+
+    basic_insert(querry,param_sql)
+
+    return idPartie
+
+def getIdParam(nb_essais : int, nb_lettres : int, difficulté : int) -> int:
+    
+    idParam = basic_query("SELECT id FROM parametre WHERE longueur = ? AND nbEssais = ? AND difficulte = ?",(nb_lettres,nb_essais,difficulté),True,True)
+   
+    if idParam == [] or idParam == None:
+        #Creer param
+        idParam = generate_max_id("parametre")
+        basic_insert("INSERT INTO parametre (id,longueur,nbEssais,difficulte) VALUES (?,?,?,?)",(idParam,nb_lettres,nb_essais,difficulté))
+    else : idParam = idParam[0] 
+    
+    print(f"Id parametre = {idParam}")
+
+    return idParam
+
+def updateCurrentGameUtilisateur(idUtilisateur : int, idPartie : int) -> None:
+    
+    basic_query("UPDATE utilisateur SET partieEnCours = ? WHERE idUtilisateur = ?",(idPartie,idUtilisateur))
+    
+    return None

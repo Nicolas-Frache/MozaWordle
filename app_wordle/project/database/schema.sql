@@ -27,6 +27,7 @@ CREATE TABLE parametre (
     id INTEGER,
     longueur INTEGER,
     nbEssais INTEGER,
+    difficulte INTEGER,
     CONSTRAINT id_PK PRIMARY KEY (id)
 );
 

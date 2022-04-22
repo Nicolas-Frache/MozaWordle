@@ -3,7 +3,7 @@ import traceback
 from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
 
-from project.database.db_tools import Inscription
+from project.database.db_tools import Inscription, RegisterGame
 from project.database import db_tools, dict_tools
 
 # Création de l'instance de l'application Flask et définition
@@ -35,12 +35,38 @@ def handle_error(error):
 @app.route('/menu')
 def home():
     if request.method == "GET":
+        """
+        si connecté :
+            récupère parametre
+        sinon
+            assignation parametre par défaut
+        
+        """
         return render_template("pages/Menu.html")
     elif request.method == "POST":
+
         _nb_essais, _nb_lettres, _difficulte = int(request.form.get("tentatives")), int(request.form.get("taille")), int(request.form.get("difficulte"))
         _mot = dict_tools.get_random_word(_nb_lettres, _difficulte)
+        
+        idJoueur = -1
+        idParam = -1
+
+        estConnecté = "idJoueur" in session and session["idJoueur"] != None
+
+        idParam = db_tools.getIdParam(_nb_essais,_nb_lettres,_difficulte)
+
+        if estConnecté:
+            idJoueur = session["idJoueur"]
+            session["paramLastGame"] = idParam
+        
+        _idPartie = RegisterGame(_mot,idParam,idJoueur)
+
+        if estConnecté:
+            session["currentGame"] = _idPartie
+            db_tools.updateCurrentGameUtilisateur(idJoueur,_idPartie)
+        
         print(f"Nb essais = {_nb_essais}, nb_lettres = {_nb_lettres}, difficulté = {_difficulte}, mot random = {_mot}")
-        return render_template("pages/Jeu.html", nb_essais=_nb_essais, nb_lettres=_nb_lettres, mot=_mot)
+        return render_template("pages/Jeu.html", nb_essais=_nb_essais, nb_lettres=_nb_lettres, mot=_mot, idPartie = _idPartie)
 
 
 @app.route('/jeu')
