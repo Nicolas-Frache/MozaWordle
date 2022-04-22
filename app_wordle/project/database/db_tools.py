@@ -174,8 +174,12 @@ def updateCurrentGameUtilisateur(idUtilisateur : int, idPartie : int) -> None:
     
     return None
 
+
 def addScoreUtilisateur(idUtilisateur : int, idPartie : int) -> None:
 
     scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?",(idUtilisateur))
     scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?",(idPartie))
+
+    newScoreUtilisateur = scoreUtilisateur + scorePartie
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?",(scoreUtilisateur))
 
