@@ -175,11 +175,73 @@ def updateCurrentGameUtilisateur(idUtilisateur : int, idPartie : int) -> None:
     return None
 
 
-def addScoreUtilisateur(idUtilisateur : int, idPartie : int) -> None:
 
-    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?",(idUtilisateur))
-    scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?",(idPartie))
+#Calcul des scores
+def calculScorePartie(idPartie : int) -> None:
+
+    idParam = basic_query("SELECT parametre FROM Partie WHERE idPartie = ?",idPartie)
+
+    L = basic_query("SELECT longueur FROM parametre WHERE id =?",idParam)
+    E = basic_query("SELECT nbEssais FROM parametre WHERE id =?",idParam)
+    D = basic_query("SELECT difficulte FROM parametre WHERE id =?",idParam)
+
+    scorePartie = D*(L+13-E)
+
+    basic_query("UPDATE partie SET scorePartie = ?",scorePartie)
+
+
+def calculScoreUtilisateur(idUtilisateur : int) -> None:     #au cas où    #TODO
+    return None
+
+
+def addScoreUtilisateur(idPartie : int) -> None:
+
+    idJoueur = basic_query("SELECT idJoueur FROM partie WHERE idPartie = ?",idPartie)
+
+    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?",idJoueur)
+    scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?",idPartie)
 
     newScoreUtilisateur = scoreUtilisateur + scorePartie
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?",(scoreUtilisateur))
 
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?",newScoreUtilisateur)
+
+
+
+#gets
+def getLeaderboardList() -> list: #TODO
+    return []
+
+
+def getRang(scoreUtilisateur : int) -> int:
+
+    Leaderboard = getLeaderboardList()
+    rang = fonctions.positionInList(Leaderboard,scoreUtilisateur)
+    return rang
+
+
+def getNbPartiesJouees(idUtilisateur : int) -> int:   #TODO
+    return 0
+
+
+def getNbPartiesGagnees(idUtilisateur : int) -> int:  #TODO
+    return 0
+
+
+
+def getStatistiques(idUtilisateur : int) -> list:   #TODO
+
+    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?",idUtilisateur)
+
+    rang = getRang(scoreUtilisateur)
+
+    nbPartieJouees = getNbPartiesJouees(idUtilisateur)
+
+    nbPartieGagnees = getNbPartiesGagnees(idUtilisateur)
+
+    tautDeVictoire = int(10*nbPartieGagnees/nbPartieJouees)/10   #un chiffre apres la virgule
+
+    longueurPreferee = 6  #TODO
+
+    difficultePreferee = 1  #TODO
+
+    return [rang,scoreUtilisateur,nbPartieJouees,nbPartieGagnees,tautDeVictoire,longueurPreferee,difficultePreferee]
