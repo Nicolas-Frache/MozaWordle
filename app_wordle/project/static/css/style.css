@@ -272,29 +272,24 @@ hr.ligne {
     margin-left: 20%;
     position: relative;
     color: white;
-    font-family: Verdana;}
-
-.leaderpage{
-    display: grid;
-    grid-template-areas:
-    'leaderboard stats';
-    width: 100%;
-    height: 90%;
-    margin: 30px 300px;
+    font-family: Verdana;
 }
 
-.stats{
-    grid-area: stats;
-    display: block;
-    width: 500px;
-    height: 100%;
-    background-color: #ffffff;
+.leadergrid{
+    display: grid; /*ça devient moche quand on rétrécit la fenêtre*/
+    grid-template-areas:
+    'leaderboard stats';
+    width: 80%;
+    height: 90%;
+    margin: 30px 300px;
 }
 
 .leaderboard{
     grid-area: leaderboard;
     border-collapse: collapse;
     width: 15%;
+    border: 1rem solid;
+    border-color: var(--header-bg);
 }
 
 .leaderboard th, td {
@@ -309,7 +304,7 @@ hr.ligne {
 .leaderboard tr:nth-child(odd){background-color: #fff}
 
 .leaderboard th {
-    background-color: var(--log-btn);
+    background-color: var(--ins-btn);
     color: white;
 }
 
@@ -326,4 +321,32 @@ hr.ligne {
 .leaderboard .Tres {
     font-weight: bold;
     color:#cd7f32;
+}
+
+.stats-block{
+    grid-area: stats;
+    display: block;
+    width: 60%;
+    background-color: #ffffff;
+    margin: 50px;
+    border: 1rem solid;
+    border-color: var(--header-bg);
+
+}
+
+.stats{
+    display: block;
+    padding: 30px;
+    font-family: Verdana;
+    font-size: 30px;
+    border-color: #595959;
+    border-width: 30px;
+}
+
+.stats ul {
+    list-style: none;
+}
+
+.stats hr{
+    border: 0px;
 }
