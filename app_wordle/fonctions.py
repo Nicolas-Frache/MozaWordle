@@ -61,7 +61,7 @@ def triFusion(tab : list) -> None:
 def positionInList(tab : list, element : int) -> int:   # tab.index(element) ne renvoie pas 0 en cas d'erreur
     for i in range(len(tab)):
         if tab[i] == element:  # comme ça les égalités ont le meme rang
-            return i
+            return i+1
     return 0
 
 
