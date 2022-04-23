@@ -183,7 +183,7 @@ def calcul_score_partie(idPartie: int) -> None:
     basic_query("UPDATE partie SET scorePartie = ?", scorePartie)
 
 
-def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où    #TODO
+def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où
     scorePartieList = basic_query("SELECT scorePartie FROM partie WHERE idJoueur = ?", idUtilisateur)
     newScoreUtilisateur = sum(scorePartieList)
     basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", newScoreUtilisateur)
@@ -200,47 +200,48 @@ def add_score_utilisateur(idPartie: int) -> None:
 
 
 # gets
-def get_leaderboard_list() -> list:  # TODO
+def get_leaderboard_list() -> list:
     leaderboardList = basic_query("SELECT scoreUtilisateur FROM utilisateur", ())
-    return leaderboardList
+
+    return fonctions.tri_fusion(leaderboardList)
 
 
 def get_rang(scoreUtilisateur: int) -> int:
     Leaderboard = get_leaderboard_list()
-    rang = fonctions.positionInList(Leaderboard, scoreUtilisateur)
+    rang = fonctions.index_of_custom(Leaderboard, scoreUtilisateur)
     return rang
 
 
-def get_nb_parties_jouees(idUtilisateur: int) -> int:  # TODO
+def get_nb_parties_jouees(idUtilisateur: int) -> int:
     nbPartiesJouees = basic_query("SELECT count(estEnCours) FROM partie "
                                   "WHERE idJoueur = ? AND estEnCours = ?",
-                                  (idUtilisateur, False))  # Ligne too long ?
+                                  (idUtilisateur, False))
     return nbPartiesJouees
 
 
-def get_nb_parties_gagnees(idUtilisateur: int) -> int:  # TODO
+def get_nb_parties_gagnees(idUtilisateur: int) -> int:
     nbPartiesGagnees = basic_query("SELECT count(aGagne) FROM partie WHERE idJoueur = ? AND aGagne = ?",
-                                   (idUtilisateur, True))  # Ligne too long ?
+                                   (idUtilisateur, True))
     return nbPartiesGagnees
 
 
-def get_longueur_preferee(idUtilisateur: int) -> int:  # TODO
+def get_longueur_preferee(idUtilisateur: int) -> int:
     longueurList = basic_query("SELECT parametre.longueur FROM partie "
                                "JOIN parametre ON partie.parametre = parametre.id "
                                "WHERE partie.idJoueur = ?",
                                idUtilisateur)
-    return 0
+    return fonctions.most_common_in_list(longueurList, "longueur")
 
 
-def get_difficulte_preferee(idUtilisateur: int) -> int:  # TODO
+def get_difficulte_preferee(idUtilisateur: int) -> int:
 
     difficulteList = basic_query("SELECT parametre.difficulte FROM partie "
                                  "JOIN parametre ON partie.parametre = parametre.id"
                                  " WHERE partie.idJoueur = ?", idUtilisateur)
-    return 0
+    return fonctions.most_common_in_list(difficulteList, "difficulty")
 
 
-def get_statistiques(idUtilisateur: int) -> list:  # TODO
+def get_statistiques(idUtilisateur: int) -> list:
 
     scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur"
                                    " WHERE idUtilisateur = ?",

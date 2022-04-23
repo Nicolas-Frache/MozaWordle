@@ -1,4 +1,4 @@
-from collections import Counter
+
 def is_valid_password(uc_password: str) -> bool:
     # Un password est valide ssi il comporte entre 10 et 32 carractères, dont 1 chiffre, 1 minuscule et 1 majuscule
     if len(uc_password) < 10 or len(uc_password) > 32:
@@ -19,7 +19,7 @@ def encrypt(uc_string: str) -> str:
 
 
 def tri_fusion(tab: list) -> None:
-    # Effectue un tri fusion sur tab
+    # tri fusion sur tab
     if len(tab) > 1:
         mid = len(tab) // 2
 
@@ -55,15 +55,27 @@ def tri_fusion(tab: list) -> None:
     return None
 
 
-def index_of_custom(tab: list, element: int) -> int:  # tab.index(element) ne renvoie pas 0 en cas d'erreur
+def index_of_custom(tab: list, element: int) -> int:  # tab.index(element) mais qui return 0 en cas d' error
     try:
         return tab.index(element)
     except ValueError:
         return 0
 
 
-def mostCommonInList(tab :list) -> int :
+def most_common_in_list(tab: list, pref_type: str) -> int: #y'a plus opti mais flemme
+    L = []
+    a = 0
+    b = 0
+    if pref_type == "difficulty":
+        b = 3
+    elif pref_type == "longueur":
+        a = 2
+        b = 15
+    for i in range(a, b):
+        L.append(tab.count(i+1))
+    maxi = max(L)
+    if maxi != 0:
+        for i in range(b-a):
+            if L[i] == maxi:
+                return i+1+a
     return 0
-	
-	
-
