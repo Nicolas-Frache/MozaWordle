@@ -1,6 +1,8 @@
 from project.database.db_tools import basic_query
 from random import randrange
 
+from project.exceptions import badParamGetRandomWordError, invalidDifficultyGetRandomWordError
+
 
 def est_dans_dict(mot: str):
     """
@@ -25,6 +27,6 @@ def get_random_word(longueur: int, difficulte: int):
             return words[randrange(len(words) // 3, 2 * len(words)) // 3][0]
         elif difficulte == 1:
             return words[randrange(2 * len(words) // 3, len(words))][0]
-
-    except ValueError:
-        print("Aucun mot ne correspond aux critères de recherche")
+        invalidDifficultyGetRandomWordError()
+    except Exception as e:
+        badParamGetRandomWordError(str(e))

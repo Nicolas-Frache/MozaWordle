@@ -1,30 +1,24 @@
 from collections import Counter
-
-def ValidPassword(uc_password : str) -> bool:
+def is_valid_password(uc_password: str) -> bool:
     # Un password est valide ssi il comporte entre 10 et 32 carractères, dont 1 chiffre, 1 minuscule et 1 majuscule
     if len(uc_password) < 10 or len(uc_password) > 32:
         return False
-
     maj, min, num = False, False, False
 
     for c in uc_password:
         maj = maj + c.isupper()
         min = min + c.islower()
         num = num + c.isdigit()
-
     return bool(maj * min * num)
 
 
-def Encrypt(uc_string : str) -> str:
-
+def encrypt(uc_string: str) -> str:
     ec_string = uc_string
-
-    #TODO encypter
-
+    # TODO encypter
     return ec_string
 
 
-def triFusion(tab : list) -> None:
+def tri_fusion(tab: list) -> None:
     # Effectue un tri fusion sur tab
     if len(tab) > 1:
         mid = len(tab) // 2
@@ -32,8 +26,8 @@ def triFusion(tab : list) -> None:
         G = tab[:mid]  # sous-tableau gauche
         D = tab[mid:]  # sous-tableau droit
 
-        triFusion(G)
-        triFusion(D)
+        tri_fusion(G)
+        tri_fusion(D)
 
         # Fusion
         i = 0
@@ -61,13 +55,15 @@ def triFusion(tab : list) -> None:
     return None
 
 
-def positionInList(tab : list, element : int) -> int:   # tab.index(element) ne renvoie pas 0 en cas d'erreur
-    for i in range(len(tab)):
-        if tab[i] == element:  # comme ça les égalités ont le meme rang
-            return i+1
-    return 0
+def index_of_custom(tab: list, element: int) -> int:  # tab.index(element) ne renvoie pas 0 en cas d'erreur
+    try:
+        return tab.index(element)
+    except ValueError:
+        return 0
+
 
 def mostCommonInList(tab :list) -> int :
     return 0
-
+	
+	
 

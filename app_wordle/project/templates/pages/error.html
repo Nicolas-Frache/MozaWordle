@@ -5,8 +5,9 @@
 {% endblock %}
 
 {% block content %}
-    <p>Une erreur s'est produite</p>
+    <p class="text">Une erreur s'est produite</p>
     {% if error is defined %}
-        <p><u>Description de l'erreur:</u> {{ error }}</p>
+        <p class="text"><b>Description de l'erreur:</b></p>
+        <p class="text">{{ error }}</p>
     {% endif %}
 {% endblock %}

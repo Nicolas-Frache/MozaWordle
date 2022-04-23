@@ -21,7 +21,7 @@ const est_dans_dictionnaire = (mot) => {
             if (response.ok) {
                 return response.json();
             } else {
-                return Promise.reject(new Error(error.message));
+                return Promise.reject(new Error("not ok response"));
             }
         })
         .then(response => {

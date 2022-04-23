@@ -17,10 +17,10 @@ def test_Valid_Password():
                        "StrongPwd1"]
 
     for pwd in invalids_pwd_list:
-        assert not fonctions.ValidPassword(pwd)
+        assert not fonctions.is_valid_password(pwd)
 
     for pwd in valids_pwd_list:
-        assert fonctions.ValidPassword(pwd)
+        assert fonctions.is_valid_password(pwd)
 
 
 # TODO: régler le problème lors de ce test (ModuleNotFoundError: No module named 'database')

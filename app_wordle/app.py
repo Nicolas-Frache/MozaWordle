@@ -3,12 +3,13 @@ import traceback
 from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
 
-from project.database.db_tools import Inscription, RegisterGame
+from project.database.db_tools import save_inscription, register_game
 from project.database import db_tools, dict_tools
 
 # Création de l'instance de l'application Flask et définition
 # du chemin du dossier contenant les templates et les fichiers statics
 from project.database.dict_tools import get_random_word
+from project.exceptions import invalidInscription
 
 app = Flask(__name__, template_folder='project/templates', static_folder='project/static')
 app.config["SESSION_PERMANENT"] = False
@@ -42,47 +43,52 @@ def home():
             assignation parametre par défaut
         
         """
-        return render_template("pages/Menu.html")
+        return render_template("pages/menu.html")
     elif request.method == "POST":
 
-        _nb_essais, _nb_lettres, _difficulte = int(request.form.get("tentatives")), int(request.form.get("taille")), int(request.form.get("difficulte"))
+        _nb_essais, _nb_lettres, _difficulte = int(request.form.get("tentatives")), int(
+            request.form.get("taille")), int(request.form.get("difficulte"))
         _mot = dict_tools.get_random_word(_nb_lettres, _difficulte)
-        
+
         idJoueur = -1
         idParam = -1
 
         estConnecté = "idJoueur" in session and session["idJoueur"] != None
 
-        idParam = db_tools.getIdParam(_nb_essais,_nb_lettres,_difficulte)
+        idParam = db_tools.get_id_param(_nb_essais, _nb_lettres, _difficulte)
 
         if estConnecté:
             idJoueur = session["idJoueur"]
             session["paramLastGame"] = idParam
-        
-        _idPartie = RegisterGame(_mot,idParam,idJoueur)
+
+        _idPartie = register_game(_mot, idParam, idJoueur)
 
         if estConnecté:
             session["currentGame"] = _idPartie
-            db_tools.updateCurrentGameUtilisateur(idJoueur,_idPartie)
-        
+            db_tools.update_current_game_utilisateur(idJoueur, _idPartie)
+
         print(f"Nb essais = {_nb_essais}, nb_lettres = {_nb_lettres}, difficulté = {_difficulte}, mot random = {_mot}")
-        return render_template("pages/Jeu.html", nb_essais=_nb_essais, nb_lettres=_nb_lettres, mot=_mot, idPartie = _idPartie)
+        return render_template("pages/jeu.html", nb_essais=_nb_essais, nb_lettres=_nb_lettres, mot=_mot,
+                               idPartie=_idPartie)
 
 
 @app.route('/jeu')
 def jeu():
-    solution = get_random_word(longueur=7, difficulte=1)
-    return render_template("pages/Jeu.html", nb_essais=6, nb_lettres=7, mot=solution)
+    try:
+        solution = get_random_word(longueur=7, difficulte=1, )
+    except Exception as e:
+        return handle_error(e)
+    return render_template("pages/jeu.html", nb_essais=6, nb_lettres=7, mot=solution)
 
 
 @app.route('/regles')
 def regles():
-    return render_template("pages/Regles.html")
+    return render_template("pages/regles.html")
 
 
 @app.route('/leaderboard')
 def leaderboard():
-    return render_template("pages/Leaderboard.html")
+    return render_template("pages/leaderboard.html")
 
 
 @app.route('/test')
@@ -94,21 +100,23 @@ def test():
     return 'test'
 
 
-@app.route('/login', methods=["GET", "POST"])
-def loginPage():
-    if request.method == "POST":
-        pseudo, password = request.form.get("pseudo"), request.form.get("password")
-        passwordVerification = db_tools.GoodPassword(pseudo, password)
-        if passwordVerification[0] and (
-                ("idJoueur" in session and session["idJoueur"] is None) or not "idJoueur" in session):
-            session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.Connect(
-                pseudo)
-            return redirect("/")
-        else:
-            # TODO repport sur la page login avec un message d'erreur
-            return handle_error("Mauvais identificateur")  # Temporaire
+@app.route('/login', methods=["GET"])
+def loginPage_Get():
+    return render_template("pages/login.html")
+
+
+@app.route('/login', methods=["POST"])
+def loginPage_Post():
+    pseudo, password = request.form.get("pseudo"), request.form.get("password")
+    passwordVerification = db_tools.is_good_password(pseudo, password)
+    if passwordVerification[0] and (
+            ("idJoueur" in session and session["idJoueur"] is None) or not "idJoueur" in session):
+        session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.connect(
+            pseudo)
+        return redirect("/")
     else:
-        return render_template("pages/Login.html")
+        # TODO repport sur la page login avec un message d'erreur
+        return handle_error("Mauvais identificateur")  # Temporaire
 
 
 @app.route('/inscription', methods=["POST"])
@@ -117,13 +125,13 @@ def InscriptionPage():
         # Handle inscription
         pseudo, password = request.form.get("pseudo"), request.form.get("password")
 
-        if db_tools.Valid_Inscription(pseudo, password):
-            Inscription(pseudo, password)
-            session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.Connect(
+        if db_tools.is_valid_inscription(pseudo, password):
+            save_inscription(pseudo, password)
+            session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.connect(
                 pseudo)
             return redirect("/")
         else:
-            raise Exception("Inscription invalide")
+            invalidInscription()
     except Exception as e:
         return handle_error(e)
 
@@ -147,7 +155,9 @@ def estValideMot(mot):
     try:
         value = dict_tools.est_dans_dict(mot)
     except Exception as e:
-        return jsonify({"status": "error"})
+        return jsonify({
+            "status": "error",
+            "message": str(e)})
     return jsonify({
         "status": "success",
         "estValide": value
