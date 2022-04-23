@@ -105,7 +105,7 @@ def create_db():
 ## Convention uc = unencrypted, ec = encrypted
 
 def Valid_Inscription(pseudo: str,uc_password : str) -> bool:
-    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo =?",(pseudo,),True)
+    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo =?",pseudo,True)
     PseudoAvalaible = querry == []
     ValidPassword = fonctions.ValidPassword(uc_password)
 
@@ -168,15 +168,17 @@ def getIdParam(nb_essais : int, nb_lettres : int, difficulté : int) -> int:
 
     return idParam
 
+
 def updateCurrentGameUtilisateur(idUtilisateur : int, idPartie : int) -> None:
     
-    basic_query("UPDATE utilisateur SET partieEnCours = ? WHERE idUtilisateur = ?",(idPartie,idUtilisateur))
+    basic_query("UPDATE utilisateur SET partieEnCours = ? WHERE idUtilisateur = ?", (idPartie, idUtilisateur))
     
     return None
 
 
-
 #Calcul des scores
+
+
 def calculScorePartie(idPartie : int) -> None:
 
     idParam = basic_query("SELECT parametre FROM Partie WHERE idPartie = ?",idPartie)
@@ -190,8 +192,11 @@ def calculScorePartie(idPartie : int) -> None:
     basic_query("UPDATE partie SET scorePartie = ?",scorePartie)
 
 
-def calculScoreUtilisateur(idUtilisateur : int) -> None:     #au cas où    #TODO
-    return None
+def calculScoreUtilisateur(idUtilisateur : int) -> None:   #au cas ou
+
+    scorePartieList = basic_query("SELECT scorePartie FROM partie WHERE idJoueur = ?", idUtilisateur)
+    newScoreUtilisateur = sum(scorePartieList)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", newScoreUtilisateur)
 
 
 def addScoreUtilisateur(idPartie : int) -> None:
@@ -208,29 +213,48 @@ def addScoreUtilisateur(idPartie : int) -> None:
 
 
 #gets
-def getLeaderboardList() -> list: #TODO
-    return []
+def getLeaderboardList() -> list:
+
+    leaderboardList = basic_query("SELECT scoreUtilisateur FROM utilisateur", ())
+    return leaderboardList
 
 
 def getRang(scoreUtilisateur : int) -> int:
 
-    Leaderboard = getLeaderboardList()
-    rang = fonctions.positionInList(Leaderboard,scoreUtilisateur)
+    leaderboard = getLeaderboardList()
+    rang = fonctions.positionInList(leaderboard, scoreUtilisateur)
     return rang
 
 
-def getNbPartiesJouees(idUtilisateur : int) -> int:   #TODO
-    return 0
+def getNbPartiesJouees(idUtilisateur : int) -> int:
+
+    nbPartiesJouees = basic_query("SELECT count(estEnCours) FROM partie WHERE idJoueur = ? AND estEnCours = ?", (idUtilisateur, False)) #Ligne too long ?
+    return nbPartiesJouees
 
 
-def getNbPartiesGagnees(idUtilisateur : int) -> int:  #TODO
-    return 0
+def getNbPartiesGagnees(idUtilisateur : int) -> int:
+
+    nbPartiesGagnees = basic_query("SELECT count(aGagne) FROM partie WHERE idJoueur = ? AND aGagne = ?", (idUtilisateur, True)) #Ligne too long ?
+    return nbPartiesGagnees
+
+
+def getLongueurPreferee(idUtilisateur : int) -> int:  #TODO
+
+    longueurList = basic_query("SELECT parametre.longueur FROM partie JOIN parametre ON partie.parametre = parametre.id WHERE partie.idJoueur = ?", idUtilisateur)
+
+    return longueurPreferee
 
 
 
-def getStatistiques(idUtilisateur : int) -> list:   #TODO
+def getDifficultePreferee(idUtilisateur : int) -> int:  #TODO
 
-    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?",idUtilisateur)
+    difficulteList = basic_query("SELECT parametre.difficulte FROM partie JOIN parametre ON partie.parametre = parametre.id WHERE partie.idJoueur = ?", idUtilisateur)
+
+    return difficultePreferee
+
+def getStatistiques(idUtilisateur : int) -> list:
+
+    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", idUtilisateur)
 
     rang = getRang(scoreUtilisateur)
 
@@ -238,10 +262,13 @@ def getStatistiques(idUtilisateur : int) -> list:   #TODO
 
     nbPartieGagnees = getNbPartiesGagnees(idUtilisateur)
 
-    tautDeVictoire = int(10*nbPartieGagnees/nbPartieJouees)/10   #un chiffre apres la virgule
+    tauxDeVictoire = int(10*nbPartieGagnees/nbPartieJouees)/10   #un chiffre apres la virgule
 
-    longueurPreferee = 6  #TODO
+    longueurPreferee = getLongueurPreferee(idUtilisateur)
 
-    difficultePreferee = 1  #TODO
+    difficultePreferee = getDifficultePreferee(idUtilisateur)
 
-    return [rang,scoreUtilisateur,nbPartieJouees,nbPartieGagnees,tautDeVictoire,longueurPreferee,difficultePreferee]
+    statList = [rang, scoreUtilisateur, nbPartieJouees, nbPartieGagnees, tauxDeVictoire, longueurPreferee, difficultePreferee]
+
+    return statList
+
