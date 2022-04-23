@@ -1,3 +1,4 @@
+from collections import Counter
 
 def ValidPassword(uc_password : str) -> bool:
     # Un password est valide ssi il comporte entre 10 et 32 carractères, dont 1 chiffre, 1 minuscule et 1 majuscule
@@ -35,7 +36,9 @@ def triFusion(tab : list) -> None:
         triFusion(D)
 
         # Fusion
-        i = j = k = 0
+        i = 0
+        j = 0
+        k = 0
 
         while i < len(G) and j < len(D):
             if G[i] < D[j]:
@@ -62,6 +65,9 @@ def positionInList(tab : list, element : int) -> int:   # tab.index(element) ne 
     for i in range(len(tab)):
         if tab[i] == element:  # comme ça les égalités ont le meme rang
             return i+1
+    return 0
+
+def mostCommonInList(tab :list) -> int :
     return 0
 
 
