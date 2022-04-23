@@ -111,7 +111,7 @@ def create_db():
 ## Convention uc = unencrypted, ec = encrypted
 
 def is_valid_inscription(pseudo: str, uc_password: str) -> bool:
-    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo =?",pseudo,True)
+    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo =?", pseudo, True)
     pseudo_available = querry == []
     is_valid_password = fonctions.is_valid_password(uc_password)
     return pseudo_available and is_valid_password
@@ -136,19 +136,17 @@ def is_good_password(pseudo: str, uc_password: str):  # -> bool,string:
 
 def connect(pseudo: str):
     querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?", (pseudo,), True, True)
-
     print("Info utilisateur :")
     print(querry)
-
     return querry[0], querry[1], querry[3], querry[4]  # renvoie pseudo, paramètre derniere partie et partie en cours
 
 
 def register_game(motATrouver: string, idParam: int, idJoueur: int = -1) -> int:
     date = basic_query("SELECT CURRENT_TIMESTAMP", [], True, True)[0]
     idPartie = generate_max_id("partie")
-    querry = "INSERT INTO partie (idPartie, parametre,estEnCours,idJoueur,motATrouver,date,tourActuel,aGagne,scorePartie) VALUES (?,?,?,?,?,?,?,?,?)"
+    querry = "INSERT INTO partie (idPartie, parametre,estEnCours,idJoueur,motATrouver,date,tourActuel,aGagne,scorePartie) " \
+             "VALUES (?,?,?,?,?,?,?,?,?)"
     param_sql = (idPartie, idParam, 1, idJoueur, motATrouver, date, 0, 0, 0)
-
     basic_insert(querry, param_sql)
     return idPartie
 
@@ -156,7 +154,6 @@ def register_game(motATrouver: string, idParam: int, idJoueur: int = -1) -> int:
 def get_id_param(nb_essais: int, nb_lettres: int, difficulté: int) -> int:
     idParam = basic_query("SELECT id FROM parametre WHERE longueur = ? AND nbEssais = ? AND difficulte = ?",
                           (nb_lettres, nb_essais, difficulté), True, True)
-
     if idParam == [] or idParam == None:
         # Creer param
         idParam = generate_max_id("parametre")
@@ -166,7 +163,6 @@ def get_id_param(nb_essais: int, nb_lettres: int, difficulté: int) -> int:
         idParam = idParam[0]
 
     print(f"Id parametre = {idParam}")
-
     return idParam
 
 
@@ -175,8 +171,6 @@ def update_current_game_utilisateur(idUtilisateur: int, idPartie: int) -> None:
 
 
 # Calcul des scores
-
-
 def calcul_score_partie(idPartie: int) -> None:
     idParam = basic_query("SELECT parametre FROM Partie WHERE idPartie = ?", idPartie)
 
@@ -190,7 +184,6 @@ def calcul_score_partie(idPartie: int) -> None:
 
 
 def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où    #TODO
-
     scorePartieList = basic_query("SELECT scorePartie FROM partie WHERE idJoueur = ?", idUtilisateur)
     newScoreUtilisateur = sum(scorePartieList)
     basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", newScoreUtilisateur)
@@ -198,7 +191,6 @@ def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où    #TODO
 
 def add_score_utilisateur(idPartie: int) -> None:
     idJoueur = basic_query("SELECT idJoueur FROM partie WHERE idPartie = ?", idPartie)
-
     scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", idJoueur)
     scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?", idPartie)
 
@@ -209,59 +201,56 @@ def add_score_utilisateur(idPartie: int) -> None:
 
 # gets
 def get_leaderboard_list() -> list:  # TODO
-
     leaderboardList = basic_query("SELECT scoreUtilisateur FROM utilisateur", ())
     return leaderboardList
 
 
 def get_rang(scoreUtilisateur: int) -> int:
-    Leaderboard = getLeaderboardList()
-    rang = fonctions.positionInList(Leaderboard,scoreUtilisateur)
+    Leaderboard = get_leaderboard_list()
+    rang = fonctions.positionInList(Leaderboard, scoreUtilisateur)
     return rang
 
 
 def get_nb_parties_jouees(idUtilisateur: int) -> int:  # TODO
-
-    nbPartiesJouees = basic_query("SELECT count(estEnCours) FROM partie WHERE idJoueur = ? AND estEnCours = ?", (idUtilisateur, False)) #Ligne too long ?
+    nbPartiesJouees = basic_query("SELECT count(estEnCours) FROM partie "
+                                  "WHERE idJoueur = ? AND estEnCours = ?",
+                                  (idUtilisateur, False))  # Ligne too long ?
     return nbPartiesJouees
 
 
 def get_nb_parties_gagnees(idUtilisateur: int) -> int:  # TODO
-
-    nbPartiesGagnees = basic_query("SELECT count(aGagne) FROM partie WHERE idJoueur = ? AND aGagne = ?", (idUtilisateur, True)) #Ligne too long ?
+    nbPartiesGagnees = basic_query("SELECT count(aGagne) FROM partie WHERE idJoueur = ? AND aGagne = ?",
+                                   (idUtilisateur, True))  # Ligne too long ?
     return nbPartiesGagnees
 
 
-def getLongueurPreferee(idUtilisateur : int) -> int:  #TODO
-    longueurList = basic_query("SELECT parametre.longueur FROM partie JOIN parametre ON partie.parametre = parametre.id WHERE partie.idJoueur = ?", idUtilisateur)
+def get_longueur_preferee(idUtilisateur: int) -> int:  # TODO
+    longueurList = basic_query("SELECT parametre.longueur FROM partie "
+                               "JOIN parametre ON partie.parametre = parametre.id "
+                               "WHERE partie.idJoueur = ?",
+                               idUtilisateur)
+    return 0
 
-    return longueurPreferee
 
+def get_difficulte_preferee(idUtilisateur: int) -> int:  # TODO
 
+    difficulteList = basic_query("SELECT parametre.difficulte FROM partie "
+                                 "JOIN parametre ON partie.parametre = parametre.id"
+                                 " WHERE partie.idJoueur = ?", idUtilisateur)
+    return 0
 
-def getDifficultePreferee(idUtilisateur : int) -> int:  #TODO
-
-    difficulteList = basic_query("SELECT parametre.difficulte FROM partie JOIN parametre ON partie.parametre = parametre.id WHERE partie.idJoueur = ?", idUtilisateur)
-
-    return difficultePreferee
 
 def get_statistiques(idUtilisateur: int) -> list:  # TODO
 
-    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", idUtilisateur)
-
+    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur"
+                                   " WHERE idUtilisateur = ?",
+                                   idUtilisateur)
     rang = get_rang(scoreUtilisateur)
-
     nbPartieJouees = get_nb_parties_jouees(idUtilisateur)
-
     nbPartieGagnees = get_nb_parties_gagnees(idUtilisateur)
+    tauxDeVictoire = int(10 * nbPartieGagnees / nbPartieJouees) / 10  # un chiffre apres la virgule
+    longueurPreferee = get_longueur_preferee(idUtilisateur)
+    difficultePreferee = get_difficulte_preferee(idUtilisateur)
 
-    tauxDeVictoire = int(10*nbPartieGagnees/nbPartieJouees)/10   #un chiffre apres la virgule
-
-    longueurPreferee = getLongueurPreferee(idUtilisateur)
-
-    difficultePreferee = getDifficultePreferee(idUtilisateur)
-
-    return [rang,scoreUtilisateur,nbPartieJouees,nbPartieGagnees,tautDeVictoire,longueurPreferee,difficultePreferee]
+    return [rang, scoreUtilisateur, nbPartieJouees, nbPartieGagnees, tauxDeVictoire, longueurPreferee,
             difficultePreferee]
-    return statList
-
