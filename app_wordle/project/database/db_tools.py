@@ -43,56 +43,10 @@ def basic_query(sql, param_sql, disable_dict_factory=False, one_row=False, commi
 
 
 def basic_insert(sql, param_sql):
-    global cursor
     try:
-        connexion = get_db(True)
+        basic_query(sql, param_sql, commit=True)
     except sqlite3.Error as error:
-        connexionBaseDeDonneeError()
-        return
-    try:
-        cursor = connexion.cursor()
-        cursor.execute(sql, param_sql)
-        connexion.commit()
-    except sqlite3.Error as error:
-        requetageBaseDeDonneeError()
-    finally:
-        cursor.close()
-        connexion.close()
-
-
-def get_db(disable_dict_factory=False):
-    db = sqlite3.connect(DB_FILE)
-    if not disable_dict_factory:
-        db.row_factory = dict_factory
-    return db
-
-
-# Voir: https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory
-def dict_factory(cursor, row):
-    d = {}
-    for idx, col in enumerate(cursor.description):
-        d[col[0]] = row[idx]
-    return d
-
-
-def generate_max_id(tables: string) -> int:
-    try:
-        if tables == "utilisateur":
-            new_id = basic_query("SELECT MAX(idUtilisateur) FROM utilisateur", [], disable_dict_factory=True,
-                                 one_row=True)
-        elif tables == "partie":
-            new_id = basic_query("SELECT MAX(idPartie) FROM partie", [], disable_dict_factory=True, one_row=True)
-        elif tables == "parametre":
-            new_id = basic_query("SELECT MAX(id) FROM parametre", [], disable_dict_factory=True, one_row=True)
-        elif tables == "dictionnaire":
-            new_id = basic_query("SELECT MAX(idMot) FROM dictionnaire", [], disable_dict_factory=True, one_row=True)
-
-        if new_id == (None,):
-            new_id = [0]
-
-        return new_id[0] + 1
-    except sqlite3.Error as error:
-        print("Erreur lors de la génération d'un id max : ", error)
+        insertionBaseDeDonneeError(str(error))
 
 
 def create_db():
@@ -110,8 +64,47 @@ def create_db():
     lex.to_sql("dictionnaire", connexion, if_exists="replace")
 
 
-## Convention uc = unencrypted, ec = encrypted
+def get_db(disable_dict_factory=False):
+    db = sqlite3.connect(DB_FILE)
+    if not disable_dict_factory:
+        db.row_factory = dict_factory
+    return db
 
+
+# Voir: https://docs.python.org/3/library/sqlite3.html#sqlite3.Connection.row_factory
+
+
+def dict_factory(cursor, row):
+    d = {}
+    for idx, col in enumerate(cursor.description):
+        d[col[0]] = row[idx]
+    return d
+
+
+def generate_max_id(tables: string) -> int:
+    try:
+
+        if tables == "utilisateur":
+            new_id = basic_query("SELECT MAX(idUtilisateur) FROM utilisateur", [], disable_dict_factory=True,
+                                 one_row=True)
+        elif tables == "partie":
+            new_id = basic_query("SELECT MAX(idPartie) FROM partie", [], disable_dict_factory=True, one_row=True)
+        elif tables == "parametre":
+            new_id = basic_query("SELECT MAX(id) FROM parametre", [], disable_dict_factory=True, one_row=True)
+        elif tables == "dictionnaire":
+            new_id = basic_query("SELECT MAX(idMot) FROM dictionnaire", [], disable_dict_factory=True, one_row=True)
+        else:
+            raise Exception("Table inconnue")
+
+        if new_id is None:
+            return 1
+        else:
+            return new_id[0] + 1
+    except sqlite3.Error as error:
+        generationIdMaxError(str(error))
+
+
+# Convention uc = unencrypted, ec = encrypted
 def is_valid_inscription(pseudo: str, uc_password: str) -> bool:
     querry = basic_query("SELECT count(*)=0 FROM utilisateur WHERE pseudo =?", (pseudo,),
                          one_row=True, disable_dict_factory=True)
@@ -274,3 +267,16 @@ def delete_partie_by_id(idPartie: int) -> None:
     """
     basic_query("DELETE FROM tentative WHERE idPartie = ?", (idPartie,), commit=True)
     basic_query("DELETE FROM partie WHERE idPartie = ?", (idPartie,), commit=True)
+
+
+def save_tentative(idPartie, answer):
+    """
+    Sauvegarde une tentative à partir de l'id de la partie et du mot entré par l'utilisateur
+    :param idPartie:
+    :param answer:
+    :return: Numéro de tentative
+    """
+    num_ligne = basic_query("SELECT count(*)+1 FROM tentative WHERE idPartie=?",
+                            (idPartie,), disable_dict_factory=True, one_row=True)
+    basic_insert("INSERT INTO tentative (idPartie, numLigne, mot) VALUES (?, ?, ?)", (idPartie, num_ligne[0], answer))
+    return num_ligne[0]

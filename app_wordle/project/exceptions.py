@@ -16,3 +16,11 @@ def invalidDifficultyGetRandomWordError(previousError=""):
 
 def invalidInscription(previousError=""):
     raise Exception(previousError + ' ➡️ Inscription invalide, impossible de continuer', "E004")
+
+
+def insertionBaseDeDonneeError(previousError=""):
+    raise Exception(previousError + ' ➡️ Erreur lors de l\'insertion dans la base de données', "E006")
+
+
+def generationIdMaxError(previousError=""):
+    raise Exception(previousError + ' ➡️ Erreur lors de la génération de l\'id max', "E007")

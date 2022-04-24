@@ -3,7 +3,7 @@ import traceback
 from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
 
-from project.database.db_tools import save_inscription, register_game, basic_query, delete_partie_by_id
+from project.database.db_tools import save_inscription, register_game, basic_query, delete_partie_by_id, basic_insert
 from project.database import db_tools, dict_tools
 
 # Création de l'instance de l'application Flask et définition
@@ -65,7 +65,6 @@ def home():
                 _nb_essais = request.form.get("tentatives", type=int)
                 _nb_lettres = request.form.get("taille", type=int)
                 _difficulte = request.form.get("difficulte", type=int)
-                _mot = dict_tools.get_random_word(_nb_lettres, _difficulte)
                 # Mise à jour des paramètres de l'utilisateur
                 idParam = db_tools.get_id_param(_nb_essais, _nb_lettres, _difficulte)
                 session["currentParam"] = idParam
@@ -129,10 +128,12 @@ def jeu():
             Si le joueur n'est pas connecté, charge une partie
             avec des paramètres pas défaut
             """
-        return render_template("pages/jeu.html",
-                               nb_essais=6,
-                               nb_lettres=7,
-                               mot=get_random_word(longueur=7, difficulte=1))
+            print("assignation paramètres par défaut")
+            return render_template("pages/jeu.html",
+                                   nb_essais=6,
+                                   nb_lettres=7,
+                                   mot=get_random_word(longueur=7, difficulte=1))
+        raise Exception("Situation pas encore gérée")
     except Exception as e:
         return handle_error(e)
 
@@ -210,20 +211,38 @@ def logout():
 @app.route('/api/estValideMot/<mot>', methods=["GET"])
 def estValideMot(mot):
     """
-    Endpoint permettant de vérifier si un mot est dans le dictionnaire
-    :param mot:
-    :return:
+    Endpoint permettant de vérifier si un mot est dans le dictionnaire et
+    également d'enregistrer la tentative dans la base de données
+    :param mot à vérifier
+    :return: un fichier JSON contenant la réponse
     """
     try:
-        value = dict_tools.est_dans_dict(mot)
-        # TODO - enregisrer tentative dans la base de données
+        valid = dict_tools.est_dans_dict(mot)
+        if valid and is_logged_in():
+            # Enregistrement tentative
+            num_tentative = db_tools.save_tentative(session.get("currentGame"), mot)
+            game = basic_query("SELECT * from partie where idPartie = ?", (session.get("currentGame"),), one_row=True)
+            basic_insert("UPDATE partie SET tourActuel = ? WHERE idPartie = ?", (num_tentative, game["idPartie"],))
+            # Test de la victoire ou defaite
+            if game["motATrouver"] == mot:
+                # Victoire
+                basic_insert("UPDATE partie SET estEnCours = 0 WHERE idPartie = ?", (game["idPartie"],))
+                basic_insert("UPDATE partie SET aGagne = 1 WHERE idPartie = ?", (game["idPartie"],))
+            else:
+                param = basic_query("SELECT * from parametre where id = ?", (session.get("currentParam"),),
+                                    one_row=True)
+                if num_tentative >= param["nbEssais"]:
+                    # Défaite
+                    basic_insert("UPDATE partie SET estEnCours = 0 WHERE idPartie = ?", (game["idPartie"],))
+                    basic_insert("UPDATE partie SET aGagne = 0 WHERE idPartie = ?", (game["idPartie"],))
+
     except Exception as e:
         return jsonify({
             "status": "error",
             "message": str(e)})
     return jsonify({
         "status": "success",
-        "estValide": value
+        "estValide": valid
     })
 
 
