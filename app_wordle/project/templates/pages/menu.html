@@ -11,27 +11,28 @@
             <form action="/" method="POST">
             <tr>
                 <td><input type="range" id="taille" name="taille" style="width: 100vh;"
-                    value="6" min="3" max="15" oninput="this.nextElementSibling.value = this.value">
-                    Mot de <output>6</output> lettres
+                    value="{{ longueur }}" min="3" max="15" oninput="this.nextElementSibling.value = this.value">
+                    Mot de <output>{{ longueur }}</output> lettres
                 </td>
             </tr>
             <tr>
                 <td><input type="range" id="tentatives" name="tentatives" style="width: 100vh;"
-                    value="6" min="3" max="15" oninput="this.nextElementSibling.value = this.value">
-                    <output>6</output> tentatives
+                    value="{{ tentative }}" min="3" max="15" oninput="this.nextElementSibling.value = this.value">
+                    <output>{{ tentative }}</output> tentatives
                 </td>
             </tr>
             <tr>
             <tr>
                 <td><input type="range" id="difficulte" name="difficulte" style="width: 100vh;"
-                    value="2" min="1" max="3" oninput="this.nextElementSibling.value = this.value">
-                    Niveau de difficulté : <output>2</output>
+                    value=" {{ difficulte }}" min="1" max="3" oninput="this.nextElementSibling.value = this.value">
+                    Niveau de difficulté : <output>{{ difficulte }}</output>
                 </td>
             </tr>
             <tr>
                 <td>
                     <input class="playbutton centerbox" type="submit" value ="Jouer">
                 </td>
+    </form>
             </tr>
             </form>
         </tbody>

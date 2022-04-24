@@ -1,4 +1,6 @@
 
+
+
 def is_valid_password(uc_password: str) -> bool:
     # Un password est valide ssi il comporte entre 10 et 32 carractères, dont 1 chiffre, 1 minuscule et 1 majuscule
     if len(uc_password) < 10 or len(uc_password) > 32:
@@ -62,7 +64,7 @@ def index_of_custom(tab: list, element: int) -> int:  # tab.index(element) mais 
         return 0
 
 
-def most_common_in_list(tab: list, pref_type: str) -> int: #y'a plus opti mais flemme
+def most_common_in_list(tab: list, pref_type: str) -> int: # Optimisable
     L = []
     a = 0
     b = 0

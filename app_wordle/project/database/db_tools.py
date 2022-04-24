@@ -17,7 +17,7 @@ DICT_FILE = f"project{os.sep}database{os.sep}dictionnaire_data.sql"
 
 
 # Requêtes basiques sur la base de données
-def basic_query(sql, param_sql, disable_dict_factory=False, one_row=False):
+def basic_query(sql, param_sql, disable_dict_factory=False, one_row=False, commit=False):
     global cursor
     try:
         connexion = get_db(disable_dict_factory)
@@ -31,6 +31,8 @@ def basic_query(sql, param_sql, disable_dict_factory=False, one_row=False):
             query = cursor.fetchone()
         else:
             query = cursor.fetchall()
+        if commit:
+            connexion.commit()
     except sqlite3.Error as error:
         requetageBaseDeDonneeError(str(error))
         return
@@ -111,8 +113,9 @@ def create_db():
 ## Convention uc = unencrypted, ec = encrypted
 
 def is_valid_inscription(pseudo: str, uc_password: str) -> bool:
-    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo =?", pseudo, True)
-    pseudo_available = querry == []
+    querry = basic_query("SELECT count(*)=0 FROM utilisateur WHERE pseudo =?", (pseudo,),
+                         one_row=True, disable_dict_factory=True)
+    pseudo_available = querry[0] == 1
     is_valid_password = fonctions.is_valid_password(uc_password)
     return pseudo_available and is_valid_password
 
@@ -135,10 +138,13 @@ def is_good_password(pseudo: str, uc_password: str):  # -> bool,string:
 
 
 def connect(pseudo: str):
-    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?", (pseudo,), True, True)
+    querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?", (pseudo,), one_row=True)
     print("Info utilisateur :")
     print(querry)
-    return querry[0], querry[1], querry[3], querry[4]  # renvoie pseudo, paramètre derniere partie et partie en cours
+    return (querry["idUtilisateur"],
+            querry["pseudo"],
+            querry["parametreDernierePartie"],
+            querry["partieEnCours"])  # renvoie pseudo, paramètre derniere partie et partie en cours
 
 
 def register_game(motATrouver: string, idParam: int, idJoueur: int = -1) -> int:
@@ -167,7 +173,13 @@ def get_id_param(nb_essais: int, nb_lettres: int, difficulté: int) -> int:
 
 
 def update_current_game_utilisateur(idUtilisateur: int, idPartie: int) -> None:
-    basic_query("UPDATE utilisateur SET partieEnCours = ? WHERE idUtilisateur = ?", (idPartie, idUtilisateur))
+    """
+    Met à jour la partie en cours d'un utilisateur
+    :param idUtilisateur
+    :param idPartie
+    """
+    basic_query("UPDATE utilisateur SET partieEnCours = ? WHERE idUtilisateur = ?",
+                (idPartie, idUtilisateur), commit=True)
 
 
 # Calcul des scores
@@ -180,13 +192,13 @@ def calcul_score_partie(idPartie: int) -> None:
 
     scorePartie = D * (L + 13 - E)
 
-    basic_query("UPDATE partie SET scorePartie = ?", scorePartie)
+    basic_query("UPDATE partie SET scorePartie = ?", scorePartie, commit=True)
 
 
 def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où
     scorePartieList = basic_query("SELECT scorePartie FROM partie WHERE idJoueur = ?", idUtilisateur)
     newScoreUtilisateur = sum(scorePartieList)
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", newScoreUtilisateur)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", newScoreUtilisateur, commit=True)
 
 
 def add_score_utilisateur(idPartie: int) -> None:
@@ -196,7 +208,7 @@ def add_score_utilisateur(idPartie: int) -> None:
 
     newScoreUtilisateur = scoreUtilisateur + scorePartie
 
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", newScoreUtilisateur)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", newScoreUtilisateur, commit=True)
 
 
 # gets
@@ -234,7 +246,6 @@ def get_longueur_preferee(idUtilisateur: int) -> int:
 
 
 def get_difficulte_preferee(idUtilisateur: int) -> int:
-
     difficulteList = basic_query("SELECT parametre.difficulte FROM partie "
                                  "JOIN parametre ON partie.parametre = parametre.id"
                                  " WHERE partie.idJoueur = ?", idUtilisateur)
@@ -242,7 +253,6 @@ def get_difficulte_preferee(idUtilisateur: int) -> int:
 
 
 def get_statistiques(idUtilisateur: int) -> list:
-
     scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur"
                                    " WHERE idUtilisateur = ?",
                                    idUtilisateur)
@@ -255,3 +265,12 @@ def get_statistiques(idUtilisateur: int) -> list:
 
     return [rang, scoreUtilisateur, nbPartieJouees, nbPartieGagnees, tauxDeVictoire, longueurPreferee,
             difficultePreferee]
+
+
+def delete_partie_by_id(idPartie: int) -> None:
+    """
+    Supprime une partie et les tentatives associées de la base de données à partir de son id
+    :param idPartie:
+    """
+    basic_query("DELETE FROM tentative WHERE idPartie = ?", (idPartie,), commit=True)
+    basic_query("DELETE FROM partie WHERE idPartie = ?", (idPartie,), commit=True)

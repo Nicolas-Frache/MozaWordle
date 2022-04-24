@@ -10,11 +10,11 @@
     <div id="tableau" class="tableau">
         <table class="grille_jeu">
             <tbody id="table">
-            {% for ligne in range(0,nb_essais) %}
+            {% for ligne in range(0, nb_essais) %}
                 <tr id="ligne{{ ligne }}">
-                {% for colonne in range(0, nb_lettres) %}
-                    <td id="l{{ ligne }}c{{ colonne }}"></td>
-                {% endfor %}
+                    {% for colonne in range(0, nb_lettres) %}
+                        <td id="l{{ ligne }}c{{ colonne }}"></td>
+                    {% endfor %}
                 </tr>
             {% endfor %}
             </tbody>
