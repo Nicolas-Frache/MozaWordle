@@ -132,8 +132,6 @@ def is_good_password(pseudo: str, uc_password: str):  # -> bool,string:
 
 def connect(pseudo: str):
     querry = basic_query("SELECT * FROM utilisateur WHERE pseudo = ?", (pseudo,), one_row=True)
-    print("Info utilisateur :")
-    print(querry)
     return (querry["idUtilisateur"],
             querry["pseudo"],
             querry["parametreDernierePartie"],
@@ -160,8 +158,6 @@ def get_id_param(nb_essais: int, nb_lettres: int, difficulté: int) -> int:
                      (idParam, nb_lettres, nb_essais, difficulté))
     else:
         idParam = idParam[0]
-
-    print(f"Id parametre = {idParam}")
     return idParam
 
 
@@ -194,7 +190,6 @@ def calcul_score_utilisateur(idUtilisateur: int) -> None:  # refresh le score de
                                   disable_dict_factory=True)
     for i in range(len(scorePartieList)):
         scorePartieList[i] = scorePartieList[i][0]
-    print(scorePartieList)
     newScoreUtilisateur = sum(scorePartieList)
     basic_query("UPDATE utilisateur SET scoreUtilisateur = ? WHERE idUtilisateur=?",
                 (newScoreUtilisateur, idUtilisateur), commit=True)

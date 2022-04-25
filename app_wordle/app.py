@@ -125,6 +125,7 @@ def jeu():
                         # On "flatten" la liste de tuples pour avoir une simple liste de mot
                         for i in range(0, len(tentatives)):
                             tentatives[i] = list(tentatives[i]["mot"].upper())
+                        print(lastGame["motATrouver"])
                         return render_template("pages/jeu.html",
                                                nb_essais=param["nbEssais"],
                                                nb_lettres=param["longueur"],
@@ -143,7 +144,7 @@ def jeu():
                 session["currentGame"] = idPartie
 
                 db_tools.update_current_game_utilisateur(session.get("idJoueur"), idPartie)
-
+                print(mot)
                 return render_template("pages/jeu.html",
                                        nb_essais=param["nbEssais"],
                                        nb_lettres=param["longueur"],
@@ -156,10 +157,11 @@ def jeu():
             nb_lettres = session.get("ano_longueur", 7)
             nb_essais = session.get("ano_essais", 6)
             dif = session.get("ano_difficulte", 1)
+            mot = get_random_word(longueur=nb_lettres, difficulte=dif)
             return render_template("pages/jeu.html",
                                    nb_essais=nb_essais,
                                    nb_lettres=nb_lettres,
-                                   mot=get_random_word(longueur=nb_lettres, difficulte=dif))
+                                   mot=mot)
         raise Exception("Situation pas encore gérée")
     except Exception as e:
         return handle_error(e)
@@ -185,7 +187,8 @@ def leaderboard():
         top = len(leaderboard)
         if len(leaderboard) > 10:
             top = 10
-        return render_template("pages/leaderboard.html", idUtilisateur=idUtilisateur, leaderboard=leaderboard, top=top, statistiques=statistiques)
+        return render_template("pages/leaderboard.html", idUtilisateur=idUtilisateur, leaderboard=leaderboard, top=top,
+                               statistiques=statistiques)
     except Exception as e:
         return handle_error(e)
 
@@ -230,14 +233,14 @@ def inscription_page():
         pseudo = request.form.get("pseudo")
         password = request.form.get("password")
 
-        valide,_message = db_tools.is_valid_inscription(pseudo, password)
+        valide, _message = db_tools.is_valid_inscription(pseudo, password)
         if valide:
             save_inscription(pseudo, password)
             session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.connect(
                 pseudo)
             return redirect("/")
         else:
-            return render_template("pages/login.html",message = _message)
+            return render_template("pages/login.html", message=_message)
     except Exception as e:
         return handle_error(e)
 
@@ -289,7 +292,7 @@ def estValideMot(mot):
     })
 
 
-@app.route('/api/getScore',methods=["GET"])
+@app.route('/api/getScore', methods=["GET"])
 def get_score():
     """
     Permet de calculer le score de la partie
@@ -298,10 +301,8 @@ def get_score():
     """
     try:
         idPartie = session["currentGame"]
-        print(f"Id partie = {idPartie}")
         score = db_tools.calcul_score_partie(idPartie)
         db_tools.add_score_utilisateur(session["currentGame"])
-        print(f"Le score est {score}")
     except Exception as e:
         handle_error(e)
         return jsonify({

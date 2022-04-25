@@ -154,7 +154,6 @@ function resultat(proposition, solution) {
 function colorier_ligne(numLigne) {
     if (typeof grille[numLigne][0] !== 'undefined') { // On ne colorie que si la ligne est bien remplie
         let proposition = getMot(numLigne);
-        console.log(proposition + " " + solution);
         // On genere les couleurs en comparant la proposition a la reponse
         let result = resultat(proposition, solution);
         // On colorie les cases
@@ -187,8 +186,6 @@ function victoire() {
     playing = false;
     server_requester.get_score_fin_partie()
         .then(response => {
-            console.log("Votre score est ");
-            console.log(response);
             document.getElementById("score").innerText = "Votre score : " + response;
         })
         .catch(error => {
