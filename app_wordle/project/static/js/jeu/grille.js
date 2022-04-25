@@ -9,7 +9,8 @@ let grille,
     solution,
     nb_essais,
     mot_complet = false, // true si le mot de la ligne actuelle comporte assez de lettres, false sinon
-    idTimeout ;
+    idTimeout,
+    playing = true ;
 
 function init(nb_essais_param, nb_lettres_param, solution_param) {
     nb_lettres = nb_lettres_param;
@@ -183,32 +184,34 @@ function getMot(numLigne) {
 }
 
 function victoire() {
-    // TODO : Annoncer la victoire et arrêter la partie
-
-
+    playing = false;
     server_requester.get_score_fin_partie()
         .then(response => {
-            console.log("Votre score est ")
-            console.log(response)
+            console.log("Votre score est ");
+            console.log(response);
+            document.getElementById("score").innerText = "Votre score : " + response;
         })
         .catch(error => {
             // si la requête a échoué :
-            console.log("Erreur lors de la récupération du score.")
+            console.log("Erreur lors de la récupération du score.");
             // TODO - Afficher un message d'erreur
-        });    
-    
+        });
+    document.getElementById("motV").innerText = "Vous avez trouvé le mot " + solution + ".";
+    document.getElementById("victoire").style.display = "block";
     console.log("Victoire");
 }
 
 function defaite() {
-    // TODO : Annoncer la defaite et arrêter la partie
+    playing = false;
+    document.getElementById("motD").innerText = "Le mot à trouver était " + solution + ".";
+    document.getElementById("defaite").style.display = "block";
     console.log("Défaite");
 }
 
 function display_message(message) {
     // TODO : Améliorer le style (animation par exemple)
     if (typeof idTimeout !== undefined) {
-        clearTimeout(idTimeout)
+        clearTimeout(idTimeout);
     }
 
     document.getElementById("message").innerText = message;
@@ -216,9 +219,14 @@ function display_message(message) {
     idTimeout = setTimeout(() => document.getElementById("message").style.display = "none", 1500);
 }
 
+function isPlaying() {
+    return playing;
+}
+
 export default {
     init,
     ecrire,
     supprimer,
     valider_ligne,
+    isPlaying,
 }
