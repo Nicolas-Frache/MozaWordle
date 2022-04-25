@@ -20,7 +20,7 @@
 html, body {
     height: 100%;
     margin: 0;
-    background-color: var(--primary_color);
+    --background-color: var(--primary_color);
 }
 
 body {
@@ -424,4 +424,17 @@ hr.ligne {
     100% {
         transform: scale(1) rotateZ(360deg)
     }
+}
+
+
+body {
+    background: linear-gradient(129deg, #381515, #373815, #273815, #153824, #153138, #151938, #2a1538, #371538, #381515);
+    background-size: 1800% 1800%;
+    animation: AnimationName 25s ease infinite;
+}
+
+@keyframes AnimationName {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }
