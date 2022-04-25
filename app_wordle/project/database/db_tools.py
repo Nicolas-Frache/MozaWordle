@@ -105,12 +105,12 @@ def generate_max_id(tables: string) -> int:
 
 
 # Convention uc = unencrypted, ec = encrypted
-def is_valid_inscription(pseudo: str, uc_password: str) -> bool:
+def is_valid_inscription(pseudo: str, uc_password: str):
     querry = basic_query("SELECT count(*)=0 FROM utilisateur WHERE pseudo =?", (pseudo,),
                          one_row=True, disable_dict_factory=True)
-    pseudo_available = querry[0] == 1
-    is_valid_password = fonctions.is_valid_password(uc_password)
-    return pseudo_available and is_valid_password
+    pseudo_available = querry[0] == 1 and pseudo != None and pseudo != ""
+    is_valid_password,message = fonctions.is_valid_password(uc_password)
+    return pseudo_available and is_valid_password,message
 
 
 def save_inscription(pseudo: str, uc_password: str) -> None:

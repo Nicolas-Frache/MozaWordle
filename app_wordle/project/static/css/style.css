@@ -14,6 +14,7 @@
     --log-btn: #47AB11;
     --ins-btn: #1184E8;
     --play-btn: #47AB11;
+    --error-msg : #da0f0f;
 }
 
 html, body {
@@ -206,6 +207,15 @@ main {
     justify-content: center;
     align-items: center;
     margin-top: 50px;
+}
+
+.error_msg{
+    margin : auto auto;
+    padding: 5px;
+    border-radius:  4px;
+    text-align : center;
+    color: #ffffff;
+    background-color: var(--error-msg);
 }
 
 form {

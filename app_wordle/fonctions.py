@@ -1,17 +1,28 @@
 
 
 
-def is_valid_password(uc_password: str) -> bool:
+def is_valid_password(uc_password: str):
     # Un password est valide ssi il comporte entre 10 et 32 carractères, dont 1 chiffre, 1 minuscule et 1 majuscule
+    message = ""
+    longueur = True
     if len(uc_password) < 10 or len(uc_password) > 32:
-        return False
+        longueur = False
+        message += "Le mot de passe doit être entre 10 et 32 caractères. "
     maj, min, num = False, False, False
 
     for c in uc_password:
         maj = maj + c.isupper()
         min = min + c.islower()
         num = num + c.isdigit()
-    return bool(maj * min * num)
+    
+    if not maj:
+        message += " Il faut au moins une majuscule. "
+    if not min:
+        message += " Il faut au moins une minuscule. "    
+    if not num:
+        message += " Il faut au moins un chiffre "
+
+    return bool(maj * min * num * longueur),message
 
 
 def encrypt(uc_string: str) -> str:

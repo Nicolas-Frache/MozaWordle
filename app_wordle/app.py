@@ -196,13 +196,14 @@ def inscription_page():
         pseudo = request.form.get("pseudo")
         password = request.form.get("password")
 
-        if db_tools.is_valid_inscription(pseudo, password):
+        valide,_message = db_tools.is_valid_inscription(pseudo, password)
+        if valide:
             save_inscription(pseudo, password)
             session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.connect(
                 pseudo)
             return redirect("/")
         else:
-            invalidInscription()
+            return render_template("pages/login.html",message = _message)
     except Exception as e:
         return handle_error(e)
 
