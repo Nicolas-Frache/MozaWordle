@@ -8,7 +8,8 @@ let grille,
     nb_lettres,
     solution,
     nb_essais,
-    mot_complet = false; // true si le mot de la ligne actuelle comporte assez de lettres, false sinon
+    mot_complet = false, // true si le mot de la ligne actuelle comporte assez de lettres, false sinon
+    idTimeout ;
 
 function init(nb_essais_param, nb_lettres_param, solution_param) {
     nb_lettres = nb_lettres_param;
@@ -151,12 +152,10 @@ function resultat(proposition, solution) {
  */
 function colorier_ligne(numLigne) {
     if (typeof grille[numLigne][0] !== 'undefined') { // On ne colorie que si la ligne est bien remplie
-        console.log("l158")
         let proposition = getMot(numLigne);
         console.log(proposition + " " + solution);
         // On genere les couleurs en comparant la proposition a la reponse
         let result = resultat(proposition, solution);
-        console.log(result)
         // On colorie les cases
         // TODO : ameliorer le style
         for (let i = 0; i < nb_lettres; i++) {
@@ -193,14 +192,15 @@ function defaite() {
     console.log("Défaite");
 }
 
-async function display_message(message) {
+function display_message(message) {
     // TODO : Améliorer le style (animation par exemple)
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    if (typeof idTimeout !== undefined) {
+        clearTimeout(idTimeout)
+    }
 
     document.getElementById("message").innerText = message;
     document.getElementById("message").style.display = "block";
-    await sleep(1500);
-    document.getElementById("message").style.display = "none";
+    idTimeout = setTimeout(() => document.getElementById("message").style.display = "none", 1500);
 }
 
 export default {

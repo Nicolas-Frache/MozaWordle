@@ -7,6 +7,7 @@ window.onload = function () {
     const nb_essais = table.rows.length;
     const nb_lettres = table.rows[0].cells.length;
     const solution = document.getElementById('solution').innerText.toUpperCase();
+    document.getElementById('solution').remove()
     const char = ['A', 'Z', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'Q', 'S', 'D', 'F', 'G',
         'H', 'J', 'K', 'L', 'M', 'W', 'X', 'C', 'V', 'B', 'N', 'BACKSPACE', 'ENTER'];
 
