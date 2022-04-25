@@ -138,7 +138,7 @@ main {
 
 #clavier {
     font-size: 2em;
-    margin-top: 100px;
+    margin-top: 5px;
 }
 
 .ligne {
@@ -358,4 +358,43 @@ hr.ligne {
     text-shadow: 1px 1px 1px #000;
     font-family: Verdana;
     font-size: 20px;
+}    
+
+.grille_jeu {
+	-webkit-animation: rotate-scale-up 0.65s linear 1 alternate-reverse both;
+	        animation: rotate-scale-up 0.65s linear 1 alternate-reverse both;
+}
+
+/**
+ * ----------------------------------------
+ * animation rotate-scale-up
+ * ----------------------------------------
+ */
+@-webkit-keyframes rotate-scale-up {
+  0% {
+    -webkit-transform: scale(1) rotateZ(0);
+            transform: scale(1) rotateZ(0);
+  }
+  50% {
+    -webkit-transform: scale(2) rotateZ(180deg);
+            transform: scale(2) rotateZ(180deg);
+  }
+  100% {
+    -webkit-transform: scale(1) rotateZ(360deg);
+            transform: scale(1) rotateZ(360deg);
+  }
+}
+@keyframes rotate-scale-up {
+  0% {
+    -webkit-transform: scale(1) rotateZ(0);
+            transform: scale(1) rotateZ(0);
+  }
+  50% {
+    -webkit-transform: scale(1.5) rotateZ(180deg);
+            transform: scale(1.5) rotateZ(180deg);
+  }
+  100% {
+    -webkit-transform: scale(1) rotateZ(360deg);
+            transform: scale(1) rotateZ(360deg);
+  }
 }

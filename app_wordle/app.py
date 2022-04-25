@@ -53,7 +53,7 @@ def home():
                 assignation parametre par défaut    
             """
             if is_logged_in() and session.get("paramLastGame") is not None:
-                param = basic_query("SELECT * from parametre where id = ?", (session.get("currentParam"),),
+                param = basic_query("SELECT * from parametre where id = ?", (session.get("paramLastGame"),),
                                     one_row=True)
                 return render_template("pages/menu.html",
                                        longueur=param["longueur"],
@@ -80,10 +80,10 @@ def jeu():
     try:
         nouvelle_partie = False
         if is_logged_in():
+            param = basic_query("SELECT * from parametre where id = ?",
+                                (session.get("currentParam"),),
+                                one_row=True)
             if session.get("currentGame") is not None:
-                param = basic_query("SELECT * from parametre where id = ?",
-                                    (session.get("currentParam"),),
-                                    one_row=True)
                 lastGame = basic_query("SELECT * from partie where idPartie = ?",
                                        (session.get("currentGame"),),
                                        one_row=True)
