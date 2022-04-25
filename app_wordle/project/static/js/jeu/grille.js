@@ -34,7 +34,6 @@ function init(nb_essais_param, nb_lettres_param, solution_param) {
 
     // On finit l'initialisation en coloriant toutes les lignes (sans tester si les mots sont dans le dictionnaire
     // car cela a déjà été fait quand le joueur a commencé la partie)
-    console.log(grille);
     for (let i = 0; i < nb_essais_param; i++) {
         colorier_ligne(i)
     }
@@ -73,6 +72,7 @@ function supprimer() {
 function valider_ligne() {
     let mot = getMot(ligne_actuelle);
     if (!mot_complet) {
+        display_message("Votre mot n'est pas complet.")
         return;
     }
 
@@ -80,7 +80,6 @@ function valider_ligne() {
     server_requester.est_dans_dictionnaire(mot.toLowerCase())
         .then(response => {
             // si la requête a réussi :
-            console.log(response);
 
             if (response === true) {
                 // SI VALIDE
@@ -97,12 +96,11 @@ function valider_ligne() {
                 colonne_actuelle = 0;
             } else {
                 // SI NON VALIDE
-                // TODO - afficher un message indiquant que le mot n'est pas dans le dictionnaire
+                display_message("Votre mot n'est pas dans le dictionnaire.");
             }
         })
         .catch(error => {
             // si la requête a échoué :
-            console.log("erreur: " + error.message)//
 
             // TODO - Afficher un message d'erreur
         });
@@ -193,6 +191,16 @@ function victoire() {
 function defaite() {
     // TODO : Annoncer la defaite et arrêter la partie
     console.log("Défaite");
+}
+
+async function display_message(message) {
+    // TODO : Améliorer le style (animation par exemple)
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+    document.getElementById("message").innerText = message;
+    document.getElementById("message").style.display = "block";
+    await sleep(1500);
+    document.getElementById("message").style.display = "none";
 }
 
 export default {

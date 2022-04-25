@@ -101,8 +101,6 @@ def jeu():
                         Si le joueur n'a pas changé ses paramètres, on lui permet de continuer la partie
                         en cours en chargeant les tentatives précèdentes
                         """
-                        print("Partie à continuer")
-                        # ---->  TODO  <---
                         # Récupération des tentatives
                         tentatives = basic_query(
                             "SELECT mot from tentative where idPartie = ? ORDER BY numLigne ASC",
@@ -110,7 +108,6 @@ def jeu():
                         # On "flatten" la liste de tuples pour avoir une simple liste de mot
                         for i in range(0, len(tentatives)):
                             tentatives[i] = list(tentatives[i]["mot"].upper())
-                        print(tentatives)
                         return render_template("pages/jeu.html",
                                                nb_essais=param["nbEssais"],
                                                nb_lettres=param["longueur"],
