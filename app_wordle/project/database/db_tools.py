@@ -177,14 +177,15 @@ def update_current_game_utilisateur(idUtilisateur: int, idPartie: int) -> None:
 
 # Calcul des scores
 def calcul_score_partie(idPartie: int) -> None:
-    idParam = basic_query("SELECT parametre FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True)
+    idParam = basic_query("SELECT parametre FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,one_row=True)[0]
 
     L, E, D = basic_query("SELECT longueur,nbEssais,difficulte FROM parametre WHERE id =?", (idParam,),
-                          disable_dict_factory=True)
-
+                          disable_dict_factory=True,one_row=True)
+                          
     scorePartie = D * (L + 13 - E)
 
     basic_query("UPDATE partie SET scorePartie = ?", (scorePartie,), commit=True)
+    return scorePartie
 
 
 def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où

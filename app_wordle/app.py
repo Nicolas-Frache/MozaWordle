@@ -1,4 +1,5 @@
 # from crypt import methods
+from operator import methodcaller
 import traceback
 from flask import Flask, render_template, redirect, request, session, jsonify
 from flask_session import Session
@@ -134,7 +135,7 @@ def jeu():
         else:
             """
             Si le joueur n'est pas connecté, charge une partie
-            avec des paramètres pas défaut
+            avec des paramètres par défaut
             """
             print("assignation paramètres par défaut")
             return render_template("pages/jeu.html",
@@ -262,6 +263,31 @@ def estValideMot(mot):
     return jsonify({
         "status": "success",
         "estValide": valid
+    })
+
+
+@app.route('/api/getScore',methods=["GET"])
+def get_score():
+    """
+    Permet de calculer le score de la partie
+    :param None
+    :return: un fichier JSON contenant le score
+    """
+    try:
+        idPartie = session["currentGame"]
+        print(f"Id partie = {idPartie}")
+        score = db_tools.calcul_score_partie(idPartie)
+        print(f"Le score est {score}")
+    except Exception as e:
+
+        handle_error(e)
+
+        return jsonify({
+            "status": "error",
+            "message": str(e)})
+    return jsonify({
+        "status": "success",
+        "score": score
     })
 
 

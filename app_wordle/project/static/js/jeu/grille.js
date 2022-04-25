@@ -184,6 +184,19 @@ function getMot(numLigne) {
 
 function victoire() {
     // TODO : Annoncer la victoire et arrêter la partie
+
+
+    server_requester.get_score_fin_partie()
+        .then(response => {
+            console.log("Votre score est ")
+            console.log(response)
+        })
+        .catch(error => {
+            // si la requête a échoué :
+            console.log("Erreur lors de la récupération du score.")
+            // TODO - Afficher un message d'erreur
+        });    
+    
     console.log("Victoire");
 }
 
