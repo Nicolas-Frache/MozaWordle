@@ -155,16 +155,18 @@ def regles():
 @app.route('/leaderboard')
 def leaderboard():
     if is_logged_in():
-        idUtilisateur = int(session["idJoueur"])
+        idUtilisateur = session["idJoueur"]
+        pseudo = session["pseudo"]
+        db_tools.calcul_score_utilisateur(idUtilisateur)
         statistiques = db_tools.get_statistiques(idUtilisateur)
-    else :
-        idUtilisateur = None
+    else:
+        pseudo = None
         statistiques = None
     leaderboard = db_tools.get_leaderboard_list()
     top = len(leaderboard)
     if len(leaderboard) > 10:
         top = 10
-    return render_template("pages/leaderboard.html", idUtilisateur=idUtilisateur, leaderboard=leaderboard, top=top, statistiques=statistiques)
+    return render_template("pages/leaderboard.html", pseudo=pseudo, leaderboard=leaderboard, top=top, statistiques=statistiques)
 
 
 @app.route('/test')

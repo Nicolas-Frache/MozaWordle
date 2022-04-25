@@ -177,37 +177,40 @@ def update_current_game_utilisateur(idUtilisateur: int, idPartie: int) -> None:
 
 # Calcul des scores
 def calcul_score_partie(idPartie: int) -> None:
-    idParam = basic_query("SELECT parametre FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,one_row=True)[0]
-    
+    idParam = basic_query("SELECT parametre FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,
+                          one_row=True)[0]
+
     L, E, D = basic_query("SELECT longueur,nbEssais,difficulte FROM parametre WHERE id =?", (idParam,),
                           disable_dict_factory=True,one_row=True)
 
     scorePartie = D * (L + 13 - E)
 
-    basic_query("UPDATE partie SET scorePartie = ? WHERE idPartie = ?", (scorePartie,idPartie), commit=True)
+    basic_query("UPDATE partie SET scorePartie = ?", (scorePartie,), commit=True)
     return scorePartie
 
 
-def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où
+def calcul_score_utilisateur(idUtilisateur: int) -> None:  # refresh le score de l'utilisateur
     scorePartieList = basic_query("SELECT scorePartie FROM partie WHERE idJoueur = ?", (idUtilisateur,),
                                   disable_dict_factory=True)
+    for i in range(len(scorePartieList)):
+        scorePartieList[i] = scorePartieList[i][0]
+    print(scorePartieList)
     newScoreUtilisateur = sum(scorePartieList)
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ? WHERE idUtilisateur = ?", (newScoreUtilisateur,idUtilisateur), commit=True)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ? WHERE idUtilisateur=?",
+                (newScoreUtilisateur, idUtilisateur), commit=True)
 
 
 def add_score_utilisateur(idPartie: int) -> None:
-    idJoueur = basic_query("SELECT idJoueur FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,one_row=True)[0]
-    print(f"IdJoueur {idJoueur}")
+    idJoueur = basic_query("SELECT idJoueur FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,
+                           one_row=True)[0]
+
     scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", (idJoueur,),
                                    disable_dict_factory=True,one_row=True)[0]
-
     scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?", (idPartie,),
                               disable_dict_factory=True,one_row=True)[0]
-
     newScoreUtilisateur = scoreUtilisateur + scorePartie
-    print(f"New score = {newScoreUtilisateur}, scorePartie = {scorePartie}, idPartie = {idPartie}, scoreUtilisateur = {scoreUtilisateur}")
 
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ? WHERE idUtilisateur = ?", (newScoreUtilisateur,idJoueur), commit=True)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", (newScoreUtilisateur,), commit=True)
 
 
 # gets
@@ -218,7 +221,8 @@ def get_leaderboard_list() -> list:
 
 
 def get_rang(idUtilisateur: int) -> int:
-    Pseudo, scoreUtilisateur = basic_query("SELECT pseudo,scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?",(idUtilisateur,), disable_dict_factory=True, one_row=True)
+    Pseudo, scoreUtilisateur = basic_query("SELECT pseudo,scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?",
+                                           (idUtilisateur,), disable_dict_factory=True, one_row=True)
     Leaderboard = get_leaderboard_list()
     rang = fonctions.index_of_custom(Leaderboard, (Pseudo, scoreUtilisateur))
     return rang
@@ -227,7 +231,7 @@ def get_rang(idUtilisateur: int) -> int:
 def get_nb_parties_jouees(idUtilisateur: int) -> int:
     nbPartiesJouees = basic_query("SELECT count(estEnCours) FROM partie "
                                   "WHERE idJoueur = ? AND estEnCours = ?",
-                                  (idUtilisateur, False), disable_dict_factory=True)[0][0]  # format [(number,)]
+                                  (idUtilisateur,0), disable_dict_factory=True)[0][0]  # format [(number,)]
     return nbPartiesJouees
 
 
@@ -243,8 +247,7 @@ def get_longueur_preferee(idUtilisateur: int) -> int:
                                "WHERE partie.idJoueur = ?",
                                (idUtilisateur,), disable_dict_factory=True)
     for i in range(len(longueurList)):
-        longueurList[i]=longueurList[i][0]
-    print(longueurList)
+        longueurList[i] = longueurList[i][0]
     return fonctions.most_common_in_list(longueurList, "longueur")
 
 
@@ -254,8 +257,7 @@ def get_difficulte_preferee(idUtilisateur: int) -> int:
                                  " WHERE partie.idJoueur = ?",
                                  (idUtilisateur,), disable_dict_factory=True)
     for i in range(len(difficulteList)):
-        difficulteList[i]=difficulteList[i][0]
-    print(difficulteList)
+        difficulteList[i] = difficulteList[i][0]
     return fonctions.most_common_in_list(difficulteList, "difficulty")
 
 
@@ -266,7 +268,11 @@ def get_statistiques(idUtilisateur: int) -> list:
     rang = get_rang(idUtilisateur)
     nbPartieJouees = get_nb_parties_jouees(idUtilisateur)
     nbPartieGagnees = get_nb_parties_gagnees(idUtilisateur)
-    tauxDeVictoire = int(100 * nbPartieGagnees / nbPartieJouees)
+
+    tauxDeVictoire = int(100 * nbPartieGagnees)
+    if nbPartieJouees != 0:
+        tauxDeVictoire = int(100 * nbPartieGagnees / nbPartieJouees)
+
     longueurPreferee = get_longueur_preferee(idUtilisateur)
     difficultePreferee = get_difficulte_preferee(idUtilisateur)
 
