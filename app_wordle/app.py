@@ -67,7 +67,7 @@ def home():
                 _difficulte = request.form.get("difficulte", type=int)
                 # Mise à jour des paramètres de l'utilisateur
                 idParam = db_tools.get_id_param(_nb_essais, _nb_lettres, _difficulte)
-                session["currentParam"] = idParam
+                session["paramLastGame"] = idParam
                 basic_query("UPDATE utilisateur SET parametreDernierePartie = ? WHERE idUtilisateur = ?",
                             (idParam, session.get("idJoueur"),), commit=True)
             return redirect("/jeu")
@@ -81,7 +81,7 @@ def jeu():
         nouvelle_partie = False
         if is_logged_in():
             param = basic_query("SELECT * from parametre where id = ?",
-                                (session.get("currentParam"),),
+                                (session.get("paramLastGame"),),
                                 one_row=True)
             if session.get("currentGame") is not None:
                 lastGame = basic_query("SELECT * from partie where idPartie = ?",
@@ -92,7 +92,7 @@ def jeu():
                     Si je le joueur a changé ses paramètres, on supprime la partie en cours dans la bd,
                     (on ne conserve pas de partie non terminée), puis on en crée une nouvelle
                     """
-                    if lastGame["parametre"] != session.get("currentParam"):
+                    if lastGame["parametre"] != session.get("paramLastGame"):
                         # Supression partie
                         delete_partie_by_id(lastGame["idPartie"])
                         nouvelle_partie = True
@@ -122,7 +122,7 @@ def jeu():
                 # Création d'une nouvelle partie
                 mot = dict_tools.get_random_word(param["longueur"], param["difficulte"])
                 # Creation de la partie dans la bd:
-                idPartie = register_game(mot, session.get("currentParam"), session.get("idJoueur"))
+                idPartie = register_game(mot, session.get("paramLastGame"), session.get("idJoueur"))
                 session["currentGame"] = idPartie
 
                 db_tools.update_current_game_utilisateur(session.get("idJoueur"), idPartie)
@@ -237,7 +237,7 @@ def estValideMot(mot):
                 basic_insert("UPDATE partie SET estEnCours = 0 WHERE idPartie = ?", (game["idPartie"],))
                 basic_insert("UPDATE partie SET aGagne = 1 WHERE idPartie = ?", (game["idPartie"],))
             else:
-                param = basic_query("SELECT * from parametre where id = ?", (session.get("currentParam"),),
+                param = basic_query("SELECT * from parametre where id = ?", (session.get("paramLastGame"),),
                                     one_row=True)
                 if num_tentative >= param["nbEssais"]:
                     # Défaite

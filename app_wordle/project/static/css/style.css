@@ -11,9 +11,9 @@
     --header-bg: #424242;
     --footer-bg: var(--header-bg);
 
-    --log-btn:#47AB11;
-    --ins-btn:#1184E8;
-    --play-btn:#47AB11;
+    --log-btn: #47AB11;
+    --ins-btn: #1184E8;
+    --play-btn: #47AB11;
 }
 
 html, body {
@@ -73,7 +73,7 @@ header nav li a {
 }
 
 header nav li a.logbutton {
-    background-color: var( --log-btn);
+    background-color: var(--log-btn);
     padding: 10px 20px;
     border-radius: 4px;
 }
@@ -201,7 +201,7 @@ main {
     color: white;
 }
 
-.body{
+.body {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -275,7 +275,7 @@ hr.ligne {
     font-family: Verdana;
 }
 
-.leadergrid{
+.leadergrid {
     display: grid; /*ça devient moche quand on rétrécit la fenêtre*/
     grid-template-areas:
     'leaderboard stats';
@@ -284,7 +284,7 @@ hr.ligne {
     margin: 20px 19%;
 }
 
-.leaderboard{
+.leaderboard {
     grid-area: leaderboard;
     border-collapse: collapse;
     width: 15%;
@@ -300,8 +300,13 @@ hr.ligne {
 
 }
 
-.leaderboard tr:nth-child(even){background-color: #f2f2f2}
-.leaderboard tr:nth-child(odd){background-color: #fff}
+.leaderboard tr:nth-child(even) {
+    background-color: #f2f2f2
+}
+
+.leaderboard tr:nth-child(odd) {
+    background-color: #fff
+}
 
 .leaderboard th {
     background-color: var(--ins-btn);
@@ -310,20 +315,20 @@ hr.ligne {
 
 .leaderboard .Uno {
     font-weight: bold;
-    color:gold;
+    color: gold;
 }
 
 .leaderboard .Dos {
     font-weight: bold;
-    color:silver;
+    color: silver;
 }
 
 .leaderboard .Tres {
     font-weight: bold;
-    color:#cd7f32;
+    color: #cd7f32;
 }
 
-.stats-block{
+.stats-block {
     grid-area: stats;
     display: block;
     width: 60%;
@@ -334,7 +339,7 @@ hr.ligne {
 
 }
 
-.stats{
+.stats {
     display: block;
     padding: 30px;
     font-family: Verdana;
@@ -347,54 +352,28 @@ hr.ligne {
     list-style: none;
 }
 
-.stats hr{
+.stats hr {
     border: 0px;
 }
 
-.message{
-    position:absolute;
-    top:60px;
+.message {
+    position: absolute;
+    top: 60px;
     color: white;
     text-shadow: 1px 1px 1px #000;
     font-family: Verdana;
     font-size: 20px;
-}    
-
-.grille_jeu {
-	-webkit-animation: rotate-scale-up 0.65s linear 1 alternate-reverse both;
-	        animation: rotate-scale-up 0.65s linear 1 alternate-reverse both;
 }
 
-/**
- * ----------------------------------------
- * animation rotate-scale-up
- * ----------------------------------------
- */
-@-webkit-keyframes rotate-scale-up {
-  0% {
-    -webkit-transform: scale(1) rotateZ(0);
-            transform: scale(1) rotateZ(0);
-  }
-  50% {
-    -webkit-transform: scale(2) rotateZ(180deg);
-            transform: scale(2) rotateZ(180deg);
-  }
-  100% {
-    -webkit-transform: scale(1) rotateZ(360deg);
-            transform: scale(1) rotateZ(360deg);
-  }
+.grille_jeu tr td {
+    animation: rotate-scale-up .65s linear both
 }
+
 @keyframes rotate-scale-up {
-  0% {
-    -webkit-transform: scale(1) rotateZ(0);
-            transform: scale(1) rotateZ(0);
-  }
-  50% {
-    -webkit-transform: scale(1.5) rotateZ(180deg);
-            transform: scale(1.5) rotateZ(180deg);
-  }
-  100% {
-    -webkit-transform: scale(1) rotateZ(360deg);
-            transform: scale(1) rotateZ(360deg);
-  }
+    0% {
+        transform: scale(0.1) rotateZ(0)
+    }
+    100% {
+        transform: scale(1) rotateZ(360deg)
+    }
 }
