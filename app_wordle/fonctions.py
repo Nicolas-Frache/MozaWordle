@@ -31,7 +31,7 @@ def encrypt(uc_string: str) -> str:
     return ec_string
 
 
-def tri_fusion(tab: list) -> None:
+def tri_fusion(tab: list) -> None:  # tri à gauche
     # tri fusion sur tab
     if len(tab) > 1:
         mid = len(tab) // 2
@@ -48,7 +48,7 @@ def tri_fusion(tab: list) -> None:
         k = 0
 
         while i < len(G) and j < len(D):
-            if G[i] < D[j]:
+            if G[i][1] > D[j][1]:
                 tab[k] = G[i]
                 i += 1
             else:
@@ -68,9 +68,9 @@ def tri_fusion(tab: list) -> None:
     return None
 
 
-def index_of_custom(tab: list, element: int) -> int:  # tab.index(element) mais qui return 0 en cas d' error
+def index_of_custom(tab: list, element: tuple) -> int:  # tab.index(element) mais qui return 0 en cas d' error
     try:
-        return tab.index(element)
+        return tab.index(element) + 1
     except ValueError:
         return 0
 
