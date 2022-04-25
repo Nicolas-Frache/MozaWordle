@@ -375,6 +375,44 @@ hr.ligne {
     font-size: 20px;
 }
 
+.end {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 400px;
+    width: 400px;
+    color: white;
+    text-shadow: 1px 1px 1px #000;
+    font-family: Verdana;
+    font-size: 70px;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.victoire {
+    background-color: #016501;
+}
+
+.defaite {
+    background-color: #af3232;
+}
+
+.button {
+    border: 0;
+    font-size: 3rem;
+    text-align: center;
+    color: #fff;
+    text-shadow: 1px 1px 1px #000;
+    border-radius: 4px;
+    background-color: var(--play-btn);
+    background-image: linear-gradient(to top left,
+    rgba(0, 0, 0, .2),
+    rgba(0, 0, 0, .2) 3%,
+    rgba(0, 0, 0, 0));
+    text-decoration: none;
+}
+
 .grille_jeu tr td {
     animation: rotate-scale-up .65s linear both
 }
