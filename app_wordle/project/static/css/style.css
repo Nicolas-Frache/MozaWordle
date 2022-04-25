@@ -313,17 +313,17 @@ hr.ligne {
     color: white;
 }
 
-.leaderboard .Uno {
+#color-1 {
     font-weight: bold;
     color: gold;
 }
 
-.leaderboard .Dos {
+#color-2 {
     font-weight: bold;
     color: silver;
 }
 
-.leaderboard .Tres {
+#color-3 {
     font-weight: bold;
     color: #cd7f32;
 }

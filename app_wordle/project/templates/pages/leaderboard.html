@@ -8,85 +8,47 @@
     <div class="leadergrid">
 
         <table class="leaderboard">
-            <tr>
-                <th>Rank</th>
-                <th>Pseudo</th>
-                <th>Score</th>
-            </tr>
-            <tr>
-                <td><span class="Uno">#1</span></td>
-                <td>JohnathanDuBosquas</td>
-                <td>460000</td>
-            </tr>
-            <tr>
-                <td><span class="Dos">#2</span></td>
-                <td>Griffin</td>
-                <td>2350</td>
-            </tr>
-            <tr>
-                <td><span class="Tres">#3</span></td>
-                <td>Swanson</td>
-                <td>1400</td>
-            </tr>
-            <tr>
-                <td>#4</td>
-                <td>Brown</td>
-                <td>300</td>
-            </tr>
-            <tr>
-                <td>#5</td>
-                <td>Retard</td>
-                <td>300</td>
-            </tr>
-            <tr>
-                <td>#6</td>
-                <td>TheLooser456</td>
-                <td>300</td>
-            </tr>
-            <tr>
-                <td>#7</td>
-                <td>MarineALaPoubelle</td>
-                <td>300</td>
-            </tr>
-            <tr>
-                <td>#8</td>
-                <td>Zizibottom</td>
-                <td>300</td>
-            </tr>
-            <tr>
-                <td>#9</td>
-                <td>Poisson</td>
-                <td>300</td>
-            </tr>
-            <tr>
-                <td>#10</td>
-                <td>Z3R@T0R</td>
-                <td>300</td>
-            </tr>
+                <tr>
+                    <th>Rank</th>
+                    <th>Pseudo</th>
+                    <th>Score</th>
+                </tr>
+            {% for i in range(top) %}
+                <tr>
+                    <td><span id="color-{{ i+ 1 }}">#{{ i+ 1 }}</span></td>
+                    <td>{{ leaderboard[i][0] }}</td>
+                    <td>{{ leaderboard[i][1] }}</td>
+                </tr>
+            {% endfor %}
         </table>
 
         <div class="stats-block">
             <div class="stats">
+                {% if  statistiques != None%}
                 <ul>
-                    <li> <b>Pseudo</b></li>
+                    <li> <b>idUtilisateur</b></li>
                     <hr>
-                    <li>Rang: #105</li>
+                    <li>Rang: #{{ statistiques[0] }}</li>
                     <hr>
-                    <li>Score: 3500</li>
+                    <li>Score: {{ statistiques[1] }}</li>
                     <hr>
-                    <li>Parties jouées: 1</li>
+                    <li>Parties jouées: {{ statistiques[2] }}</li>
                     <hr>
-                    <li>Parties gagnées: 1</li>
+                    <li>Parties gagnées: {{ statistiques[3] }}</li>
                     <hr>
-                    <li>Taux de victoire: 100%</li>
+                    <li>Taux de victoire: {{ statistiques[4] }}%</li>
                     <hr>
-                    <li>Longueur préférée: 6</li>
+                    <li>Longueur préférée: {{ statistiques[5] }}</li>
                     <hr>
-                    <li>Difficulté préférée: 1</li>
+                    <li>Difficulté préférée: {{ statistiques[6] }}</li>
                 </ul>
+                {% else %}
+                <ul>
+                    <li>Connectez vous pour voir vos statistiques</li>
+                </ul>
+                {% endif %}
             </div>
         </div>
-
     </div>
 
 {% endblock %}
