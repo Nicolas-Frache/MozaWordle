@@ -41,37 +41,53 @@ def is_logged_in():
     return "idJoueur" in session and session["idJoueur"] is not None
 
 
-@app.route('/', methods=['GET', 'POST'])
-@app.route('/home')
-@app.route('/menu')
+@app.route('/', methods=['GET'])
+@app.route('/menu', methods=['GET'])
+@app.route('/home', methods=['GET'])
+def home_get():
+    try:
+        """
+        si connecté :
+            récupère parametre
+        sinon
+            assignation parametre par défaut    
+        """
+        if is_logged_in() and session.get("paramLastGame") is not None:
+            param = basic_query("SELECT * from parametre where id = ?", (session.get("paramLastGame"),),
+                                one_row=True)
+            return render_template("pages/menu.html",
+                                   longueur=param["longueur"],
+                                   tentative=param["nbEssais"],
+                                   difficulte=param["difficulte"])
+        else:
+            nb_lettres = session.get("ano_longueur", 7)
+            nb_essais = session.get("ano_essais", 6)
+            dif = session.get("ano_difficulte", 1)
+            return render_template("pages/menu.html",
+                                   longueur=nb_lettres,
+                                   tentative=nb_essais,
+                                   difficulte=dif)
+    except Exception as e:
+        return handle_error(e)
+
+
+@app.route('/', methods=['POST'])
 def home():
     try:
-        if request.method == "GET":
-            """
-            si connecté :
-                récupère parametre
-            sinon
-                assignation parametre par défaut    
-            """
-            if is_logged_in() and session.get("paramLastGame") is not None:
-                param = basic_query("SELECT * from parametre where id = ?", (session.get("paramLastGame"),),
-                                    one_row=True)
-                return render_template("pages/menu.html",
-                                       longueur=param["longueur"],
-                                       tentative=param["nbEssais"],
-                                       difficulte=param["difficulte"])
-            return render_template("pages/menu.html", longueur=7, tentative=6, difficulte=2)
-        elif request.method == "POST":
-            if is_logged_in():
-                _nb_essais = request.form.get("tentatives", type=int)
-                _nb_lettres = request.form.get("taille", type=int)
-                _difficulte = request.form.get("difficulte", type=int)
-                # Mise à jour des paramètres de l'utilisateur
-                idParam = db_tools.get_id_param(_nb_essais, _nb_lettres, _difficulte)
-                session["paramLastGame"] = idParam
-                basic_query("UPDATE utilisateur SET parametreDernierePartie = ? WHERE idUtilisateur = ?",
-                            (idParam, session.get("idJoueur"),), commit=True)
-            return redirect("/jeu")
+        _nb_essais = request.form.get("tentatives", type=int)
+        _nb_lettres = request.form.get("taille", type=int)
+        _difficulte = request.form.get("difficulte", type=int)
+        if is_logged_in():
+            # Mise à jour des paramètres de l'utilisateur
+            idParam = db_tools.get_id_param(_nb_essais, _nb_lettres, _difficulte)
+            session["paramLastGame"] = idParam
+            basic_query("UPDATE utilisateur SET parametreDernierePartie = ? WHERE idUtilisateur = ?",
+                        (idParam, session.get("idJoueur"),), commit=True)
+        else:
+            session["ano_longueur"] = _nb_lettres
+            session["ano_essais"] = _nb_essais
+            session["ano_difficulte"] = _difficulte
+        return redirect("/jeu")
     except Exception as e:
         return handle_error(e)
 
@@ -137,11 +153,13 @@ def jeu():
             Si le joueur n'est pas connecté, charge une partie
             avec des paramètres par défaut
             """
-            print("assignation paramètres par défaut")
+            nb_lettres = session.get("ano_longueur", 7)
+            nb_essais = session.get("ano_essais", 6)
+            dif = session.get("ano_difficulte", 1)
             return render_template("pages/jeu.html",
-                                   nb_essais=6,
-                                   nb_lettres=7,
-                                   mot=get_random_word(longueur=7, difficulte=1))
+                                   nb_essais=nb_essais,
+                                   nb_lettres=nb_lettres,
+                                   mot=get_random_word(longueur=nb_lettres, difficulte=dif))
         raise Exception("Situation pas encore gérée")
     except Exception as e:
         return handle_error(e)
@@ -154,19 +172,22 @@ def regles():
 
 @app.route('/leaderboard')
 def leaderboard():
-    if is_logged_in():
-        idUtilisateur = session["idJoueur"]
-        pseudo = session["pseudo"]
-        db_tools.calcul_score_utilisateur(idUtilisateur)
-        statistiques = db_tools.get_statistiques(idUtilisateur)
-    else:
-        pseudo = None
-        statistiques = None
-    leaderboard = db_tools.get_leaderboard_list()
-    top = len(leaderboard)
-    if len(leaderboard) > 10:
-        top = 10
-    return render_template("pages/leaderboard.html", pseudo=pseudo, leaderboard=leaderboard, top=top, statistiques=statistiques)
+    try:
+        if is_logged_in():
+            idUtilisateur = int(session["idJoueur"])
+            pseudo = session["pseudo"]
+            db_tools.calcul_score_utilisateur(idUtilisateur)
+            statistiques = db_tools.get_statistiques(idUtilisateur)
+        else:
+            idUtilisateur = None
+            statistiques = None
+        leaderboard = db_tools.get_leaderboard_list()
+        top = len(leaderboard)
+        if len(leaderboard) > 10:
+            top = 10
+        return render_template("pages/leaderboard.html", idUtilisateur=idUtilisateur, leaderboard=leaderboard, top=top, statistiques=statistiques)
+    except Exception as e:
+        return handle_error(e)
 
 
 @app.route('/test')
@@ -257,9 +278,7 @@ def estValideMot(mot):
                     # Défaite
                     basic_insert("UPDATE partie SET estEnCours = 0 WHERE idPartie = ?", (game["idPartie"],))
                     basic_insert("UPDATE partie SET aGagne = 0 WHERE idPartie = ?", (game["idPartie"],))
-
     except Exception as e:
-
         handle_error(e)
         return jsonify({
             "status": "error",
