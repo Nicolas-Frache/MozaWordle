@@ -48,5 +48,6 @@ CREATE TABLE dictionnaire (
     mot VARCHAR(50),
     longueur INTEGER,
     frequence INTEGER,
+    estDevinable INTEGER,
     CONSTRAINT idMot_PK PRIMARY KEY (idMot)
 );

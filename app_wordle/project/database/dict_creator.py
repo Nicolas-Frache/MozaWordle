@@ -2,6 +2,10 @@ import pandas as pd
 import unidecode as unidecode
 
 
+def est_devinable(ortho, lemme):
+    return ortho == lemme
+
+
 # Retourne un dataframe contenant le dictionnaire filtré selon nos besoins
 def get_dict_data():
     print("Début du traitement du dictionnaire...")
@@ -13,7 +17,7 @@ def get_dict_data():
     nb_mots_initial = lex.size
 
     # On conserve uniquement les colonnes nécessaires
-    lex = lex.filter(items=['Index', 'ortho', 'nblettres', 'freqlivres'])
+    lex = lex.filter(items=['Index', 'ortho', 'nblettres', 'freqlivres', 'lemme'])
 
     # On supprime les lignes avec un nombre de lettres inférieur à 3
     lex = lex.loc[(lex.nblettres >= 3)]
@@ -31,6 +35,10 @@ def get_dict_data():
     # Puis on supprime les doublons en gardant le premier
     lex.drop_duplicates(subset=['ortho'], keep='first', inplace=True)
 
+    # On indique si les mots sont des dérivés de lemmes = devinable
+    lex['motDevinable'] = lex.apply(lambda x: est_devinable(x['ortho'], x['lemme']), axis=1)
+    lex.drop(columns="lemme")
+
     # Enfin on reinitialise les index
     lex.reset_index(drop=True, inplace=True)
 
@@ -41,7 +49,9 @@ def get_dict_data():
     print(f'    - soit {float("{:.1f}".format(100 - (lex.memory_usage().sum() * 100 / taille_initiale)))}% d\'économie')
 
     # On renomme les colonnes pour correspondre à notre schema de base de données
-    lex.rename(columns={'ortho': 'mot', 'freqlivres': 'frequence', 'nblettres': 'longueur'}, inplace=True)
+    lex.rename(
+        columns={'ortho': 'mot', 'freqlivres': 'frequence', 'nblettres': 'longueur', 'estDevinable': 'estDevinable'},
+        inplace=True)
 
     # On exporte le dictionnaire
     return lex

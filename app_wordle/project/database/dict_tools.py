@@ -18,7 +18,8 @@ def est_dans_dict(mot: str):
 # Renvoie un mot aléatoire
 def get_random_word(longueur: int, difficulte: int):
     try:
-        words = basic_query("SELECT mot FROM dictionnaire WHERE longueur = ? ORDER BY frequence",
+        words = basic_query("SELECT mot FROM dictionnaire WHERE longueur = ? AND motDevinable = 1 "
+                            "ORDER BY frequence",
                             (longueur,), disable_dict_factory=True)
 
         if difficulte == 3:
