@@ -371,7 +371,7 @@ hr.ligne {
 
 @keyframes rotate-scale-up {
     0% {
-        transform: scale(0.1) rotateZ(0)
+        transform: scale(0) rotateZ(0)
     }
     100% {
         transform: scale(1) rotateZ(360deg)
