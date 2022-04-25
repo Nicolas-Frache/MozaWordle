@@ -158,6 +158,7 @@ def jeu():
             nb_essais = session.get("ano_essais", 6)
             dif = session.get("ano_difficulte", 1)
             mot = get_random_word(longueur=nb_lettres, difficulte=dif)
+            print(mot)
             return render_template("pages/jeu.html",
                                    nb_essais=nb_essais,
                                    nb_lettres=nb_lettres,

@@ -179,7 +179,8 @@ def calcul_score_partie(idPartie: int) -> None:
     L, E, D = basic_query("SELECT longueur,nbEssais,difficulte FROM parametre WHERE id =?", (idParam,),
                           disable_dict_factory=True,one_row=True)
 
-    scorePartie = D * (L + 13 - E)
+    T = basic_query("SELECT count(numLigne) FROM tentatives WHERE idPartie = ?", (idPartie,))
+    scorePartie = D * (L + 13 - E + T//2)
 
     basic_query("UPDATE partie SET scorePartie = ?", (scorePartie,), commit=True)
     return scorePartie
