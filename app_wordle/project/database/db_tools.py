@@ -116,8 +116,8 @@ def is_valid_inscription(pseudo: str, uc_password: str):
 def save_inscription(pseudo: str, uc_password: str) -> None:
     ec_password = fonctions.encrypt(uc_password)
     id_joueur = generate_max_id("utilisateur")
-    basic_insert("INSERT INTO utilisateur (idUtilisateur,pseudo,password) VALUES (?,?,?)",
-                 (id_joueur, str(pseudo), str(ec_password)))
+    basic_insert("INSERT INTO utilisateur (idUtilisateur,pseudo,password,scoreUtilisateur) VALUES (?,?,?)",
+                 (id_joueur, str(pseudo), str(ec_password),0))
 
 
 def is_good_password(pseudo: str, uc_password: str):  # -> bool,string:
@@ -181,7 +181,7 @@ def calcul_score_partie(idPartie: int) -> None:
 
     L, E, D = basic_query("SELECT longueur,nbEssais,difficulte FROM parametre WHERE id =?", (idParam,),
                           disable_dict_factory=True,one_row=True)
-                          
+
     scorePartie = D * (L + 13 - E)
 
     basic_query("UPDATE partie SET scorePartie = ?", (scorePartie,), commit=True)
@@ -196,12 +196,18 @@ def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où
 
 
 def add_score_utilisateur(idPartie: int) -> None:
-    idJoueur = basic_query("SELECT idJoueur FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True)
-    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", (idJoueur,),
-                                   disable_dict_factory=True)
-    scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?", (idPartie,),
-                              disable_dict_factory=True)
+    idJoueur = basic_query("SELECT idJoueur FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,one_row=True)[0]
 
+    print(f"IdJoueur = {idJoueur}")
+
+    scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", (idJoueur,),
+                                   disable_dict_factory=True,one_row=True)[0]
+
+    print(f"Score utilisateur = {scoreUtilisateur}")
+    scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?", (idPartie,),
+                              disable_dict_factory=True,one_row=True)[0]
+
+    print(f"Score partie = {scorePartie}")
     newScoreUtilisateur = scoreUtilisateur + scorePartie
 
     basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", (newScoreUtilisateur,), commit=True)
