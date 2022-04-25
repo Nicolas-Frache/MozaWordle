@@ -248,9 +248,6 @@ def estValideMot(mot):
                 # Victoire
                 basic_insert("UPDATE partie SET estEnCours = 0 WHERE idPartie = ?", (game["idPartie"],))
                 basic_insert("UPDATE partie SET aGagne = 1 WHERE idPartie = ?", (game["idPartie"],))
-
-                db_tools.add_score_utilisateur(session["currentGame"])
-
             else:
                 param = basic_query("SELECT * from parametre where id = ?", (session.get("paramLastGame"),),
                                     one_row=True)
@@ -282,11 +279,10 @@ def get_score():
         idPartie = session["currentGame"]
         print(f"Id partie = {idPartie}")
         score = db_tools.calcul_score_partie(idPartie)
+        db_tools.add_score_utilisateur(session["currentGame"])
         print(f"Le score est {score}")
     except Exception as e:
-
         handle_error(e)
-
         return jsonify({
             "status": "error",
             "message": str(e)})

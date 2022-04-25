@@ -178,13 +178,13 @@ def update_current_game_utilisateur(idUtilisateur: int, idPartie: int) -> None:
 # Calcul des scores
 def calcul_score_partie(idPartie: int) -> None:
     idParam = basic_query("SELECT parametre FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,one_row=True)[0]
-
+    
     L, E, D = basic_query("SELECT longueur,nbEssais,difficulte FROM parametre WHERE id =?", (idParam,),
                           disable_dict_factory=True,one_row=True)
 
     scorePartie = D * (L + 13 - E)
 
-    basic_query("UPDATE partie SET scorePartie = ?", (scorePartie,), commit=True)
+    basic_query("UPDATE partie SET scorePartie = ? WHERE idPartie = ?", (scorePartie,idPartie), commit=True)
     return scorePartie
 
 
@@ -192,25 +192,22 @@ def calcul_score_utilisateur(idUtilisateur: int) -> None:  # au cas où
     scorePartieList = basic_query("SELECT scorePartie FROM partie WHERE idJoueur = ?", (idUtilisateur,),
                                   disable_dict_factory=True)
     newScoreUtilisateur = sum(scorePartieList)
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", (newScoreUtilisateur,), commit=True)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ? WHERE idUtilisateur = ?", (newScoreUtilisateur,idUtilisateur), commit=True)
 
 
 def add_score_utilisateur(idPartie: int) -> None:
     idJoueur = basic_query("SELECT idJoueur FROM partie WHERE idPartie = ?", (idPartie,), disable_dict_factory=True,one_row=True)[0]
-
-    print(f"IdJoueur = {idJoueur}")
-
+    print(f"IdJoueur {idJoueur}")
     scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", (idJoueur,),
                                    disable_dict_factory=True,one_row=True)[0]
 
-    print(f"Score utilisateur = {scoreUtilisateur}")
     scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?", (idPartie,),
                               disable_dict_factory=True,one_row=True)[0]
 
-    print(f"Score partie = {scorePartie}")
     newScoreUtilisateur = scoreUtilisateur + scorePartie
+    print(f"New score = {newScoreUtilisateur}, scorePartie = {scorePartie}, idPartie = {idPartie}, scoreUtilisateur = {scoreUtilisateur}")
 
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", (newScoreUtilisateur,), commit=True)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ? WHERE idUtilisateur = ?", (newScoreUtilisateur,idJoueur), commit=True)
 
 
 # gets
