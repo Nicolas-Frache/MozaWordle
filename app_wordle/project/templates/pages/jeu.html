@@ -13,7 +13,7 @@
             {% for ligne in range(0, nb_essais) %}
                 <tr id="ligne{{ ligne }}">
                     {% for colonne in range(0, nb_lettres) %}
-                        <td id="l{{ ligne }}c{{ colonne }}"></td>
+                        <td id="l{{ ligne }}c{{ colonne }}">{% if tentatives is defined and tentatives|length > ligne %}{{ tentatives[ligne][colonne] }}{% endif %}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}

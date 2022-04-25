@@ -81,6 +81,9 @@ def jeu():
         nouvelle_partie = False
         if is_logged_in():
             if session.get("currentGame") is not None:
+                param = basic_query("SELECT * from parametre where id = ?",
+                                    (session.get("currentParam"),),
+                                    one_row=True)
                 lastGame = basic_query("SELECT * from partie where idPartie = ?",
                                        (session.get("currentGame"),),
                                        one_row=True)
@@ -98,9 +101,21 @@ def jeu():
                         Si le joueur n'a pas changé ses paramètres, on lui permet de continuer la partie
                         en cours en chargeant les tentatives précèdentes
                         """
-                        # ---->  TODO  <---
                         print("Partie à continuer")
-                        pass
+                        # ---->  TODO  <---
+                        # Récupération des tentatives
+                        tentatives = basic_query(
+                            "SELECT mot from tentative where idPartie = ? ORDER BY numLigne ASC",
+                            (lastGame["idPartie"],))
+                        # On "flatten" la liste de tuples pour avoir une simple liste de mot
+                        for i in range(0, len(tentatives)):
+                            tentatives[i] = list(tentatives[i]["mot"].upper())
+                        print(tentatives)
+                        return render_template("pages/jeu.html",
+                                               nb_essais=param["nbEssais"],
+                                               nb_lettres=param["longueur"],
+                                               mot=lastGame["motATrouver"],
+                                               tentatives=tentatives)
                 else:
                     nouvelle_partie = True
             else:
@@ -108,10 +123,6 @@ def jeu():
 
             if nouvelle_partie:
                 # Création d'une nouvelle partie
-                param = basic_query("SELECT * from parametre where id = ?",
-                                    (session.get("currentParam"),),
-                                    one_row=True)
-
                 mot = dict_tools.get_random_word(param["longueur"], param["difficulte"])
                 # Creation de la partie dans la bd:
                 idPartie = register_game(mot, session.get("currentParam"), session.get("idJoueur"))

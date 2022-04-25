@@ -96,7 +96,7 @@ def generate_max_id(tables: string) -> int:
         else:
             raise Exception("Table inconnue")
 
-        if new_id is None:
+        if new_id[0] is None:
             return 1
         else:
             return new_id[0] + 1

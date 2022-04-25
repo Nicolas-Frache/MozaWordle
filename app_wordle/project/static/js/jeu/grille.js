@@ -34,8 +34,9 @@ function init(nb_essais_param, nb_lettres_param, solution_param) {
 
     // On finit l'initialisation en coloriant toutes les lignes (sans tester si les mots sont dans le dictionnaire
     // car cela a déjà été fait quand le joueur a commencé la partie)
+    console.log(grille);
     for (let i = 0; i < nb_essais_param; i++) {
-        colorier_ligne(i, solution)
+        colorier_ligne(i)
     }
 }
 
@@ -81,7 +82,7 @@ function valider_ligne() {
             // si la requête a réussi :
             console.log(response);
 
-            if(response === true){
+            if (response === true) {
                 // SI VALIDE
                 colorier_ligne(ligne_actuelle);
                 if (mot === solution) {
@@ -94,8 +95,7 @@ function valider_ligne() {
                 ligne_actuelle++;
                 mot_complet = false;
                 colonne_actuelle = 0;
-            }
-            else {
+            } else {
                 // SI NON VALIDE
                 // TODO - afficher un message indiquant que le mot n'est pas dans le dictionnaire
             }
@@ -153,12 +153,12 @@ function resultat(proposition, solution) {
  */
 function colorier_ligne(numLigne) {
     if (typeof grille[numLigne][0] !== 'undefined') { // On ne colorie que si la ligne est bien remplie
-
+        console.log("l158")
         let proposition = getMot(numLigne);
-
+        console.log(proposition + " " + solution);
         // On genere les couleurs en comparant la proposition a la reponse
         let result = resultat(proposition, solution);
-
+        console.log(result)
         // On colorie les cases
         // TODO : ameliorer le style
         for (let i = 0; i < nb_lettres; i++) {
