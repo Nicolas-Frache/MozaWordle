@@ -116,7 +116,7 @@ def is_valid_inscription(pseudo: str, uc_password: str):
 def save_inscription(pseudo: str, uc_password: str) -> None:
     ec_password = fonctions.encrypt(uc_password)
     id_joueur = generate_max_id("utilisateur")
-    basic_insert("INSERT INTO utilisateur (idUtilisateur,pseudo,password,scoreUtilisateur) VALUES (?,?,?)",
+    basic_insert("INSERT INTO utilisateur (idUtilisateur,pseudo,password,scoreUtilisateur) VALUES (?,?,?,?)",
                  (id_joueur, str(pseudo), str(ec_password),0))
 
 
