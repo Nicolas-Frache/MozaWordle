@@ -27,8 +27,8 @@ function init(nb_essais_param, nb_lettres_param, solution_param) {
     // synchronise avec l'html au cas où
     for (let i = 0; i < nb_essais_param; i++) {
         for (let j = 0; j < nb_lettres; j++) {
-            if (document.getElementById("l" + i + "c" + j).innerHTML !== "") {
-                grille[i][j] = document.getElementById("l" + i + "c" + j).innerHTML;
+            if (document.getElementById("l" + i + "c" + j).innerText !== "") {
+                grille[i][j] = document.getElementById("l" + i + "c" + j).innerText;
                 ligne_actuelle = i + 1;
             }
         }
