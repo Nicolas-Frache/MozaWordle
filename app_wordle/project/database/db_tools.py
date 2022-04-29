@@ -183,7 +183,7 @@ def calcul_score_partie(idPartie: int) -> None:
                     disable_dict_factory=True, one_row=True)
     scorePartie = D * (L + 13 - E + T[0] // 2)
 
-    basic_query("UPDATE partie SET scorePartie = ?", (scorePartie,), commit=True)
+    basic_query("UPDATE partie SET scorePartie = ? WHERE idPartie = ?", (scorePartie,idPartie,), commit=True)
     return scorePartie
 
 
