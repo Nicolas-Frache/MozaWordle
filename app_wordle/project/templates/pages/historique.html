@@ -1,0 +1,22 @@
+{% extends "components/base.html" %}
+
+{% block title %}
+    Page de login
+{% endblock %}
+
+{% block content %}
+
+    <div class="historique">
+        {% for i in range(len) %}
+            <div>
+                Partie : {{parties[i][0]}}. longueur : {{parties[i][1]}}, nombre d'essais : {{parties[i][2]}},
+                difficulte : {{parties[i][3]}}, est en cours ? : {{parties[i][4]}},
+                mot à trouver : {{parties[i][5]}} , début : {{parties[i][6]}},
+                victoire ? : {{parties[i][7]}}, score : {{parties[i][8]}}
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
+
+

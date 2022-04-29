@@ -5,9 +5,10 @@
         <li><a href="../leaderboard">Leaderboard</a></li>
         <li><a href="../regles">Règles</a></li>
         {%if not session.pseudo%}
-        <li><a href="/login" class="logbutton">Login</a></li>
-            {% else %}
-        <li><a href="/logout" class="logbutton">Logout of {{session.pseudo}}</a></li>
+            <li><a href="/login" class="logbutton">Login</a></li>
+        {% else %}
+            <li><a href="../historique">Historique</a></li>
+            <li><a href="/logout" class="logbutton">Logout of {{session.pseudo}}</a></li>
         {% endif %}
     </nav>
 </header>

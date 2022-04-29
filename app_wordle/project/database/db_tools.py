@@ -276,6 +276,21 @@ def get_statistiques(idUtilisateur: int) -> list:
     return [rang, scoreUtilisateur, nbPartieJouees, nbPartieGagnees, tauxDeVictoire, longueurPreferee,
             difficultePreferee]
 
+def get_historique_parties(idUtilisateur : int) -> list:
+
+    parties = basic_query("SELECT idPartie,parametre,estEnCours,motATrouver,date,aGagne,scorePartie FROM partie WHERE idJoueur = ?",(idUtilisateur,),
+                            disable_dict_factory=True,one_row=False)
+    print("Parties")
+    print(parties)
+    retour = []
+    for i in range(len(parties)):
+        p = parties[i]
+        param = basic_query("SELECT * FROM parametre WHERE id = ?",(p[1],),disable_dict_factory=True,one_row=True)
+        partie_w_detail = [p[0],param[1],param[2],param[3],p[2],p[3],p[4],p[5],p[6]]
+        retour.append(partie_w_detail)
+
+    print(retour)
+    return retour
 
 def delete_partie_by_id(idPartie: int) -> None:
     """

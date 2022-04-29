@@ -202,6 +202,27 @@ def test():
         return handle_error(e)
     return 'test'
 
+@app.route('/historique')
+def historique():
+    if is_logged_in():
+        parties = db_tools.get_historique_parties(session["idJoueur"])
+        return render_template("pages/historique.html", parties = parties,len = len(parties))
+        
+        """
+        idPartie = parties[0],
+        longueur = parties[1],
+        nbEssais = parties[2],
+        difficulte = parties[3],
+        estEnCours = parties[4],
+        motATrouver = parties[5],
+        date = parties[6],
+        aGagne = parties[7],
+        scorePartie = parties[8],
+        """
+    else :
+        return handle_error("Il faut être connecté pour accéder à l'historique des parties.")
+
+
 
 @app.route('/login', methods=["GET"])
 def loginPage_Get():
@@ -319,6 +340,10 @@ def initdb_command():
     # Initialisation de la base de données
     db_tools.create_db()
 
+@app.cli.command('hist')
+def hist_command():
+    db_tools.get_historique_parties(1)
+    print("fin")
 
 # Pour l'execution en ligne de commande directement avec 'Python3 app.py'
 if __name__ == '__main__':
