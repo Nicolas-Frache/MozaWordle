@@ -111,7 +111,7 @@ function valider_ligne() {
         })
         .catch(error => {
             // si la requête a échoué :
-            display_message("Une erreur est survenue lors de la requête vers le serveur: " + error);
+            display_message("Une erreur est survenue lors de la requête vers le serveur ▶️ " + error, 20000);
         });
 }
 
@@ -197,8 +197,7 @@ function victoire() {
         })
         .catch(error => {
             // si la requête a échoué :
-            console.log("Erreur lors de la récupération du score.");
-            // TODO - Afficher un message d'erreur
+            display_message("Erreur lors de la récupération du score ▶️ " + error, 20000);
         });
     document.getElementById("motV").innerText = "Vous avez trouvé le mot " + solution + ".";
     document.getElementById("end-container").style.display = "block";
@@ -214,7 +213,7 @@ function defaite() {
     console.log("Défaite");
 }
 
-function display_message(message) {
+function display_message(message, time = 2000) {
     // TODO : Améliorer le style (animation par exemple)
     if (typeof idTimeout !== undefined) {
         clearTimeout(idTimeout);
@@ -222,7 +221,7 @@ function display_message(message) {
 
     document.getElementById("message").innerText = message;
     document.getElementById("message").style.display = "block";
-    idTimeout = setTimeout(() => document.getElementById("message").style.display = "none", 1500);
+    idTimeout = setTimeout(() => document.getElementById("message").style.display = "none", time);
 }
 
 function isPlaying() {

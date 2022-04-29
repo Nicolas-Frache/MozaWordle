@@ -19,10 +19,11 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 
-def handle_error(error):
+def handle_error(error, get_str=False):
     """
     Fonction permettant de gérer les erreurs
     :param Une erreur, personalisée ou non avec un message
+    :param get_str: Si True, renvoie le message d'erreur, sinon renvoie la page d'erreur
     :return: une page html contenant le message d'erreur
     """
     print(traceback.format_exc())
@@ -30,6 +31,8 @@ def handle_error(error):
         message = error.value.args[0]
     else:
         message = str(error)
+    if get_str:
+        return message
     return render_template("pages/error.html", error=message)
 
 
@@ -242,7 +245,7 @@ def loginPage_Post():
                 pseudo)
             return redirect("/")
         else:
-            return render_template("pages/login.html",message = "Mauvais identifiant")
+            return render_template("pages/login.html", message="Mauvais identifiant")
     except Exception as e:
         return handle_error(e)
 
@@ -303,12 +306,12 @@ def estValideMot(mot):
                     basic_insert("UPDATE partie SET estEnCours = 0 WHERE idPartie = ?", (game["idPartie"],))
                     basic_insert("UPDATE partie SET aGagne = 0 WHERE idPartie = ?", (game["idPartie"],))
     except Exception as e:
-        handle_error(e)
+        message = handle_error(e, get_str=True)
         return jsonify({
-            "status": "error",
-            "message": str(e)})
+            "status_custom": "error",
+            "error_message": message})
     return jsonify({
-        "status": "success",
+        "status_custom": "success",
         "estValide": valid
     })
 
@@ -321,16 +324,21 @@ def get_score():
     :return: un fichier JSON contenant le score
     """
     try:
+        if not is_logged_in():
+            return jsonify({
+                "status_custom": "not_logged_in"
+            })
+
         idPartie = session["currentGame"]
         score = db_tools.calcul_score_partie(idPartie)
         db_tools.add_score_utilisateur(session["currentGame"])
     except Exception as e:
-        handle_error(e)
+        message = handle_error(e, get_str=True)
         return jsonify({
-            "status": "error",
-            "message": str(e)})
+            "status_custom": "error",
+            "error_message": message})
     return jsonify({
-        "status": "success",
+        "status_custom": "success",
         "score": score
     })
 

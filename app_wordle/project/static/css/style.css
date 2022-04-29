@@ -386,6 +386,7 @@ hr.ligne {
     text-shadow: 1px 1px 1px #000;
     font-family: Verdana;
     font-size: 20px;
+    width: 26%;
 }
 
 #end-container {

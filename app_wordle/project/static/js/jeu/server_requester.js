@@ -26,6 +26,9 @@ const est_dans_dictionnaire = (mot) => {
             }
         })
         .then(response => {
+            if (response.status_custom === "error") {
+                return Promise.reject(new Error("Erreur interne au serveur ⏩" + response.error_message));
+            }
             return response.estValide;
         })
         .catch(error => {
@@ -56,10 +59,16 @@ const get_score_fin_partie = () => {
             }
         })
         .then(response => {
+            if (response.status_custom === "error") {
+                return Promise.reject(new Error("Erreur interne au serveur ⏩ " + response.error_message));
+            }
+            if (response.status_custom === "not_logged_in") {
+                return "Connectez-vous pour voir votre score !";
+            }
             return response.score;
         })
         .catch(error => {
-            return Promise.reject(new Error(error.message));
+            return Promise.reject(new Error("Mauvaise réponse du serveur ⏩ " + error.message));
         });
 
 }
