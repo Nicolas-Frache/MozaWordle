@@ -10,7 +10,7 @@ let grille,
     nb_essais,
     mot_complet = false, // true si le mot de la ligne actuelle comporte assez de lettres, false sinon
     idTimeout,
-    playing = true ;
+    playing = true;
 
 function init(nb_essais_param, nb_lettres_param, solution_param) {
     nb_lettres = nb_lettres_param;
@@ -99,12 +99,19 @@ function valider_ligne() {
             } else {
                 // SI NON VALIDE
                 display_message("Votre mot n'est pas dans le dictionnaire.");
+                let grilleDom = document.getElementById("grille_jeu");
+
+                grilleDom.className = "grille_jeu"
+                // Utilisation d'un délai pour que le navigateur ait le temps de comprendre
+                // ce qu'il se passe et de lancer l'animation de tremblement
+                setTimeout(function () {
+                    grilleDom.className += " animation_shake"
+                }, 10);
             }
         })
         .catch(error => {
             // si la requête a échoué :
-
-            // TODO - Afficher un message d'erreur
+            display_message("Une erreur est survenue lors de la requête vers le serveur: " + error);
         });
 }
 
@@ -194,13 +201,15 @@ function victoire() {
             // TODO - Afficher un message d'erreur
         });
     document.getElementById("motV").innerText = "Vous avez trouvé le mot " + solution + ".";
-    document.getElementById("victoire").style.display = "block";
+    document.getElementById("end-container").style.display = "block";
+    document.getElementById("defaite").style.display = "block";
     console.log("Victoire");
 }
 
 function defaite() {
     playing = false;
     document.getElementById("motD").innerText = "Le mot à trouver était " + solution + ".";
+    document.getElementById("end-container").style.display = "block";
     document.getElementById("defaite").style.display = "block";
     console.log("Défaite");
 }

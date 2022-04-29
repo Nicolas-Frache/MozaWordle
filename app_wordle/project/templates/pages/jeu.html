@@ -9,12 +9,13 @@
     <script type="module" src="{{ url_for('static', filename='js/jeu/app.js') }}"></script>
     <div id="message" class="message" style="display: none"></div>
     <div id="tableau" class="tableau">
-        <table class="grille_jeu">
+        <table class="grille_jeu" id="grille_jeu">
             <tbody id="table">
             {% for ligne in range(0, nb_essais) %}
                 <tr id="ligne{{ ligne }}">
                     {% for colonne in range(0, nb_lettres) %}
-                        <td id="l{{ ligne }}c{{ colonne }}">{% if tentatives is defined and tentatives|length > ligne %}{{ tentatives[ligne][colonne] }}{% endif %}</td>
+                        <td id="l{{ ligne }}c{{ colonne }}">{% if tentatives is defined and tentatives|length > ligne %}
+                            {{ tentatives[ligne][colonne] }}{% endif %}</td>
                     {% endfor %}
                 </tr>
             {% endfor %}
@@ -40,19 +41,21 @@
     <div id="solution" style="display: none">{{ mot }}</div>
     <div id="Erreurs" style="display: none"></div>
 
-    <div id="victoire" class="end victoire" style="display: none">
-        VICTOIRE <br>
-        <div id="score" style="font-size: 20px"></div>
-        <div id="motV" style="font-size: 20px"></div>
-        <a href="./jeu" class="button">Rejouer</a> <br>
-        <a href="." class="button">Menu</a>
-    </div>
+    <div id=end-container style="display: none">
+        <div id="victoire" class="end victoire" style="display: none">
+            VICTOIRE <br>
+            <div id="score" style="font-size: 20px"></div>
+            <div id="motV" style="font-size: 20px"></div>
+            <a href="./jeu" class="button">Rejouer</a> <br>
+            <a href="." class="button">Menu</a>
+        </div>
 
-    <div id="defaite" class="end defaite" style="display: none">
-        DÉFAITE <br>
-        <div id="motD" style="font-size: 20px">OK</div>
-        <a href="./jeu" class="button">Rejouer</a> <br><br>
-        <a href="." class="button">Menu</a>
+        <div id="defaite" class="end defaite" style="display: none">
+            DÉFAITE <br>
+            <div id="motD" style="font-size: 20px">OK</div>
+            <a href="./jeu" class="button">Rejouer</a> <br>
+            <a href="." class="button">Menu</a>
+        </div>
     </div>
 
 {% endblock %}
