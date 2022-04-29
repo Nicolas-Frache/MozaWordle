@@ -221,8 +221,7 @@ def loginPage_Post():
                 pseudo)
             return redirect("/")
         else:
-            # TODO repport sur la page login avec un message d'erreur
-            return handle_error("Mauvais identificateur")  # Temporaire
+            return render_template("pages/login.html",message = "Mauvais identifiant")
     except Exception as e:
         return handle_error(e)
 
