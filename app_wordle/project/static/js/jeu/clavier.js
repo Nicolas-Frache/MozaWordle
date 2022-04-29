@@ -6,7 +6,7 @@ import grille from './grille.js';
 const press_key = (value) => {
     // Declenchee lors d'un clic sur le clavier ou sur une touche du clavier
     if (grille.isPlaying()) {
-        document.getElementById(value.toUpperCase()).style.backgroundColor = '#003F87';
+        document.getElementById(value.toUpperCase()).style.opacity = "0.5";
     }
 }
 
@@ -15,7 +15,7 @@ const press_key = (value) => {
  */
 const release_key = (value) => {
     if (grille.isPlaying()) {
-        document.getElementById(value.toUpperCase()).style.backgroundColor = '#25C9C973';
+        document.getElementById(value.toUpperCase()).style.opacity = "1";
 
         switch(value) {
         case

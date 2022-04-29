@@ -159,6 +159,10 @@ function resultat(proposition, solution) {
  * Colorie dans le DOM les cases correspondant à la ligne donnée pour la solution
  */
 function colorier_ligne(numLigne) {
+    let case_grille, touche;
+    let grey = "rgb(121, 121, 121)";
+    let yellow = "rgb(237, 176, 44)";
+    let red = "rgb(182, 0, 0)";
     if (typeof grille[numLigne][0] !== 'undefined') { // On ne colorie que si la ligne est bien remplie
         let proposition = getMot(numLigne);
         // On genere les couleurs en comparant la proposition a la reponse
@@ -166,12 +170,23 @@ function colorier_ligne(numLigne) {
         // On colorie les cases
         // TODO : ameliorer le style
         for (let i = 0; i < nb_lettres; i++) {
+            case_grille = document.getElementById('l' + numLigne + 'c' + i);
+            touche = document.getElementById(proposition[i]);
             switch (result[i]) {
+                case 0:
+                    if (touche.style.backgroundColor !== red && touche.style.backgroundColor !== yellow) {
+                        touche.style.backgroundColor = grey;
+                    }
+                    break;
                 case 1:
-                    document.getElementById('l' + numLigne + 'c' + i).style.backgroundColor = "#edb02c";
+                    case_grille.style.backgroundColor = yellow;
+                    if (touche.style.backgroundColor !== red) {
+                        touche.style.backgroundColor = yellow;
+                    }
                     break;
                 case 2:
-                    document.getElementById('l' + numLigne + 'c' + i).style.backgroundColor = "#b60000";
+                    case_grille.style.backgroundColor = red;
+                    touche.style.backgroundColor = red;
                     break;
             }
         }
