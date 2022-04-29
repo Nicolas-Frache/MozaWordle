@@ -202,7 +202,7 @@ function victoire() {
         });
     document.getElementById("motV").innerText = "Vous avez trouvé le mot " + solution + ".";
     document.getElementById("end-container").style.display = "block";
-    document.getElementById("defaite").style.display = "block";
+    document.getElementById("victoire").style.display = "block";
     console.log("Victoire");
 }
 
