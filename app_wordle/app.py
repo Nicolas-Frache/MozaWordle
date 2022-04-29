@@ -10,7 +10,7 @@ from project.database import db_tools, dict_tools
 # Création de l'instance de l'application Flask et définition
 # du chemin du dossier contenant les templates et les fichiers statics
 from project.database.dict_tools import get_random_word
-from project.exceptions import invalidInscription
+from project.exceptions import invalidInscription, nonConnecteHistoriqueError
 
 app = Flask(__name__, template_folder='project/templates', static_folder='project/static')
 app.config["SESSION_PERMANENT"] = False
@@ -75,7 +75,7 @@ def home_get():
 
 
 @app.route('/', methods=['POST'])
-def home():
+def home_post():
     try:
         _nb_essais = request.form.get("tentatives", type=int)
         _nb_lettres = request.form.get("taille", type=int)
@@ -104,10 +104,11 @@ def jeu():
                                 (session.get("paramLastGame"),),
                                 one_row=True)
             if session.get("currentGame") is not None:
+                print(session.get("currentGame"))
                 lastGame = basic_query("SELECT * from partie where idPartie = ?",
                                        (session.get("currentGame"),),
                                        one_row=True)
-                if lastGame["estEnCours"] == 1:
+                if lastGame is not None and lastGame["estEnCours"] == 1:
                     """
                     Si je le joueur a changé ses paramètres, on supprime la partie en cours dans la bd,
                     (on ne conserve pas de partie non terminée), puis on en crée une nouvelle
@@ -181,7 +182,6 @@ def leaderboard():
     try:
         if is_logged_in():
             idUtilisateur = int(session["idJoueur"])
-            pseudo = session["pseudo"]
             db_tools.calcul_score_utilisateur(idUtilisateur)
             statistiques = db_tools.get_statistiques(idUtilisateur)
         else:
@@ -197,34 +197,17 @@ def leaderboard():
         return handle_error(e)
 
 
-@app.route('/test')
-def test():
-    try:
-        print(dict_tools.est_dans_dict("voiture"))
-    except Exception as e:
-        return handle_error(e)
-    return 'test'
-
 @app.route('/historique')
 def historique():
-    if is_logged_in():
-        parties = db_tools.get_historique_parties(session["idJoueur"])
-        return render_template("pages/historique.html", parties = parties,len = len(parties))
-        
-        """
-        idPartie = parties[0],
-        longueur = parties[1],
-        nbEssais = parties[2],
-        difficulte = parties[3],
-        estEnCours = parties[4],
-        motATrouver = parties[5],
-        date = parties[6],
-        aGagne = parties[7],
-        scorePartie = parties[8],
-        """
-    else :
-        return handle_error("Il faut être connecté pour accéder à l'historique des parties.")
-
+    try:
+        if is_logged_in():
+            colonnes = ["id", "Tentatives", "Nombre de lettres", "Solution", "Etat", "Score", "Difficulté", "Date"]
+            lignes = db_tools.get_historique_parties(int(session.get("idJoueur")))
+            return render_template("pages/historique.html", parties=lignes, colonnes=colonnes)
+        else:
+            nonConnecteHistoriqueError()
+    except Exception as e:
+        return handle_error(e)
 
 
 @app.route('/login', methods=["GET"])
@@ -240,7 +223,6 @@ def loginPage_Post():
         passwordVerification = db_tools.is_good_password(pseudo, password)
         if passwordVerification[0] and (
                 ("idJoueur" in session and session["idJoueur"] is None) or not "idJoueur" in session):
-
             session["idJoueur"], session["pseudo"], session["paramLastGame"], session["currentGame"] = db_tools.connect(
                 pseudo)
             return redirect("/")
@@ -348,10 +330,12 @@ def initdb_command():
     # Initialisation de la base de données
     db_tools.create_db()
 
+
 @app.cli.command('hist')
 def hist_command():
     db_tools.get_historique_parties(1)
     print("fin")
+
 
 # Pour l'execution en ligne de commande directement avec 'Python3 app.py'
 if __name__ == '__main__':

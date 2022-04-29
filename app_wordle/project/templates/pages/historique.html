@@ -4,18 +4,35 @@
     Page de login
 {% endblock %}
 
-{% block content %}
+{% block css %}
+    <link rel="stylesheet" type="text/css" href= "{{ url_for('static', filename='css/data_tab.css') }}" />
+{% endblock %}
 
-    <div class="historique">
-        {% for i in range(len) %}
-            <div>
-                Partie : {{parties[i][0]}}. longueur : {{parties[i][1]}}, nombre d'essais : {{parties[i][2]}},
-                difficulte : {{parties[i][3]}}, est en cours ? : {{parties[i][4]}},
-                mot à trouver : {{parties[i][5]}} , début : {{parties[i][6]}},
-                victoire ? : {{parties[i][7]}}, score : {{parties[i][8]}}
-            </div>
-        {% endfor %}
-    </div>
+{% block content %}
+    <table class="data_tab">
+        <thead>
+            <tr>
+                {% for i in colonnes %}
+                    <th> {{ i }} </th>
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            {% if parties|length != 0 %}
+                {% for partie in parties %}
+                    <tr>
+                        {% for value in partie %}
+                            <td> {{ value }} </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <td colspan="{{ colonnes|length }}">
+                    Aucune donnée à afficher
+                </td>
+            {% endif %}
+        </tbody>
+    </table>
 
 {% endblock %}
 

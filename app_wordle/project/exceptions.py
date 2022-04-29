@@ -24,3 +24,7 @@ def insertionBaseDeDonneeError(previousError=""):
 
 def generationIdMaxError(previousError=""):
     raise Exception(previousError + ' ➡️ Erreur lors de la génération de l\'id max', "E007")
+
+
+def nonConnecteHistoriqueError(previousError=""):
+    raise Exception(previousError + ' ➡️ "Il faut être connecté pour accéder à l\'historique des parties.', "E008")

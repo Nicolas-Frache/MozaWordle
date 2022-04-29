@@ -1,0 +1,25 @@
+.data_tab {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 25px 10%;
+    font-size: 1.0em;
+    min-width: 300px;
+    border-radius: 5px 5px 0 0;
+    overflow: hidden;
+    box-shadow: 3px 3px 20px rgba(0, 0, 0, 1);
+    color: white;
+    text-align: initial;
+}
+
+.data_tab thead {
+    background-color: rgb(13, 84, 99);
+}
+
+.data_tab tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.data_tab thead tr th, .data_tab tbody tr td {
+    padding: 20px 15px;
+    max-width: min-content;
+}

@@ -109,15 +109,15 @@ def is_valid_inscription(pseudo: str, uc_password: str):
     querry = basic_query("SELECT count(*)=0 FROM utilisateur WHERE pseudo =?", (pseudo,),
                          one_row=True, disable_dict_factory=True)
     pseudo_available = querry[0] == 1 and pseudo != None and pseudo != ""
-    is_valid_password,message = fonctions.is_valid_password(uc_password)
-    return pseudo_available and is_valid_password,message
+    is_valid_password, message = fonctions.is_valid_password(uc_password)
+    return pseudo_available and is_valid_password, message
 
 
 def save_inscription(pseudo: str, uc_password: str) -> None:
     ec_password = fonctions.encrypt(uc_password)
     id_joueur = generate_max_id("utilisateur")
     basic_insert("INSERT INTO utilisateur (idUtilisateur,pseudo,password,scoreUtilisateur) VALUES (?,?,?,?)",
-                 (id_joueur, str(pseudo), str(ec_password),0))
+                 (id_joueur, str(pseudo), str(ec_password), 0))
 
 
 def is_good_password(pseudo: str, uc_password: str):  # -> bool,string:
@@ -177,11 +177,11 @@ def calcul_score_partie(idPartie: int) -> None:
                           one_row=True)[0]
 
     L, E, D = basic_query("SELECT longueur,nbEssais,difficulte FROM parametre WHERE id =?", (idParam,),
-                          disable_dict_factory=True,one_row=True)
+                          disable_dict_factory=True, one_row=True)
 
     T = basic_query("SELECT count(numLigne) FROM tentative WHERE idPartie = ?", (idPartie,),
-                            disable_dict_factory=True,one_row=True)
-    scorePartie = D * (L + 13 - E + T[0]//2)
+                    disable_dict_factory=True, one_row=True)
+    scorePartie = D * (L + 13 - E + T[0] // 2)
 
     basic_query("UPDATE partie SET scorePartie = ?", (scorePartie,), commit=True)
     return scorePartie
@@ -202,9 +202,9 @@ def add_score_utilisateur(idPartie: int) -> None:
                            one_row=True)[0]
 
     scoreUtilisateur = basic_query("SELECT scoreUtilisateur FROM utilisateur WHERE idUtilisateur = ?", (idJoueur,),
-                                   disable_dict_factory=True,one_row=True)[0]
+                                   disable_dict_factory=True, one_row=True)[0]
     scorePartie = basic_query("SELECT scorePartie FROM partie WHERE idPartie = ?", (idPartie,),
-                              disable_dict_factory=True,one_row=True)[0]
+                              disable_dict_factory=True, one_row=True)[0]
     newScoreUtilisateur = scoreUtilisateur + scorePartie
 
     basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", (newScoreUtilisateur,), commit=True)
@@ -228,7 +228,7 @@ def get_rang(idUtilisateur: int) -> int:
 def get_nb_parties_jouees(idUtilisateur: int) -> int:
     nbPartiesJouees = basic_query("SELECT count(estEnCours) FROM partie "
                                   "WHERE idJoueur = ? AND estEnCours = ?",
-                                  (idUtilisateur,0), disable_dict_factory=True)[0][0]  # format [(number,)]
+                                  (idUtilisateur, 0), disable_dict_factory=True)[0][0]  # format [(number,)]
     return nbPartiesJouees
 
 
@@ -276,21 +276,34 @@ def get_statistiques(idUtilisateur: int) -> list:
     return [rang, scoreUtilisateur, nbPartieJouees, nbPartieGagnees, tauxDeVictoire, longueurPreferee,
             difficultePreferee]
 
-def get_historique_parties(idUtilisateur : int) -> list:
 
-    parties = basic_query("SELECT idPartie,parametre,estEnCours,motATrouver,date,aGagne,scorePartie FROM partie WHERE idJoueur = ?",(idUtilisateur,),
-                            disable_dict_factory=True,one_row=False)
-    print("Parties")
-    print(parties)
-    retour = []
+def get_historique_parties(idUtilisateur: int) -> list:
+    parties = basic_query(
+        "SELECT * FROM partie WHERE idJoueur = ?",
+        (idUtilisateur,))
+    lignes = []
     for i in range(len(parties)):
-        p = parties[i]
-        param = basic_query("SELECT * FROM parametre WHERE id = ?",(p[1],),disable_dict_factory=True,one_row=True)
-        partie_w_detail = [p[0],param[1],param[2],param[3],p[2],p[3],p[4],p[5],p[6]]
-        retour.append(partie_w_detail)
+        partie = parties[i]
+        param = basic_query("SELECT * FROM parametre WHERE id = ?", (partie["parametre"],), one_row=True)
+        nbTentative = basic_query("SELECT count(*) FROM tentative WHERE idPartie = ?", (partie["idPartie"],),
+                                  one_row=True, disable_dict_factory=True)[0]
+        etatPartie = ""
+        if partie["estEnCours"] == 0 and partie["aGagne"] == 1:
+            etatPartie = "Gagnée"
+        elif partie["estEnCours"] == 0 and partie["aGagne"] == 0:
+            etatPartie = "Perdue"
+        scorePartie = partie["scorePartie"]
+        if scorePartie is None:
+            scorePartie = " - "
+        if partie["estEnCours"] == 1:
+            scorePartie = " - "
+            etatPartie = "En cours"
+            partie["motATrouver"] = "🥸"
+        partie_w_detail = [partie["idPartie"], str(nbTentative) + "/" + str(param["nbEssais"]), param["longueur"],
+                           partie["motATrouver"], etatPartie, scorePartie, param["difficulte"], partie["date"]]
+        lignes.append(partie_w_detail)
+    return lignes
 
-    print(retour)
-    return retour
 
 def delete_partie_by_id(idPartie: int) -> None:
     """
