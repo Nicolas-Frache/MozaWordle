@@ -207,7 +207,7 @@ def add_score_utilisateur(idPartie: int) -> None:
                               disable_dict_factory=True, one_row=True)[0]
     newScoreUtilisateur = scoreUtilisateur + scorePartie
 
-    basic_query("UPDATE utilisateur SET scoreUtilisateur = ?", (newScoreUtilisateur,), commit=True)
+    basic_query("UPDATE utilisateur SET scoreUtilisateur = ? WHERE idUtilisateur = ?", (newScoreUtilisateur,idJoueur,), commit=True)
 
 
 # gets
