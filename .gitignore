@@ -339,3 +339,7 @@ $RECYCLE.BIN/
 identifier.sqlite
 
 app_wordle/flask_session/
+
+solveur/obj/
+
+solveur/bin/
