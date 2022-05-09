@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 #include "interface.h"
 
 int api_mode = false;
@@ -12,6 +13,8 @@ void print_hello(){
     if(api_mode){
         printf("api mode !\n");
     } else {
-        printf("Console mode !\n");
+        system("figlet -f slant Solveur ! | cowsay -n");
+        printf("\nValentin CHANEL, Matéo DEMANGEON, Nicolas FRACHE, Victor VOISIN.");
+        printf("\n-----------------------------------\n\n");
     }
 }
