@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include "../solver/solver.h"
+#include "../solver/list_tools.h"
 
 typedef struct words_list_t {
     int words_size;

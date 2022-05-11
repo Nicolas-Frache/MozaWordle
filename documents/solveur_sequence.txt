@@ -1,0 +1,78 @@
+
+@startuml
+
+title Utilisation du solveur sur une partie
+
+
+actor user
+participant interface.c as ui
+participant main.c as main
+participant solver.c as solver
+participant dict.h as dict
+database db
+
+activate main #DarkSalmon
+== Initialisation ==
+ui <- main : ask_for_word_length()
+activate ui #FFBBBB
+user <- ui : demande \nlongueur mot
+activate user #FFBBBB 
+user --> ui : //5//
+deactivate user
+ui --> main : 5
+deactivate ui
+
+
+main -> dict : import_dict(5)
+activate dict #FFBBBB 
+dict -> db : "select … from …"
+activate db #Yellow
+dict <-- db : <i>response</i>
+deactivate db
+main <-- dict : dictionnaire 
+deactivate dict
+
+== Essai 1 - Recherche du meilleur mot ==
+main -> dict : get_all_matching_words(…)
+activate dict #FFBBBB 
+main <-- dict : matching_words
+deactivate dict
+
+loop //Pour TOUS les mots "candidat" du dictionnaire//
+    main -> solver : evaluate_try_score(candidat)
+    activate solver #FFBBBB
+    loop <i>Pour tous les mots "current_possible"</i>\n <i>possiblement valides avec les indices</i>
+        solver -> solver : evaluate_score_with_specific_combination\n(candidat, current_possible)
+        activate solver #DarkSalmon
+        deactivate solver
+    end
+    main <-- solver : mot_avec_score\n_moyen_max
+    deactivate solver
+end
+
+ui <- main : ask_for_answer(mot)
+activate ui #FFBBBB
+user <- ui : demande coloration\npour la tentative
+activate user #FFBBBB 
+user --> ui : //01020//
+deactivate user
+ui --> main : [0, 1, 0, 2, 0]
+deactivate ui
+
+== Essai 2 ==
+main -> dict : get_all_matching_words( [0, 1, 0, 2, 0] )
+activate dict #FFBBBB 
+...
+== Et ainsi de suite  … ==
+
+
+
+
+
+
+
+
+
+
+
+
