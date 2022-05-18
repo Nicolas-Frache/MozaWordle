@@ -8,13 +8,6 @@
 void print_hello();
 
 /**
- * Demande à l'utilisateur de saisir le nombre de lettre du mot à deviner
- * @return le nombre de lettre
- */
-int ask_for_word_length();
-
-
-/**
  * Affiche message début de loop, avec option pour jouer ou quitter la partie
  * 
  */

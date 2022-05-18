@@ -1,6 +1,3 @@
-//
-// Created by nicol on 09/05/2022.
-//
 #include <stdlib.h>
 #include <stdbool.h>
 
@@ -8,7 +5,7 @@
 #define SOLVEUR_LIST_TOOLS_H
 
 typedef struct list_tries_t {
-    int nb_tries_t;
+    int nb_tries;
     struct try_t *head;
 } list_tries_t;
 

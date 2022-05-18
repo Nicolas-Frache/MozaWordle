@@ -3,18 +3,18 @@
 
 #include <stdbool.h>
 #include "../solver/solver.h"
-#include "../solver/list_tools.h"
+#include "../solver/tries_list_tools.h"
 
-typedef struct _word_t {
+typedef struct {
     int word_size;
     char* mots;
     double frequency;
 } word_t;
 
-typedef struct words_list_t {
+typedef struct {
     int words_size;
-    word_t** words; // tableau de référence à des struct_word
-} dict_t;
+    word_t** words;
+} words_list_t;
 
 /**
  * Génère le dictionnaire de mots d'une longueur donnée
