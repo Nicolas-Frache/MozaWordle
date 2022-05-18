@@ -5,10 +5,15 @@
 #include "../solver/solver.h"
 #include "../solver/list_tools.h"
 
+typedef struct _word_t {
+    int word_size;
+    char* mots;
+    double frequency;
+} word_t;
+
 typedef struct words_list_t {
     int words_size;
-    char *mots;
-    double frequency;
+    word_t** words; // tableau de référence à des struct_word
 } dict_t;
 
 /**
