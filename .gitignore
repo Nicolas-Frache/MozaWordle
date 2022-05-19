@@ -343,3 +343,7 @@ app_wordle/flask_session/
 solveur/bin/
 
 solveur/obj/
+
+*.o
+
+*.gch

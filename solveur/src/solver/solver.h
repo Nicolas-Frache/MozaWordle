@@ -3,7 +3,7 @@ struct words_list_t;
 #ifndef SOLVEUR_SOLVER_H
 #define SOLVEUR_SOLVER_H
 
-#include "tries_list_tools.h"
+#include "attempts_tools.h"
 #include "../dict/dict.h"
 
 /**
@@ -17,7 +17,7 @@ struct words_list_t;
  * @param tries - La liste (chainée) des essais precedents permettant d'évaluer le score
  * @return
  */
-double evaluate_try_score(char *candidate_word,struct words_list_t *matching_words, struct list_tries_t *tries);
+double evaluate_try_score(char *candidate_word,struct words_list_t *matching_words, struct list_attempts_t *tries);
 
 /**
  * Pour un mot candidats donnée, calcul le score correspondant aux nouvelles informations qu'on
@@ -28,7 +28,7 @@ double evaluate_try_score(char *candidate_word,struct words_list_t *matching_wor
  * @param tries - Les essais précèdents pour estimer la quantité de nouvelles informations
  * @return
  */
-double evaluate_score_with_specific_combinaison(char *candidate_word, char *matching_word, list_tries_t *tries);
+double evaluate_score_with_specific_combinaison(char *candidate_word, char *matching_word, list_attempts_t *tries);
 
 
 #endif //SOLVEUR_SOLVER_H

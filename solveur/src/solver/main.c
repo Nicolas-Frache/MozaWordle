@@ -6,6 +6,7 @@
 
 #include "../test/snow.h"
 #include "../test/test_test.c"
+#include "../test/test_attempts_tools.c"
 snow_main();
 
 #else

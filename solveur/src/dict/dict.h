@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 #include "../solver/solver.h"
-#include "../solver/tries_list_tools.h"
+#include "../solver/attempts_tools.h"
 
 typedef struct {
     int word_size;
@@ -32,7 +32,7 @@ void destroy_dict();
  * @param list_tries_t - list des essais précedents et des résultats associées sous formes de liste chainée
  * @return
  */
-struct words_list_t get_all_matching_words(list_tries_t *list_tries, struct words_list_t *list_words);
+struct words_list_t get_all_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words);
 
 /**
  * Teste si un mot peut être valide sachant un essai en particulier et son résultat
@@ -40,7 +40,7 @@ struct words_list_t get_all_matching_words(list_tries_t *list_tries, struct word
  * @param try - essai et son résultat
  * @return true si le mot peut être valide, false sinon
  */
-bool is_matching_word_specific_try(char *word, try_t try);
+bool is_matching_word_specific_try(char *word, attempt_t try);
 
 /**
  * Pour une liste
@@ -48,6 +48,6 @@ bool is_matching_word_specific_try(char *word, try_t try);
  * @param list_words
  * @return
  */
-int get_number_of_no_matching_words(list_tries_t *list_tries, struct words_list_t *list_words);
+int get_number_of_no_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words);
 
 #endif //SOLVEUR_DICT_H
