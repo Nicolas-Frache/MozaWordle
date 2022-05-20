@@ -13,28 +13,12 @@ void print_hello();
  */
 void print_begining_msg();
 
-
 /**
- * Demande code, et le retourne
- * @param code_possible la liste des code accepter, redemande un code jusqu'à ce qu'un soit accepter
- * @return int code
- */
-int ask_code(int* code_possible);
-
-/**
- * Demande à l'utilisateur d'indiquer la solution sous la forme "00102"
+ * Demande à l'utilisateur d'indiquer la solution sous la forme "00102" ou "-1" pour quitter
  * @param result - le tableau entier qui est passée par référence puis modifiée par la méthode
  * @param tried_word - Le mot que le solveur propose
  */
 void ask_for_answer(int result[], char *tried_word);
-
-
-/**
- * Congratulations message
- * 
- */
-void congratulations();
-
 
 /**
  * Demande à l'utilisateur s'il veut rejouer

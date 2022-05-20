@@ -10,7 +10,7 @@ typedef struct list_attempts_t {
 } list_attempts_t;
 
 typedef struct attempt_t {
-    char *words;
+    char *word;
     int *results; //ref a tableau du résultat du match
     struct attempt_t *next;
 } attempt_t;
@@ -23,7 +23,7 @@ void destroy_attempt(attempt_t* attempt);
 
 void destroy_list_attempts(list_attempts_t *list_attempts);
 
-void append_list_attempts(list_attempts_t *list_attempts, char *words, int *results);
+void append_attempt(list_attempts_t *list_attempts, char *words, int *results);
 
 bool is_empty_list_attempts(list_attempts_t *list_attempts);
 

@@ -5,35 +5,25 @@
 #include <math.h>
 #include "interface.h"
 
-int api_mode = false;
-
-void set_to_api_mode(){
-    api_mode = true;
+void print_hello() {
+    system("figlet -f slant Solveur ! | cowsay -n");
+    printf("\nGroupe E32 - Valentin CHANEL, Matéo DEMANGEON, Nicolas FRACHE, Victor VOISIN.");
+    printf("\n-----------------------------------\n\n");
 }
 
-void print_hello(){
-    if(api_mode){
-        printf("api mode !\n");
-    } else {
-        system("figlet -f slant Solveur ! | cowsay -n");
-        printf("\nValentin CHANEL, Matéo DEMANGEON, Nicolas FRACHE, Victor VOISIN.");
-        printf("\n-----------------------------------\n\n");
-    }
-}
-
-int ask_for_word_length(){
+int ask_for_word_length() {
     int length = 0;
     printf("Saisissez le nombre de lettre du mot à deviner :\n");
     scanf("%d", &length);
     return length;
 }
 
-bool is_valid_answer(int res, int size){
+bool is_valid_answer(int res, int size) {
     // TODO: Vérifier que la chaine est de la bonne longueur, et bien composée de 0, 1 et 2
-    return (res>=0 && res<pow(10,size));
+    return (res >= 0 && res < pow(10, size));
 }
 
-void ask_for_answer(int result[], char *tried_word){
+void ask_for_answer(int result[], char *tried_word) {
     int taille = strlen(tried_word);
     int res = 0;
     printf("Saisissez le résultat de la proposition : %s\n", tried_word);
@@ -41,7 +31,7 @@ void ask_for_answer(int result[], char *tried_word){
 
     bool is_valid = is_valid_answer(res, taille);
 
-    while(!is_valid){
+    while (!is_valid) {
         printf("Résultat invalide pour la proposition %s, saisissez-le à nouveau : \n", tried_word);
         scanf("%d", &res);
         is_valid = is_valid_answer(res, taille);
