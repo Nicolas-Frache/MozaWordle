@@ -26,10 +26,10 @@ void import_dict(int word_size);
 void destroy_dict();
 
 /**
- * Retourne le nombre de mots qui pourraient éventuellement être bon parmis un liste,
+ * Retourne les mots qui pourraient éventuellement être bon parmi un liste,
  * sachant la liste d'essai et de resultats en paramètre
  * @param list_tries - Essai précèdent et leur resultat
- * @param list_tries_t - list des essais précedents et des résultats associées sous formes de liste chainée
+ * @param list_tries_t - list des essais precedents et des résultats associées sous formes de liste chainée
  * @return
  */
 struct words_list_t get_all_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words);
@@ -40,14 +40,6 @@ struct words_list_t get_all_matching_words(list_attempts_t *list_tries, struct w
  * @param try - essai et son résultat
  * @return true si le mot peut être valide, false sinon
  */
-bool is_matching_word_specific_try(char *word, attempt_t try);
-
-/**
- * Pour une liste
- * @param list_tries
- * @param list_words
- * @return
- */
-int get_number_of_no_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words);
+bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
 
 #endif //SOLVEUR_DICT_H

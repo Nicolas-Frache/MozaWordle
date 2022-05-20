@@ -16,7 +16,7 @@ activate main #DarkSalmon
 ui <- main : ask_for_word_length()
 activate ui #FFBBBB
 user <- ui : demande \nlongueur mot
-activate user #FFBBBB 
+activate user #FFBBBB
 user --> ui : //5//
 deactivate user
 ui --> main : 5
@@ -24,36 +24,42 @@ deactivate ui
 
 
 main -> dict : import_dict(5)
-activate dict #FFBBBB 
+activate dict #FFBBBB
 dict -> db : "select … from …"
 activate db #Yellow
 dict <-- db : <i>response</i>
 deactivate db
-main <-- dict : dictionnaire 
+main <-- dict : dictionnaire
 deactivate dict
 
 == Essai 1 - Recherche du meilleur mot ==
 main -> dict : get_all_matching_words(…)
-activate dict #FFBBBB 
+activate dict #FFBBBB
 main <-- dict : matching_words
 deactivate dict
-
-loop //Pour TOUS les mots "candidat" du dictionnaire//
-    main -> solver : evaluate_try_score(candidat)
+main -> solver : compute_next_best_attempt(…)
+loop //Pour TOUS les mots "w" du dictionnaire//
     activate solver #FFBBBB
+    solver -> solver : evaluate_attempt_score(w, …)
+    activate solver #DarkSalmon
     loop <i>Pour tous les mots "current_possible"</i>\n <i>possiblement valides avec les indices</i>
-        solver -> solver : evaluate_score_with_specific_combination\n(candidat, current_possible)
-        activate solver #DarkSalmon
+        solver -> solver : evaluate_score_with_specific_combination\n(w, current_possible)
+        activate solver #IndianRed
+        solver -> dict : is_matching_word_specific_attempt(…)
+        activate dict #FFBBBB
+        solver <-- dict : true|false
+        deactivate dict
         deactivate solver
     end
-    main <-- solver : mot_avec_score\n_moyen_max
     deactivate solver
 end
+main <-- solver : mot_avec_score\n_moyen_max
+deactivate solver
 
 ui <- main : ask_for_answer(mot)
 activate ui #FFBBBB
 user <- ui : demande coloration\npour la tentative
-activate user #FFBBBB 
+activate user #FFBBBB
 user --> ui : //01020//
 deactivate user
 ui --> main : [0, 1, 0, 2, 0]
@@ -61,18 +67,7 @@ deactivate ui
 
 == Essai 2 ==
 main -> dict : get_all_matching_words( [0, 1, 0, 2, 0] )
-activate dict #FFBBBB 
+activate dict #FFBBBB
 ...
 == Et ainsi de suite  … ==
-
-
-
-
-
-
-
-
-
-
-
 
