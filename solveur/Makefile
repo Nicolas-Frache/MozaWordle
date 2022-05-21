@@ -17,28 +17,30 @@ T = src/test/
 TEST = -DSNOW_ENABLED
 
 # Pour utiliser faire : 'make exe1'
-exe1: main.o
+exe1: main.o interface.o solver.o attempts_tools.o dict.o
 	$(COMPIL) -o $(B)executable_1 main.o interface.o solver.o attempts_tools.o && $(MOV)
-main.o: $(S)main.c interface.o solver.o attempts_tools.o
+main.o:
 	$(COMPIL) -c $(S)main.c
 
-interface.o: $(IO)interface.c $(IO)interface.h
+interface.o:
 	$(COMPIL) -c $(IO)interface.c
-solver.o: $(S)solver.c $(S)solver.h $(D)dict.h
+solver.o:
 	$(COMPIL) -c $(S)solver.c
-attempts_tools.o: $(S)attempts_tools.c $(S)attempts_tools.h
-	$(COMPIL) -c $(S)attempts_tools.c $(S)attempts_tools.h
+attempts_tools.o:
+	$(COMPIL) -c $(S)attempts_tools.c
+dict.o:
+	$(COMPIL) -c $(D)dict.c
 
 
-test: main_test.o test_test.o attempts_tools.o
-	$(COMPIL) $(TEST) -o $(B)test main_test.o attempts_tools.o && $(MOV)
-main_test.o: $(S)main.c
+test: main_test.o attempts_tools.o dict.o solver.o interface.o main.o
+	$(COMPIL) $(TEST) -o $(B)test main_test.o dict.o attempts_tools.o solver.o && $(MOV)
+main_test.o:
 	$(COMPIL) $(TEST) -c $(S)main.c	&& mv ./main.o ./main_test.o
 
-test_test.o: $(T)test_test.c
-	$(COMPIL) $(TEST) -c $(T)test_test.c $(S)attempts_tools.h
-test_attempts_tools.o: $(T)test_attempts_tools.c
-	$(COMPIL) $(TEST) -c $(T)test_attempts_tools.c $(S)attempts_tools.h
+#test_test.o: $(T)test_test.c
+#	$(COMPIL) $(TEST) -c $(T)test_test.c
+#test_attempts_tools.o: $(T)test_attempts_tools.c
+#	$(COMPIL) $(TEST) -c $(T)test_attempts_tools.c
 
 # Pour nettoyer les fichiers sources
 clean:
