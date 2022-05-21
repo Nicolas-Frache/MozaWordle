@@ -7,14 +7,14 @@
 
 
 typedef struct word_t {
-    char *mots;
+    char* mots;
     double frequency;
-    struct word_t *next;
+    struct word_t* next;
 } word_t;
 
 typedef struct {
     int words_size;
-    struct word_t *head;
+    struct word_t* head;
     int nb_words;
 } words_list_t;
 
@@ -37,11 +37,20 @@ void destroy_dict();
 struct words_list_t *get_all_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words);
 
 /**
- * Teste si un mot peut être valide sachant un essai en particulier et son résultat
+ * Teste si un mot peut être valide sachant une liste d'essai en particulier et leurs résultats
  * @param word - mot à tester
- * @param try - essai et son résultat
+ * @param attempts - essais et son résultats
  * @return true si le mot peut être valide, false sinon
  */
 bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
+
+
+/**
+ * Test si un mot peut être valide sachant un essai et son résultat
+ * @param word - mot à  tester
+ * @param attempt - un seul essai
+ * @return true si le mot peut être valide, false sinon
+ */
+bool is_matching_word_one_specific_attempt(char* word, attempt_t* attempt);
 
 #endif //SOLVEUR_DICT_H
