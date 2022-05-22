@@ -3,8 +3,9 @@
 #define UNUSED(x) (void)(x)
 
 void reset_attempts(list_attempts_t *attempts){
-    destroy_list_attempts(attempts);
-    attempts = create_list_attempts();
+    attempts->nb_tries = 0;
+    destroy_attempt(attempts->head);
+    attempts->head = NULL;
 }
 
 describe(Dict) {
@@ -39,6 +40,8 @@ describe(Dict) {
             ;asserteq(is_matching_word_specific_attempts("zaz", attempts), true, "should match")
             ;asserteq(is_matching_word_specific_attempts("zza", attempts), true, "should match")
             ;asserteq(is_matching_word_specific_attempts("zzz", attempts), false, "should not match")
+            ;asserteq(is_matching_word_specific_attempts("zba", attempts), false, "should not match")
+            ;asserteq(is_matching_word_specific_attempts("zac", attempts), false, "should not match")
             ;
             reset_attempts(attempts);
             append_attempt(attempts, "aba", r_wrong_place_1_0_0);

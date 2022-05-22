@@ -51,6 +51,6 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
  * @param attempt - un seul essai
  * @return true si le mot peut être valide, false sinon
  */
-bool is_matching_word_one_specific_attempt(char* word, attempt_t* attempt);
+bool is_matching_word_one_specific_attempt_machine_a_gaz_edition(char* word, attempt_t* attempt);
 
 #endif //SOLVEUR_DICT_H

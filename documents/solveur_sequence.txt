@@ -70,4 +70,4 @@ main -> dict : get_all_matching_words( [0, 1, 0, 2, 0] )
 activate dict #FFBBBB
 ...
 == Et ainsi de suite  … ==
-
+@enduml
