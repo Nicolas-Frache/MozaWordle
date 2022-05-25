@@ -8,7 +8,7 @@ describe(attempts_tools) {
     int results_2[] = {2, 2, 2, 2, 2};
 
     before_each() {
-        attempts = create_list_attempts();
+        attempts = create_list_attempts(3);
     }
     after_each() {
         destroy_list_attempts(attempts);
@@ -17,6 +17,7 @@ describe(attempts_tools) {
     it("creation") {
         asserteq(attempts->nb_tries, 0, "Empty list should have 0 elements")
         ;asserteq(attempts->head, NULL, "Empty list should have no first element")
+        ;asserteq(attempts->word_size, 3, "Word size should be 3")
         ;
     }
     it("insertion"){
@@ -48,7 +49,7 @@ describe(attempts_tools) {
         asserteq(attempts->nb_tries, 1, "List should have 1 element before deletion")
         ;
         destroy_list_attempts(attempts);
-        attempts = create_list_attempts();
+        attempts = create_list_attempts(5);
         append_attempt(attempts, "melon", results_2);
         asserteq(attempts->nb_tries, 1, "List should have 1 element after deletion and insertion")
         ;

@@ -7,6 +7,7 @@
 typedef struct list_attempts_t {
     int nb_tries;
     struct attempt_t *head;
+    int word_size;
 } list_attempts_t;
 
 typedef struct attempt_t {
@@ -17,7 +18,7 @@ typedef struct attempt_t {
 
 attempt_t* create_attempt(char* words, int* results);
 
-list_attempts_t *create_list_attempts();
+list_attempts_t *create_list_attempts(int word_size);
 
 void destroy_attempt(attempt_t* attempt);
 

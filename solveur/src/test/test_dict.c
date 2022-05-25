@@ -14,12 +14,43 @@ describe(Dict) {
     int r_none_match_0_0_0[] = {0, 0, 0};
     int r_wrong_place_1_0_0[] = {1, 0, 0};
     int r_wrong_place_0_0_1[] = {0, 0, 1};
+    int r_good_place_0_2_0[] = {0, 2, 0};
 
     before_each() {
-        attempts = create_list_attempts();
+        attempts = create_list_attempts(3);
+        defer(destroy_list_attempts(attempts))
+        ;
     }
-    after_each() {
-        destroy_list_attempts(attempts);
+
+    subdesc(constraints){
+        it("Constraints struct initialization"){
+            constraints_t *constraints = create_constraints(3);
+            defer(destroy_constraints(constraints))
+            ;asserteq(constraints->word_size, 3, "bad initialization")
+            ;asserteq(constraints->global_forbidden_letters[25], false, "bad initialization")
+            ;asserteq(constraints->global_forbidden_letters[0], false, "bad initialization")
+            ;asserteq(constraints->emplacement_constraints->has_a_mandatory_letter, false, "bad initialization")
+            ;asserteq(constraints->emplacement_constraints->forbidden_letters[25], false, "bad initialization")
+            ;asserteq(constraints->word_constraint->is_exact_nb_occurrences_letters[25], false, "bad initialization")
+            ;asserteq(constraints->word_constraint->min_nb_occurrences_letters[25], 0, "bad initialization")
+            ;
+        }
+        it("compute_constraints_from_attempts"){
+            append_attempt(attempts, "abc", r_all_match_2_2_2);
+            constraints_t *constraints = compute_constraints_from_attempts(attempts);
+            defer(destroy_constraints(constraints))
+            ;asserteq(constraints->emplacement_constraints[2].has_a_mandatory_letter, true, " ")
+            ;asserteq(constraints->emplacement_constraints->mandatory_letter, 'a', " ")
+            ;asserteq(constraints->emplacement_constraints[1].mandatory_letter, 'b', " ")
+            ;asserteq(constraints->emplacement_constraints[2].mandatory_letter, 'c', " ")
+            ;
+            reset_attempts(attempts);
+            append_attempt(attempts, "aba", r_wrong_place_1_0_0);
+            constraints_t *constraints_2 = compute_constraints_from_attempts(attempts);
+            defer(destroy_constraints(constraints_2))
+            ;
+
+        }
     }
 
     subdesc(match){
@@ -36,7 +67,8 @@ describe(Dict) {
             ;
             reset_attempts(attempts);
             append_attempt(attempts, "abc", r_wrong_place_1_0_0);
-            asserteq(is_matching_word_specific_attempts("azz", attempts), false, "should not match")
+            asserteq(is_matching_word_specific_attempts("azz", attempts), false,
+                     "should not match bc if 'a' in first position is code 1 so 'a' can't be at this position")
             ;asserteq(is_matching_word_specific_attempts("zaz", attempts), true, "should match")
             ;asserteq(is_matching_word_specific_attempts("zza", attempts), true, "should match")
             ;asserteq(is_matching_word_specific_attempts("zzz", attempts), false, "should not match")
@@ -45,16 +77,25 @@ describe(Dict) {
             ;
             reset_attempts(attempts);
             append_attempt(attempts, "aba", r_wrong_place_1_0_0);
-            asserteq(is_matching_word_specific_attempts("zza", attempts), false, "should not match")
+            asserteq(is_matching_word_specific_attempts("zza", attempts), false,
+                     "should not match bc we can deduce from aba->100 that the word has exactly one 'a'")
             ;asserteq(is_matching_word_specific_attempts("zaz", attempts), true, "should match")
-            ;asserteq(is_matching_word_specific_attempts("zzz", attempts), false, "should not match")
+            ;asserteq(is_matching_word_specific_attempts("zzz", attempts), false,
+                      "should not match bc we can deduce from aba->100 that the word has exactly one 'a'")
             ;
             reset_attempts(attempts);
             append_attempt(attempts, "abc", r_none_match_0_0_0);
             asserteq(is_matching_word_specific_attempts("zzz", attempts), true, "should match")
             ;asserteq(is_matching_word_specific_attempts("azz", attempts), false, "should not match")
-            ;asserteq(is_matching_word_specific_attempts("bzz", attempts), false, "should not match")
+            ;asserteq(is_matching_word_specific_attempts("bzz", attempts), false,
+                      "should not match, a letter with a zero code can't be part of the solution at any place")
             ;asserteq(is_matching_word_specific_attempts("czz", attempts), false, "should not match")
+            ;
+            reset_attempts(attempts);
+            append_attempt(attempts, "aab", r_good_place_0_2_0);
+            asserteq(is_matching_word_specific_attempts("zaz", attempts), true, "should match")
+            ;asserteq(is_matching_word_specific_attempts("zaa", attempts), false,
+                      "should not match bc we can deduce from aab->020 that the word has exactly one 'a'")
             ;
         }
         it("match with two attempts"){

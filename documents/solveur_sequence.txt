@@ -38,17 +38,24 @@ activate dict #FFBBBB
 main <-- dict : matching_words
 deactivate dict
 main -> solver : compute_next_best_attempt(…)
-loop //Pour TOUS les mots "w" du dictionnaire//
+loop //Pour tous les mots "w" du dictionnaire//
     activate solver #FFBBBB
     solver -> solver : evaluate_attempt_score(w, …)
     activate solver #DarkSalmon
-    loop <i>Pour tous les mots "current_possible"</i>\n <i>possiblement valides avec les indices</i>
-        solver -> solver : evaluate_score_with_specific_combination\n(w, current_possible)
+    loop <i>Pour tous les mots "c1"</i><i>possiblement valides avec les indices actuels</i>
+        note over solver
+            On part du principe que c1 est la solution et qu'on essaie
+            de saisir le mot w. On calcule alors le score de w en évaluant le nombre
+            de mots que les indices issues de la saisie de w élimineraient
+        end note
+        solver -> solver : evaluate_score_with_specific_combination\n(w, c1)
         activate solver #IndianRed
-        solver -> dict : is_matching_word_specific_attempt(…)
-        activate dict #FFBBBB
-        solver <-- dict : true|false
-        deactivate dict
+        loop Pour tous les mots "<i>c2</i>" possiblement valides
+            solver -> dict : is_matching_word_specific_attempt(…)
+            activate dict #FFBBBB
+            solver <-- dict : true|false
+            deactivate dict
+        end loop
         deactivate solver
     end
     deactivate solver

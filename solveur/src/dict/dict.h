@@ -5,18 +5,69 @@
 #include "../solver/solver.h"
 #include "../solver/attempts_tools.h"
 
+#define NB_LETTERS 26
+#define MAX_WORD_LENGTH 20
 
 typedef struct word_t {
-    char* mots;
+    char *mots;
     double frequency;
-    struct word_t* next;
+    struct word_t *next;
 } word_t;
 
-typedef struct {
+typedef struct words_list_t {
     int words_size;
-    struct word_t* head;
     int nb_words;
+    struct word_t *head;
 } words_list_t;
+
+/**
+ * Structure qui décrit les contraintes portant sur l'ensemble du mot à trouver.
+ * Et plus particulièrement le nombre minimale ou exact d'une lettre donnée.
+ */
+typedef struct word_constraint_t {
+    int min_nb_occurrences_letters[NB_LETTERS];
+    bool is_exact_nb_occurrences_letters[NB_LETTERS];
+} word_constraint_t;
+
+/**
+ * Structure qui décrit les contraintes du mot à trouver sur une lettre en particulier,
+ * Deux possibilité: <lu><li>On connait tout simplement la lettre qui doit être à cet emplacement</li>
+ * <li>On a une liste de lettres dont on sait qu'elles ne peuvent pas être à cet emplacement, on représente cela
+ * sous forme d'un tableau de 26 booléens</li><lu>
+ */
+typedef struct emplacement_constraints_t {
+    bool has_a_mandatory_letter;
+    char mandatory_letter;
+    bool forbidden_letters[NB_LETTERS];
+} emplacement_constraints_t;
+
+/**
+ *  Structure qui permet la description de toutes les contraintes sur le mot à trouver avec :<ul>
+ *  <li>Une liste des lettres qui sont totalement interdites dans le mots sous forme d'un tableau de 26 booléens</li>
+ *  <li>La liste des contraintes qui portent sur le mot dans son ensemble (nombre d'occurrences d'une lettre), sous
+ *  forme d'une liste chaînée de structure <i>word_constraint_t</i></li>
+ *  <li>Les contraintes qui portent sur un emplacement de mot en particulier (lettre imposée, ou liste de lettres
+ *  interdites, sous forme d'un tableau de structures <i>emplacement_constraints_t</i></li></ul>
+ */
+typedef struct constraints_t {
+    int word_size;
+    word_constraint_t *word_constraint;
+    emplacement_constraints_t *emplacement_constraints;
+    bool global_forbidden_letters[NB_LETTERS];
+} constraints_t;
+
+
+constraints_t *create_constraints(int word_size);
+void destroy_constraints(constraints_t *constraints);
+void destroy_word_constraint(word_constraint_t *word_constraint);
+void destroy_dict();
+
+/**
+ * Crée la structure représentant les contraintes associées au mot à trouver à partir de la liste d'essaie
+ * @param attempts
+ * @return
+ */
+constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts);
 
 /**
  * Génère le dictionnaire de mots d'une longueur donnée
@@ -24,8 +75,6 @@ typedef struct {
  * @param word_size
  */
 void import_dict(int word_size);
-
-void destroy_dict();
 
 /**
  * Retourne les mots qui pourraient éventuellement être bons parmi un liste,
@@ -51,6 +100,7 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
  * @param attempt - un seul essai
  * @return true si le mot peut être valide, false sinon
  */
-bool is_matching_word_one_specific_attempt_machine_a_gaz_edition(char* word, attempt_t* attempt);
+bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt);
+
 
 #endif //SOLVEUR_DICT_H

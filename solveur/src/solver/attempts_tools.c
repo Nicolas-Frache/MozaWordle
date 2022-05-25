@@ -12,10 +12,11 @@ attempt_t *create_attempt(char *words, int *results) {
     return new;
 }
 
-list_attempts_t *create_list_attempts() {
+list_attempts_t *create_list_attempts(int word_size) {
     list_attempts_t *new = (list_attempts_t *) malloc(sizeof(list_attempts_t));
     new->nb_tries = 0;
     new->head = NULL;
+    new->word_size = word_size;
     return new;
 }
 
