@@ -8,7 +8,14 @@
 void print_hello() {
     system("figlet -f slant Solveur ! | cowsay -n");
     printf("\nGroupe E32 - Valentin CHANEL, Matéo DEMANGEON, Nicolas FRACHE, Victor VOISIN.");
-    printf("\n-----------------------------------\n\n");
+    printf("\n-----------------------------------\n");
+}
+
+void print_begining_msg(){
+    int jouer;
+    printf("Bienvenue sur RELA !\n");
+    jouer = ask_for_play();
+    //TODO traiter la cas jouer/quitter
 }
 
 int ask_for_word_length() {
@@ -38,4 +45,18 @@ void ask_for_answer(int result[], char *tried_word) {
     }
 
     result = &res;
+}
+
+bool ask_for_play(){
+    // TODO : Tester
+    int jouer = 0;
+    printf("Voulez vous jouer ?\n");
+    printf("(Tapez 1 pour jouer, tapez 0 pour quitter)\n");
+    scanf("%1d\n", &jouer); //scan le premier charactere
+    if(jouer!=0 && jouer!=1){  //test si c'est bien un bool
+        printf("%1d\n",0);  //%1d prends le premier charactère de l'entrée, à voir si cela pause de problèmes
+        return 0;
+    }
+    printf("%1d\n",jouer);
+    return jouer;
 }
