@@ -24,9 +24,8 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     while (attempt != NULL) {
         // Prise en compte de l'essai
         // On initialise le nombre minimum de chaque lettre à 0
-        int min_nb_occurrences_letters[26];
-        bool can_be_exact_nb_occ_letters[26];
-        bool can_be_forbidden[26];
+        int min_nb_occurrences_letters[26] = {};
+        bool can_be_exact_or_forbidden[26] = {};
         // On parcourt le mot de gauche à droite
         for (int i = 0; i < constraints->word_size; i++) {
             int indice_lettre_attempt = attempt->word[i] - 97;
@@ -36,11 +35,8 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
                     constraints->emplacement_constraints[i].has_a_mandatory_letter = true;
                     constraints->emplacement_constraints[i].mandatory_letter = attempt->word[i];
                 }
-                if (attempt->results[i] == 1) {
+                if (attempt->results[i] <= 1) {
                     constraints->emplacement_constraints[i].forbidden_letters[indice_lettre_attempt] = true;
-                }
-                if (attempt->results[i] == 0) {
-                    can_be_forbidden[indice_lettre_attempt] = true;
                 }
             }
             // Puis si le code est 2 ou 1, on augmente de 1 le nombre d'occurrences minimal
@@ -50,7 +46,7 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
             // Si on a un code 0, mais un nombre minimal d'essai non-nul, alors on sait que le nombre minimal
             // qu'on trouvera est en réalité le nombre exact d'occurrences de la lettre
             if (attempt->results[i] == 0) {
-                can_be_exact_nb_occ_letters[indice_lettre_attempt] = true;
+                can_be_exact_or_forbidden[indice_lettre_attempt] = true;
             }
         }
 
@@ -61,7 +57,7 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
             if (!constraints->word_constraint->is_exact_nb_occurrences_letters[i]) {
                 // ... Alors s'il y a eu un code zero associé à une lettre qui a de part ailleurs
                 // un code != 0 dans le mot, on sait qu'on a connaissance du nombre exact d'occurrences.
-                if (can_be_exact_nb_occ_letters[i] && min_nb_occurrences_letters[i] != 0) {
+                if (can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] != 0) {
                     constraints->word_constraint->is_exact_nb_occurrences_letters[i] = true;
                     constraints->word_constraint->min_nb_occurrences_letters[i] = min_nb_occurrences_letters[i];
                 } else if (constraints->word_constraint->min_nb_occurrences_letters[i] <
@@ -72,10 +68,10 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
                 }
             }
 
-            // De plus, on a précédemment mis de côté dans "can_be_forbidden" les lettres avec un code 0
+            // De plus, on a précédemment mis de côté dans "can_be_exact_or_forbidden" les lettres avec un code 0
             // Donc possiblement absentes du mot. On s'en assure en vérifiant mtn que le nb d'occurence est 0
             // Si c'est le cas on sauvegarde l'information dans la structure
-            if(can_be_forbidden[i] && min_nb_occurrences_letters[i] == 0){
+            if(can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] == 0){
                 constraints->global_forbidden_letters[i] = true;
             }
         }

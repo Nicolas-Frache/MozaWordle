@@ -40,16 +40,24 @@ describe(Dict) {
             constraints_t *constraints = compute_constraints_from_attempts(attempts);
             defer(destroy_constraints(constraints))
             ;asserteq(constraints->emplacement_constraints[2].has_a_mandatory_letter, true, " ")
-            ;asserteq(constraints->emplacement_constraints->mandatory_letter, 'a', " ")
-            ;asserteq(constraints->emplacement_constraints[1].mandatory_letter, 'b', " ")
-            ;asserteq(constraints->emplacement_constraints[2].mandatory_letter, 'c', " ")
+            ;asserteq(constraints->emplacement_constraints[0].mandatory_letter, 'a', "'a' in first place")
+            ;asserteq(constraints->emplacement_constraints[1].mandatory_letter, 'b', "'b' in second place")
+            ;asserteq(constraints->emplacement_constraints[2].mandatory_letter, 'c', "'c' in third place")
             ;
             reset_attempts(attempts);
+            destroy_constraints(constraints);
             append_attempt(attempts, "aba", r_wrong_place_1_0_0);
-            constraints_t *constraints_2 = compute_constraints_from_attempts(attempts);
-            defer(destroy_constraints(constraints_2))
+            constraints = compute_constraints_from_attempts(attempts);
+            ;asserteq(constraints->global_forbidden_letters[1], true, "'b' cant be in the word")
+            ;asserteq(constraints->word_constraint->is_exact_nb_occurrences_letters[0], true, "exact number of 'a' known")
+            ;asserteq(constraints->word_constraint->min_nb_occurrences_letters[0], 1, "exactly one 'a'")
+            ;asserteq(constraints->emplacement_constraints[0].forbidden_letters[0], true, "'a' cant be at the first place")
+            ;asserteq(constraints->emplacement_constraints[1].forbidden_letters[0], false, "'a' can be at the second place")
+            ;asserteq(constraints->emplacement_constraints[2].forbidden_letters[0], true, "'a' cant be at the last place")
+            ;asserteq(constraints->emplacement_constraints[1].has_a_mandatory_letter, false,
+                      "no known exact letter for second place. Even if only a word with 'a' in second place"
+                      " can match previous constraints")
             ;
-
         }
     }
 
