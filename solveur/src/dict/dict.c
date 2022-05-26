@@ -18,14 +18,47 @@ void destroy_constraints(constraints_t *constraints) {
     free(constraints);
 }
 
+constraints_t* copy_constraints(constraints_t* original)
+{
+    UNUSED(original);
+    //TODO
+    return original;
+}
+
+words_list_t* create_word_list(int word_size)
+{   //NON testé
+    words_list_t* new = (words_list_t*)malloc(sizeof(words_list_t));
+    new->words_size = word_size;
+    new->head = NULL;
+    return new;
+}
+
+void destroy_word(word_t* word)
+{   //NON testé
+    if (word->next != NULL)
+    {
+        destroy_word(word->next);
+    }
+    free(word);
+}
+
+void destroy_word_list(words_list_t* list)
+{   //NON testé
+    if (list->head != NULL)
+    {
+        destroy_word(list->head);
+    }
+    free(list);
+}
+
 constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     attempt_t *attempt = attempts->head;
     constraints_t *constraints = create_constraints(attempts->word_size);
     while (attempt != NULL) {
         // Prise en compte de l'essai
         // On initialise le nombre minimum de chaque lettre à 0
-        int min_nb_occurrences_letters[26] = {};
-        bool can_be_exact_or_forbidden[26] = {};
+        int min_nb_occurrences_letters[NB_LETTERS] = {};
+        bool can_be_exact_or_forbidden[NB_LETTERS] = {};
         // On parcourt le mot de gauche à droite
         for (int i = 0; i < constraints->word_size; i++) {
             int indice_lettre_attempt = attempt->word[i] - 97;
@@ -139,32 +172,74 @@ void update_constraints_with_attempts(constraints_t* old_constraints, attempt_t*
     }   
 }
 
-constraints_t* copy_constraints(constraints_t* original)
-{
-    UNUSED(original);
-    //TODO
-    return original;
-}
-
 void import_dict(int word_size) {
     UNUSED(word_size);
     // TODO
 }
 
-words_list_t* get_all_matching_wordsv2(constraints_t constraints, words_list_t* list_words)
+words_list_t* get_all_matching_wordsv2(constraints_t* constraints, words_list_t* list_words)
 {
-    UNUSED(constraints);
-    UNUSED(list_words);
-    //TODO
-    return NULL;
+    //NON testé
+    words_list_t* retour = create_word_list(constraints->word_size);
+    retour->words_size = constraints->word_size;
+    word_t* last;
+    
+    word_t* current = list_words->head;
+    while(current->next != NULL)
+    {
+        if (is_matching_word_constraint(constraints,current->mots))
+        {
+            if (last == NULL) { last = current;}
+            else {
+                last->next = current;   // je crois que ca pose pas de probleme pour itérer sur list_words
+                last = current;
+            }
+        }
+        current = current->next;
+
+    }
+    if (is_matching_word_constraint(constraints,current->mots))
+    {
+        if (last == NULL) { last = current;}
+        else {
+            last->next = current;
+        }
+    }
+    retour->head = last;
+    return retour;
 }
 
-bool is_matching_word_constraint(constraints_t constraint, char* word)
+bool is_matching_word_constraint(constraints_t* constraint, char* word)
 {
-    UNUSED(constraint);
-    UNUSED(word);
+    //NON testé
+    if (constraint->word_size != (int)strlen(word)) {return false;}
 
-    return NULL;
+    int nb_of_occurence[NB_LETTERS] = {};
+    
+    for (int i = 0; i < (int)constraint->word_size; i++)
+    {
+        char letter = word[i];
+        int indice_letter = letter - 97;
+        if ((constraint->emplacement_constraints[i].has_a_mandatory_letter && constraint->emplacement_constraints[i].mandatory_letter != letter) ||
+            constraint->emplacement_constraints->forbidden_letters[indice_letter] ||
+            constraint->global_forbidden_letters[indice_letter]
+            )
+        {
+            return false;
+        }
+        nb_of_occurence[indice_letter]++;
+    }
+
+    for (int i = 0; i < NB_LETTERS; i++)
+    {
+        if (nb_of_occurence[i] < constraint->word_constraint->min_nb_occurrences_letters[i] ||
+            (nb_of_occurence[i] != constraint->word_constraint->min_nb_occurrences_letters[i] && constraint->word_constraint->is_exact_nb_occurrences_letters[i]))
+        {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 #pragma region legacy

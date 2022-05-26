@@ -52,15 +52,23 @@ typedef struct emplacement_constraints_t {
 typedef struct constraints_t {
     int word_size;
     word_constraint_t *word_constraint;
-    emplacement_constraints_t *emplacement_constraints;
+    emplacement_constraints_t *emplacement_constraints;  //tête d'un tableau
     bool global_forbidden_letters[NB_LETTERS];
 } constraints_t;
 
+words_list_t* create_word_list(int word_size);
+void destroy_word_list(words_list_t* list);
 
 constraints_t *create_constraints(int word_size);
 void destroy_constraints(constraints_t *constraints);
 void destroy_word_constraint(word_constraint_t *word_constraint);
 void destroy_dict();
+/**
+ * Créé une copie de constraint qui est modifiable sans affecter l'original
+ * @param original 
+ * @return constraints_t* 
+ */
+constraints_t* copy_constraints(constraints_t* original);
 
 /**
  * Crée la structure représentant les contraintes associées au mot à trouver à partir de la liste d'essaie
@@ -78,14 +86,6 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts);
  */
 void update_constraints_with_attempts(constraints_t* constraints, attempt_t* attempt);
 
-
-/**
- * Créé une copie de constraint qui est modifiable sans affecter l'original
- * @param original 
- * @return constraints_t* 
- */
-constraints_t* copy_constraints(constraints_t* original);
-
 /**
  * Génère le dictionnaire de mots d'une longueur donnée
  * à partir de la base de données sqlite3
@@ -100,9 +100,9 @@ void import_dict(int word_size);
  * @param list_words 
  * @return words_list_t* 
  */
-words_list_t* get_all_matching_wordsv2(constraints_t constraints, words_list_t* list_words);
+words_list_t* get_all_matching_wordsv2(constraints_t* constraints, words_list_t* list_words);
 
-
+bool is_matching_word_constraint(constraints_t* constraint, char* word);
 
 #pragma region legacy
 /**
