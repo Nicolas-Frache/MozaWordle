@@ -60,8 +60,11 @@ words_list_t* create_word_list(int word_size);
 void destroy_word_list(words_list_t* list);
 
 constraints_t *create_constraints(int word_size);
+
 void destroy_constraints(constraints_t *constraints);
+
 void destroy_word_constraint(word_constraint_t *word_constraint);
+
 void destroy_dict();
 /**
  * Créé une copie de constraint qui est modifiable sans affecter l'original
@@ -125,11 +128,25 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
 
 /**
  * Test si un mot peut être valide sachant un essai et son résultat
+ * Version pas tout à fait au point et un peu lourde qu'on garde de côté pour éventuellement faire des comparaisons de performance
  * @param word - mot à  tester
  * @param attempt - un seul essai
  * @return true si le mot peut être valide, false sinon
  */
 bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt);
 #pragma endregion
+
+/**
+ * Test si un mot match avec un ensemble de contraintes liées à des attempts
+ * @param word - mot à tester
+ * @param constraints - contraintes sur le mot
+ * @return vrai si le mot peut être valide, faux sinon
+ */
+bool is_matching_word_constraints(const char *word, constraints_t *constraints);
+
+
+
+
+
 
 #endif //SOLVEUR_DICT_H

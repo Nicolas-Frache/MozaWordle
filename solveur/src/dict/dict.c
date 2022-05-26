@@ -85,7 +85,7 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
 
         // On parcourt maintenant les informations qu'on a sur les nombres d'occurrences de chaque lettre
         // pour déterminer si on a de nouvelles informations, si c'est le cas, on le sauvegarde
-        for (int i = 0; i < 26; i++) {
+        for (int i = 0; i < NB_LETTERS; i++) {
             // Si on ne connait pas déjà le nombre exact...
             if (!constraints->word_constraint->is_exact_nb_occurrences_letters[i]) {
                 // ... Alors s'il y a eu un code zero associé à une lettre qui a de part ailleurs
@@ -209,41 +209,6 @@ words_list_t* get_all_matching_wordsv2(constraints_t* constraints, words_list_t*
     return retour;
 }
 
-bool is_matching_word_constraint(constraints_t* constraint, char* word)
-{
-    //NON testé
-    if (constraint->word_size != (int)strlen(word)) {return false;}
-
-    int nb_of_occurence[NB_LETTERS] = {};
-    
-    for (int i = 0; i < (int)constraint->word_size; i++)
-    {
-        char letter = word[i];
-        int indice_letter = letter - 97;
-        if ((constraint->emplacement_constraints[i].has_a_mandatory_letter && constraint->emplacement_constraints[i].mandatory_letter != letter) ||
-            constraint->emplacement_constraints->forbidden_letters[indice_letter] ||
-            constraint->global_forbidden_letters[indice_letter]
-            )
-        {
-            return false;
-        }
-        nb_of_occurence[indice_letter]++;
-    }
-
-    for (int i = 0; i < NB_LETTERS; i++)
-    {
-        if (nb_of_occurence[i] < constraint->word_constraint->min_nb_occurrences_letters[i] ||
-            (nb_of_occurence[i] != constraint->word_constraint->min_nb_occurrences_letters[i] && constraint->word_constraint->is_exact_nb_occurrences_letters[i]))
-        {
-            return false;
-        }
-    }
-
-    return true;
-}
-
-#pragma region legacy
-
 struct words_list_t *get_all_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words) {
     UNUSED(list_tries);
     UNUSED(list_words);
@@ -252,11 +217,18 @@ struct words_list_t *get_all_matching_words(list_attempts_t *list_tries, struct 
 }
 
 bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
-    UNUSED(word);
-    UNUSED(attempts);
     if (is_empty_list_attempts(attempts))
         return true;
 
+    // Méthode servant uniquement pour les tests car l'objectif du système de contraintes et justement
+    // de réutiliser les mêmes contraintes à de multiples reprises
+    constraints_t  *constraints = compute_constraints_from_attempts(attempts);
+    bool result = is_matching_word_constraints(word, constraints);
+    destroy_constraints(constraints);
+    return  result;
+
+    // Méthode précèdente, qu'on garde de côté en vue d'éventuels comparaison de performances à venir
+    /*
     attempt_t *current = attempts->head;
     bool result = is_matching_word_one_specific_attempt_v1(word, current);
     while (current->next != NULL && result) {
@@ -264,13 +236,48 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
         result &= is_matching_word_one_specific_attempt_v1(word, current);
     }
     return result;
+     */
 }
+
+bool is_matching_word_constraints(const char *word, constraints_t *constraints) {
+    int n = constraints->word_size;
+    if (n != (int)strlen(word)) return false;
+    int compteur_lettre[NB_LETTERS] = {};
+    for(int i = 0; i<n; i++){
+        int indice_lettre = word[i] - 97;
+        // Test des contraintes pour chaque lettre séparement
+        if(
+            // Test des lettres obligatoires
+                (constraints->emplacement_constraints[i].has_a_mandatory_letter && constraints->emplacement_constraints[i].mandatory_letter != word[i])
+                // Test de la présence d'une lettre interdite pour l'ensemble du mot
+                || (constraints->global_forbidden_letters[indice_lettre])
+                // Test de la présence d'une lettre interdite pour cet index en particulier
+                ||(constraints->emplacement_constraints[i].forbidden_letters[indice_lettre])){
+            return false;
+        }
+        // On garde le comptage de lettre pour l'étape suivante
+        compteur_lettre[indice_lettre]++;
+    }
+    // Pour finir on vérifie que les contraintes concernant le nombre de lettre sont respectées
+    for (int i = 0; i<NB_LETTERS; i++){
+        if(
+                // Test sur le nombre minimun d'occurence de la lettre
+                (compteur_lettre[i] < constraints->word_constraint->min_nb_occurrences_letters[i])
+                // Test si le nombre exact d'occcurence est connu
+                || (constraints->word_constraint->is_exact_nb_occurrences_letters[i]
+                && compteur_lettre[i] != constraints->word_constraint->min_nb_occurrences_letters[i])
+                ){
+            return false;
+        }
+    }
+    return true;
+}
+
+#pragma region legacy
+
 
 /**
  * Version pas tout à fait au point et un peu lourde qu'on garde de côté pour éventuellement faire des comparaisons de performance
- * @param word
- * @param attempt
- * @return
  */
 bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt) {
     int len = (int) strlen(word);

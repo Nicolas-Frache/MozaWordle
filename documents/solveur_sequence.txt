@@ -42,21 +42,23 @@ loop //Pour tous les mots "w" du dictionnaire//
     activate solver #FFBBBB
     solver -> solver : evaluate_attempt_score(w, …)
     activate solver #DarkSalmon
-    loop <i>Pour tous les mots "c1"</i><i>possiblement valides avec les indices actuels</i>
+    loop <i>Pour tous les (3^n) patterns "<i>p</i>" possiblement résultants de ce mot"
         note over solver
-            On part du principe que c1 est la solution et qu'on essaie
-            de saisir le mot w. On calcule alors le score de w en évaluant le nombre
-            de mots que les indices issues de la saisie de w élimineraient
+            On part du principe qu'on essaie de saisir le mot w, et que le pattern p
+            en ressort. On va donc calculer le score de w avec la moyenne du nombre
+            de nouveaux mots exclus pour chaque pattern p
         end note
-        solver -> solver : evaluate_score_with_specific_combination\n(w, c1)
-        activate solver #IndianRed
-        loop Pour tous les mots "<i>c2</i>" possiblement valides
-            solver -> dict : is_matching_word_specific_attempt(…)
+
+        solver -> dict : compute_constraints_from_attempts(attempts)
+        activate dict #FFBBBB
+        solver <-- dict : constraints
+        deactivate dict
+        loop Pour tous les mots "<i>c</i>" possiblement valides
+            solver -> dict : is_matching_word_constraints(w, constraints)
             activate dict #FFBBBB
             solver <-- dict : true|false
             deactivate dict
         end loop
-        deactivate solver
     end
     deactivate solver
 end
