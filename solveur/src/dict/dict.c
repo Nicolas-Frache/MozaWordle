@@ -80,10 +80,94 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     return constraints;
 }
 
+void update_constraints_with_attempts(constraints_t* old_constraints, attempt_t* attempt)
+{
+    // NON TESTE
+    constraints_t *new_constraints = copy_constraints(old_constraints);
+
+    int min_nb_occurrences_letters[26]; 
+    memcpy(min_nb_occurrences_letters,new_constraints->word_constraint->min_nb_occurrences_letters,sizeof(min_nb_occurrences_letters));
+    bool can_be_exact_or_forbidden[26];
+    memcpy(can_be_exact_or_forbidden, new_constraints->word_constraint->is_exact_nb_occurrences_letters,sizeof(can_be_exact_or_forbidden));
+
+    for (int i = 0; i < new_constraints->word_size; i++) {
+        int indice_lettre_attempt = attempt->word[i] - 97;
+        if (!new_constraints->emplacement_constraints[i].has_a_mandatory_letter) {
+            // On récolte les informations ne concernant pas le nombre de lettres dans un mot
+            if (attempt->results[i] == 2) {
+                new_constraints->emplacement_constraints[i].has_a_mandatory_letter = true;
+                new_constraints->emplacement_constraints[i].mandatory_letter = attempt->word[i];
+            }
+            if (attempt->results[i] <= 1) {
+                new_constraints->emplacement_constraints[i].forbidden_letters[indice_lettre_attempt] = true;
+            }
+        }
+        // Puis si le code est 2 ou 1, on augmente de 1 le nombre d'occurrences minimal
+        if (attempt->results[i] >= 1) {
+            min_nb_occurrences_letters[indice_lettre_attempt]++;
+        }
+        // Si on a un code 0, mais un nombre minimal d'essai non-nul, alors on sait que le nombre minimal
+        // qu'on trouvera est en réalité le nombre exact d'occurrences de la lettre
+        if (attempt->results[i] == 0) {
+            can_be_exact_or_forbidden[indice_lettre_attempt] = true;
+        }
+    }
+
+    // On parcourt maintenant les informations qu'on a sur les nombres d'occurrences de chaque lettre
+    // pour déterminer si on a de nouvelles informations, si c'est le cas, on le sauvegarde
+    for (int i = 0; i < 26; i++) {
+        // Si on ne connait pas déjà le nombre exact...
+        if (!new_constraints->word_constraint->is_exact_nb_occurrences_letters[i]) {
+            // ... Alors s'il y a eu un code zero associé à une lettre qui a de part ailleurs
+            // un code != 0 dans le mot, on sait qu'on a connaissance du nombre exact d'occurrences.
+            if (can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] != 0) {
+                new_constraints->word_constraint->is_exact_nb_occurrences_letters[i] = true;
+                new_constraints->word_constraint->min_nb_occurrences_letters[i] = min_nb_occurrences_letters[i];
+            } else if (new_constraints->word_constraint->min_nb_occurrences_letters[i] <
+                       min_nb_occurrences_letters[i]) {
+                // Et à défaut si notre nombre min et supérieur à celui enregistré, alors on gagne
+                // de l'information, on l'enregistre donc
+                new_constraints->word_constraint->min_nb_occurrences_letters[i] = min_nb_occurrences_letters[i];
+            }
+        }
+        // De plus, on a précédemment mis de côté dans "can_be_exact_or_forbidden" les lettres avec un code 0
+        // Donc possiblement absentes du mot. On s'en assure en vérifiant mtn que le nb d'occurence est 0
+        // Si c'est le cas on sauvegarde l'information dans la structure
+        if(can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] == 0){
+            new_constraints->global_forbidden_letters[i] = true;
+        }
+    }   
+}
+
+constraints_t* copy_constraints(constraints_t* original)
+{
+    UNUSED(original);
+    //TODO
+    return original;
+}
+
 void import_dict(int word_size) {
     UNUSED(word_size);
     // TODO
 }
+
+words_list_t* get_all_matching_wordsv2(constraints_t constraints, words_list_t* list_words)
+{
+    UNUSED(constraints);
+    UNUSED(list_words);
+    //TODO
+    return NULL;
+}
+
+bool is_matching_word_constraint(constraints_t constraint, char* word)
+{
+    UNUSED(constraint);
+    UNUSED(word);
+
+    return NULL;
+}
+
+#pragma region legacy
 
 struct words_list_t *get_all_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words) {
     UNUSED(list_tries);
@@ -173,3 +257,4 @@ bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt) {
     return true;
 }
 
+#pragma endregion

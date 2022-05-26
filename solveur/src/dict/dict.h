@@ -69,6 +69,23 @@ void destroy_dict();
  */
 constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts);
 
+
+/**
+ * Met à jour une contrainte en fonction d'un nouvelle essai.
+ * 
+ * @param constraints - la contrainte précédente
+ * @param attempt - le nouvelle essai
+ */
+void update_constraints_with_attempts(constraints_t* constraints, attempt_t* attempt);
+
+
+/**
+ * Créé une copie de constraint qui est modifiable sans affecter l'original
+ * @param original 
+ * @return constraints_t* 
+ */
+constraints_t* copy_constraints(constraints_t* original);
+
 /**
  * Génère le dictionnaire de mots d'une longueur donnée
  * à partir de la base de données sqlite3
@@ -76,6 +93,18 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts);
  */
 void import_dict(int word_size);
 
+
+/**
+ * Retourne les mots qui sont compatible avec les contraintes passé en arguments
+ * @param constraints 
+ * @param list_words 
+ * @return words_list_t* 
+ */
+words_list_t* get_all_matching_wordsv2(constraints_t constraints, words_list_t* list_words);
+
+
+
+#pragma region legacy
 /**
  * Retourne les mots qui pourraient éventuellement être bons parmi un liste,
  * sachant la liste d'essai et de resultats en paramètre
@@ -101,6 +130,6 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
  * @return true si le mot peut être valide, false sinon
  */
 bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt);
-
+#pragma endregion
 
 #endif //SOLVEUR_DICT_H
