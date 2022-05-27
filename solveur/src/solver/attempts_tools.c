@@ -24,6 +24,7 @@ attempt_t* create_attempt_and_result(char *word,char* valid_word)
     int n = (int)strlen(word);
     int result[n];
     int nb_of_occurence[NB_LETTERS];
+    for (int i = 0; i < NB_LETTERS; i++) {nb_of_occurence[i] = 0;} // initialise array a 0 ( et évite memory leak )
 
     for (int i = 0; i < n; i++)
     {

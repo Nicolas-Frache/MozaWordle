@@ -21,10 +21,10 @@ int compute_constraints_improvement(constraints_t* old, constraints_t* new)
     {
         emplacement_constraints_t old_empl = old->emplacement_constraints[i];
         emplacement_constraints_t new_empl = new->emplacement_constraints[i];
-        if (old_empl.has_a_mandatory_letter != new_empl.has_a_mandatory_letter) { data++;}
+        if (old_empl.has_a_mandatory_letter != new_empl.has_a_mandatory_letter) { data++;} // Un bit d'info si on apprend qu'une lettre est obligatoir
         for (int j = 0; j < NB_LETTERS; j++)
         {
-            if (old_empl.forbidden_letters[j] != new_empl.forbidden_letters[j]) { data++;}
+            if (old_empl.forbidden_letters[j] != new_empl.forbidden_letters[j]) { data++;} // Si on apprend qu'une lettre est interdite, +1 info
         }
     }
     return data;
@@ -34,9 +34,9 @@ int evaluate_score_with_specific_combination(char *candidate_word, char *matchin
 {
     //Non testé
     constraints_t* new_constraint = copy_constraints(constraints);
-    attempt_t* attempt = create_attempt_and_result(candidate_word, matching_word);
-    update_constraints_with_attempts(new_constraint,attempt);
+    attempt_t* attempt = create_attempt_and_result(candidate_word, matching_word); 
+    update_constraints_with_attempts(new_constraint,attempt);  // On regarde les nouvelles contraintes si on propose candidate_word et que le mot valide est matching word
 
-    return compute_constraints_improvement(constraints, new_constraint);
+    return compute_constraints_improvement(constraints, new_constraint); // On calcul les nouvelles informations
 }
 

@@ -54,5 +54,14 @@ describe(attempts_tools) {
         asserteq(attempts->nb_tries, 1, "List should have 1 element after deletion and insertion")
         ;
     }
+    it("create and compute result")
+    {
+        attempt_t* att1 = create_attempt_and_result("apacea","annaes");
+        asserteq(att1->results[0], 2, "A should have match");
+        asserteq(att1->results[1], 0, "Shouldn't have match");
+        asserteq(att1->results[2], 1, "Letter is present elsewhere");
+        asserteq(att1->results[5], 0, "Max occurence already reach");
+        destroy_attempt(att1);
+    }
 
 }
