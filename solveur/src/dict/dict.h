@@ -9,15 +9,14 @@
 #define MAX_WORD_LENGTH 20
 
 typedef struct word_t {
-    char *mots;
-    double frequency;
+    char *word;
     struct word_t *next;
 } word_t;
 
 typedef struct words_list_t {
     int words_size;
     int nb_words;
-    struct word_t *head;
+    struct word_t *head, *tail;
 } words_list_t;
 
 /**
@@ -43,7 +42,7 @@ typedef struct emplacement_constraints_t {
 
 /**
  *  Structure qui permet la description de toutes les contraintes sur le mot à trouver avec :<ul>
- *  <li>Une liste des lettres qui sont totalement interdites dans le mots sous forme d'un tableau de 26 booléens</li>
+ *  <li>Une liste des lettres qui sont totalement interdites dans le word sous forme d'un tableau de 26 booléens</li>
  *  <li>La liste des contraintes qui portent sur le mot dans son ensemble (nombre d'occurrences d'une lettre), sous
  *  forme d'une liste chaînée de structure <i>word_constraint_t</i></li>
  *  <li>Les contraintes qui portent sur un emplacement de mot en particulier (lettre imposée, ou liste de lettres
@@ -58,13 +57,13 @@ typedef struct constraints_t {
 
 words_list_t* create_word_list(int word_size);
 void destroy_word_list(words_list_t* list);
+void append_word_list(words_list_t *list, char *word);
+words_list_t *get_dictionary();
+words_list_t *get_current_possible();
 
 constraints_t *create_constraints(int word_size);
-
 void destroy_constraints(constraints_t *constraints);
-
 void destroy_word_constraint(word_constraint_t *word_constraint);
-
 void destroy_dict();
 /**
  * Créé une copie de constraint qui est modifiable sans affecter l'original
@@ -90,7 +89,7 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts);
 void update_constraints_with_attempts(constraints_t* constraints, attempt_t* attempt);
 
 /**
- * Génère le dictionnaire de mots d'une longueur donnée
+ * Génère le dictionnaire de word d'une longueur donnée
  * à partir de la base de données sqlite3
  * @param word_size
  */
@@ -98,7 +97,7 @@ void import_dict(int word_size);
 
 
 /**
- * Retourne les mots qui sont compatible avec les contraintes passé en arguments
+ * Retourne les word qui sont compatible avec les contraintes passé en arguments
  * @param constraints 
  * @param list_words 
  * @return words_list_t* 
@@ -109,7 +108,7 @@ bool is_matching_word_constraint(constraints_t* constraint, char* word);
 
 #pragma region legacy
 /**
- * Retourne les mots qui pourraient éventuellement être bons parmi un liste,
+ * Retourne les word qui pourraient éventuellement être bons parmi un liste,
  * sachant la liste d'essai et de resultats en paramètre
  * @param list_tries - Essai précèdent et leur resultat
  * @param list_tries_t - list des essais precedents et des résultats associées sous formes de liste chainée

@@ -8,23 +8,23 @@ struct words_list_t;
 
 
 /**
- * A partir de la liste de mots qui sont conformes aux indices des tentatives précédentes "matching_words",
+ * A partir de la liste de word qui sont conformes aux indices des tentatives précédentes "matching_words",
  * et de ces tentatives, cette méthode calcule le meilleur mot à proposer pour la tentative suivante
  *
- * @param matching_words - liste de mots qui sont conformes aux indices des tentatives précédentes
+ * @param matching_words - liste de word qui sont conformes aux indices des tentatives précédentes
  * @param attempts - liste de tentatives précédentes
  * @return le prochain mot à proposer
  */
 char *compute_next_best_attempt(struct words_list_t *matching_words, struct list_attempts_t *attempts);
 
 /**
- * Pour un mot candidats donné, on parcourt tous les mots qui pourraient être valides.
+ * Pour un mot candidats donné, on parcourt tous les word qui pourraient être valides.
  * Puis pour chacun on calcul un score correspondant aux nouvelles informations que nous
  * donnerait le mot à tester dans l'hypothèse ou celui-ci est valide.
- * Enfin, on retourne le score moyen de tous ces mots possibles.
+ * Enfin, on retourne le score moyen de tous ces word possibles.
  *
  * @param candidate_word - Le mot dont on veut évaluer le score
- * @param matching_words - La liste (chainée) de mots qui pourraient être valides
+ * @param matching_words - La liste (chainée) de word qui pourraient être valides
  * @param tries - La liste (chainée) des essais precedents permettant d'évaluer le score
  * @return
  */

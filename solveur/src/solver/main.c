@@ -1,4 +1,5 @@
 #include "../io/interface.h"
+#include "../dict/dict.h"
 #include <stdio.h>
 
 
@@ -15,8 +16,8 @@ snow_main();
 int game_loop(int length);
 
 int main() {
-
     print_hello();
+    import_dict(5);
     //int code_play_or_quit[2] = {0, 1};
 
     bool playing = false;

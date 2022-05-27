@@ -22,6 +22,43 @@ describe(Dict) {
         ;
     }
 
+    subdesc(words_list){
+        words_list_t *words;
+
+        before_each() {
+            words = create_word_list(3);
+            defer(destroy_word_list(words))
+            ;
+        }
+
+        it("creation"){
+            asserteq(words->nb_words, 0)
+            ;asserteq(words->head, NULL)
+            ;asserteq(words->words_size, 3)
+            ;
+        }
+        it("append"){
+            append_word_list(words, "pomme");
+            asserteq(words->nb_words, 1)
+            ;asserteq(words->head->word, "pomme")
+            ;
+            append_word_list(words, "poire");
+            asserteq(words->nb_words, 2)
+            ;asserteq(words->head->word, "pomme")
+            ;asserteq(words->tail->word, "poire")
+            ;
+        }
+    }
+
+    subdesc(import_dict){
+        it("import of dict from db"){
+            import_dict(5);
+            asserteq(get_dictionary()->nb_words, 5037, "bad number of words in dictionary")
+            ;asserteq(get_current_possible()->nb_words, 2264, "bad number of words detected as possible as solution")
+            ;
+        }
+    }
+
     subdesc(constraints){
         it("Constraints struct initialization"){
             constraints_t *constraints = create_constraints(3);

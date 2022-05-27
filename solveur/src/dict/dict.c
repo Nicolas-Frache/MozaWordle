@@ -1,8 +1,17 @@
 #include <stdio.h>
 #include <string.h>
+#include <sqlite3.h>
 #include "dict.h"
 
 #define UNUSED(x) (void)(x)
+
+// Liste de tous les mots du dictionnaire de la longueur qui nous intéresse
+words_list_t *dictionary = NULL;
+// Liste des mots qui sont possibles avec les indices actuels
+words_list_t *current_possibles = NULL;
+
+words_list_t *get_dictionary(){return dictionary;}
+words_list_t *get_current_possible(){return current_possibles;}
 
 constraints_t *create_constraints(int word_size) {
     constraints_t *constraints = calloc(1, sizeof(constraints_t));
@@ -18,38 +27,49 @@ void destroy_constraints(constraints_t *constraints) {
     free(constraints);
 }
 
-constraints_t* copy_constraints(constraints_t* original)
-{
+constraints_t *copy_constraints(constraints_t *original) {
     UNUSED(original);
     //TODO
     return original;
 }
 
-words_list_t* create_word_list(int word_size)
-{   //NON testé
-    words_list_t* new = (words_list_t*)malloc(sizeof(words_list_t));
+words_list_t *create_word_list(int word_size) {   //NON testé
+    words_list_t *new = (words_list_t *) malloc(sizeof(words_list_t));
     new->words_size = word_size;
     new->head = NULL;
+    new->tail = NULL;
+    new->nb_words = 0;
     return new;
 }
 
-void destroy_word(word_t* word)
-{   //NON testé
-    if (word->next != NULL)
-    {
+void destroy_word(word_t *word) {
+    if (word->next != NULL) {
         destroy_word(word->next);
     }
     free(word);
 }
 
-void destroy_word_list(words_list_t* list)
-{   //NON testé
-    if (list->head != NULL)
-    {
+void destroy_word_list(words_list_t *list) {
+    if (list->head != NULL) {
         destroy_word(list->head);
     }
     free(list);
 }
+
+void append_word_list(words_list_t *list, char *word) {
+    word_t *new_word = (word_t *) malloc(sizeof(word_t));
+    new_word->word = word;
+    new_word->next = NULL;
+    if (list->head == NULL) {
+        list->head = new_word;
+        list->tail = new_word;
+    } else {
+        list->tail->next = new_word;
+        list->tail = new_word;
+    }
+    list->nb_words++;
+}
+
 
 constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     attempt_t *attempt = attempts->head;
@@ -104,7 +124,7 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
             // De plus, on a précédemment mis de côté dans "can_be_exact_or_forbidden" les lettres avec un code 0
             // Donc possiblement absentes du mot. On s'en assure en vérifiant mtn que le nb d'occurence est 0
             // Si c'est le cas on sauvegarde l'information dans la structure
-            if(can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] == 0){
+            if (can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] == 0) {
                 constraints->global_forbidden_letters[i] = true;
             }
         }
@@ -113,15 +133,16 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     return constraints;
 }
 
-void update_constraints_with_attempts(constraints_t* old_constraints, attempt_t* attempt)
-{
+void update_constraints_with_attempts(constraints_t *old_constraints, attempt_t *attempt) {
     // NON TESTE
     constraints_t *new_constraints = copy_constraints(old_constraints);
 
-    int min_nb_occurrences_letters[26]; 
-    memcpy(min_nb_occurrences_letters,new_constraints->word_constraint->min_nb_occurrences_letters,sizeof(min_nb_occurrences_letters));
+    int min_nb_occurrences_letters[26];
+    memcpy(min_nb_occurrences_letters, new_constraints->word_constraint->min_nb_occurrences_letters,
+           sizeof(min_nb_occurrences_letters));
     bool can_be_exact_or_forbidden[26];
-    memcpy(can_be_exact_or_forbidden, new_constraints->word_constraint->is_exact_nb_occurrences_letters,sizeof(can_be_exact_or_forbidden));
+    memcpy(can_be_exact_or_forbidden, new_constraints->word_constraint->is_exact_nb_occurrences_letters,
+           sizeof(can_be_exact_or_forbidden));
 
     for (int i = 0; i < new_constraints->word_size; i++) {
         int indice_lettre_attempt = attempt->word[i] - 97;
@@ -166,30 +187,80 @@ void update_constraints_with_attempts(constraints_t* old_constraints, attempt_t*
         // De plus, on a précédemment mis de côté dans "can_be_exact_or_forbidden" les lettres avec un code 0
         // Donc possiblement absentes du mot. On s'en assure en vérifiant mtn que le nb d'occurence est 0
         // Si c'est le cas on sauvegarde l'information dans la structure
-        if(can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] == 0){
+        if (can_be_exact_or_forbidden[i] && min_nb_occurrences_letters[i] == 0) {
             new_constraints->global_forbidden_letters[i] = true;
         }
-    }   
+    }
+}
+
+/**
+ * This callback_save_dict_in_struct provides a way to obtain results from SELECT statements
+ * @see{https://www.tutorialspoint.com/sqlite/sqlite_c_cpp.htm}
+ * @param data - Data provided in the 4th argument of sqlite3_exec()
+ * @param argc - The number of columns in row
+ * @param argv - An array of strings representing fields in the row
+ * @param azColName - An array of strings representing column names
+ * @return
+ */
+static int callback_save_dict_in_struct(void *data, int argc, char **argv, char **azColName) {
+    /*for (int i = 0; i < argc; i++) {
+        printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
+    }*/
+    UNUSED(data);
+    UNUSED(argc);
+    UNUSED(azColName);
+
+    char *word = malloc(sizeof(char) * (strlen(argv[0]) + 1));
+    strcpy(word, argv[0]);
+    append_word_list(dictionary, word);
+    if (strcmp(argv[1], "1") == 0) {
+        char *word_2 = malloc(sizeof(char) * (strlen(argv[0]) + 1));
+        strcpy(word_2, argv[0]);
+        append_word_list(current_possibles, word_2);
+    }
+    return 0;
 }
 
 void import_dict(int word_size) {
-    UNUSED(word_size);
-    // TODO
+    // Création des listes de mots
+    dictionary = create_word_list(word_size);
+    current_possibles = create_word_list(word_size);
+
+    sqlite3 *db;
+    char *zErrMsg = 0;
+    int rc;
+    const char *data = "Callback function called";
+    /* Ouverture de la db en mode lecture seule */
+    rc = sqlite3_open("file:../src/dict/database.db?mode=ro&cache=private", &db);
+    if (rc != 0) {
+        fprintf(stderr, "Erreur avec base de donnée: %s\n", sqlite3_errmsg(db));
+        printf("❗❗ Attention ❗❗ , l'instruction d'exécution doit être exactement: './solver' et PAS './bin/solver' ou autre\n\n");
+        sqlite3_close(db);
+        return;
+    }
+
+    /* Create SQL statement */
+    char sql[100];
+    snprintf(sql, sizeof(sql), "SELECT mot, motDevinable FROM dictionnaire WHERE longueur = %d;", word_size);
+    /* Execute SQL statement */
+    rc = sqlite3_exec(db, sql, callback_save_dict_in_struct, (void *) data, &zErrMsg);
+    if (rc != SQLITE_OK) {
+        fprintf(stderr, "SQL error: %s\n", zErrMsg);
+        sqlite3_free(zErrMsg);
+    }
+    sqlite3_close(db);
 }
 
-words_list_t* get_all_matching_wordsv2(constraints_t* constraints, words_list_t* list_words)
-{
+words_list_t *get_all_matching_wordsv2(constraints_t *constraints, words_list_t *list_words) {
     //NON testé
-    words_list_t* retour = create_word_list(constraints->word_size);
+    words_list_t *retour = create_word_list(constraints->word_size);
     retour->words_size = constraints->word_size;
-    word_t* last;
-    
-    word_t* current = list_words->head;
-    while(current->next != NULL)
-    {
-        if (is_matching_word_constraint(constraints,current->mots))
-        {
-            if (last == NULL) { last = current;}
+    word_t *last;
+
+    word_t *current = list_words->head;
+    while (current->next != NULL) {
+        if (is_matching_word_constraints(current->word, constraints)) {
+            if (last == NULL) { last = current; }
             else {
                 last->next = current;   // je crois que ca pose pas de probleme pour itérer sur list_words
                 last = current;
@@ -197,13 +268,6 @@ words_list_t* get_all_matching_wordsv2(constraints_t* constraints, words_list_t*
         }
         current = current->next;
 
-    }
-    if (is_matching_word_constraint(constraints,current->mots))
-    {
-        if (last == NULL) { last = current;}
-        else {
-            last->next = current;
-        }
     }
     retour->head = last;
     return retour;
@@ -222,10 +286,10 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
 
     // Méthode servant uniquement pour les tests car l'objectif du système de contraintes et justement
     // de réutiliser les mêmes contraintes à de multiples reprises
-    constraints_t  *constraints = compute_constraints_from_attempts(attempts);
+    constraints_t *constraints = compute_constraints_from_attempts(attempts);
     bool result = is_matching_word_constraints(word, constraints);
     destroy_constraints(constraints);
-    return  result;
+    return result;
 
     // Méthode précèdente, qu'on garde de côté en vue d'éventuels comparaison de performances à venir
     /*
@@ -241,32 +305,33 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
 
 bool is_matching_word_constraints(const char *word, constraints_t *constraints) {
     int n = constraints->word_size;
-    if (n != (int)strlen(word)) return false;
+    if (n != (int) strlen(word)) return false;
     int compteur_lettre[NB_LETTERS] = {};
-    for(int i = 0; i<n; i++){
+    for (int i = 0; i < n; i++) {
         int indice_lettre = word[i] - 97;
         // Test des contraintes pour chaque lettre séparement
-        if(
+        if (
             // Test des lettres obligatoires
-                (constraints->emplacement_constraints[i].has_a_mandatory_letter && constraints->emplacement_constraints[i].mandatory_letter != word[i])
+                (constraints->emplacement_constraints[i].has_a_mandatory_letter &&
+                 constraints->emplacement_constraints[i].mandatory_letter != word[i])
                 // Test de la présence d'une lettre interdite pour l'ensemble du mot
                 || (constraints->global_forbidden_letters[indice_lettre])
                 // Test de la présence d'une lettre interdite pour cet index en particulier
-                ||(constraints->emplacement_constraints[i].forbidden_letters[indice_lettre])){
+                || (constraints->emplacement_constraints[i].forbidden_letters[indice_lettre])) {
             return false;
         }
         // On garde le comptage de lettre pour l'étape suivante
         compteur_lettre[indice_lettre]++;
     }
     // Pour finir on vérifie que les contraintes concernant le nombre de lettre sont respectées
-    for (int i = 0; i<NB_LETTERS; i++){
-        if(
-                // Test sur le nombre minimun d'occurence de la lettre
+    for (int i = 0; i < NB_LETTERS; i++) {
+        if (
+            // Test sur le nombre minimun d'occurence de la lettre
                 (compteur_lettre[i] < constraints->word_constraint->min_nb_occurrences_letters[i])
                 // Test si le nombre exact d'occcurence est connu
                 || (constraints->word_constraint->is_exact_nb_occurrences_letters[i]
-                && compteur_lettre[i] != constraints->word_constraint->min_nb_occurrences_letters[i])
-                ){
+                    && compteur_lettre[i] != constraints->word_constraint->min_nb_occurrences_letters[i])
+                ) {
             return false;
         }
     }
