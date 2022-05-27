@@ -251,7 +251,7 @@ void import_dict(int word_size) {
     sqlite3_close(db);
 }
 
-words_list_t *get_all_matching_wordsv2(constraints_t *constraints, words_list_t *list_words) {
+words_list_t *get_all_matching_words(constraints_t *constraints, words_list_t *list_words) {
     //NON testé
     words_list_t *retour = create_word_list(constraints->word_size);
     retour->words_size = constraints->word_size;
@@ -273,35 +273,6 @@ words_list_t *get_all_matching_wordsv2(constraints_t *constraints, words_list_t 
     return retour;
 }
 
-struct words_list_t *get_all_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words) {
-    UNUSED(list_tries);
-    UNUSED(list_words);
-    // TODO
-    return NULL;
-}
-
-bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
-    if (is_empty_list_attempts(attempts))
-        return true;
-
-    // Méthode servant uniquement pour les tests car l'objectif du système de contraintes et justement
-    // de réutiliser les mêmes contraintes à de multiples reprises
-    constraints_t *constraints = compute_constraints_from_attempts(attempts);
-    bool result = is_matching_word_constraints(word, constraints);
-    destroy_constraints(constraints);
-    return result;
-
-    // Méthode précèdente, qu'on garde de côté en vue d'éventuels comparaison de performances à venir
-    /*
-    attempt_t *current = attempts->head;
-    bool result = is_matching_word_one_specific_attempt_v1(word, current);
-    while (current->next != NULL && result) {
-        current = current->next;
-        result &= is_matching_word_one_specific_attempt_v1(word, current);
-    }
-    return result;
-     */
-}
 
 bool is_matching_word_constraints(const char *word, constraints_t *constraints) {
     int n = constraints->word_size;
@@ -340,6 +311,28 @@ bool is_matching_word_constraints(const char *word, constraints_t *constraints) 
 
 #pragma region legacy
 
+bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
+    if (is_empty_list_attempts(attempts))
+        return true;
+
+    // Méthode servant uniquement pour les tests car l'objectif du système de contraintes et justement
+    // de réutiliser les mêmes contraintes à de multiples reprises
+    constraints_t *constraints = compute_constraints_from_attempts(attempts);
+    bool result = is_matching_word_constraints(word, constraints);
+    destroy_constraints(constraints);
+    return result;
+
+    // Méthode précèdente, qu'on garde de côté en vue d'éventuels comparaison de performances à venir
+    /*
+    attempt_t *current = attempts->head;
+    bool result = is_matching_word_one_specific_attempt_v1(word, current);
+    while (current->next != NULL && result) {
+        current = current->next;
+        result &= is_matching_word_one_specific_attempt_v1(word, current);
+    }
+    return result;
+     */
+}
 
 /**
  * Version pas tout à fait au point et un peu lourde qu'on garde de côté pour éventuellement faire des comparaisons de performance

@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <assert.h>
+#include <string.h>
 #include "attempts_tools.h"
+
+#define NB_LETTERS 26
 
 bool is_empty_list_tries(list_attempts_t *pAttempts);
 
@@ -12,6 +15,40 @@ attempt_t *create_attempt(char *words, int *results) {
     return new;
 }
 
+attempt_t* create_attempt_and_result(char *word,char* valid_word)
+{
+    //Non testé
+    attempt_t *new = (attempt_t *) malloc(sizeof(attempt_t));
+    new->next = NULL;
+    new->word = word;
+    int n = (int)strlen(word);
+    int result[n];
+    int nb_of_occurence[NB_LETTERS];
+
+    for (int i = 0; i < n; i++)
+    {
+        int indice_letter = valid_word[i] - 97;
+        nb_of_occurence[indice_letter]++;
+    }
+
+    for (int i = 0; i < n; i++) 
+    {
+        int indice_letter = word[i] - 97;
+        if (word[i] == valid_word[i])
+        {
+            result[i] = 2;
+            nb_of_occurence[indice_letter]--;
+        }
+        else if (nb_of_occurence[indice_letter] > 0)
+        {
+            result[i] = 1;
+            nb_of_occurence[indice_letter]--;
+        }
+        else {result[i] = 0;}
+    }
+    new->results = result;
+    return new;
+}
 list_attempts_t *create_list_attempts(int word_size) {
     list_attempts_t *new = (list_attempts_t *) malloc(sizeof(list_attempts_t));
     new->nb_tries = 0;

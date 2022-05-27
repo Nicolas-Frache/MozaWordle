@@ -1,1 +1,42 @@
 #include "solver.h"
+#include "attempts_tools.h"
+
+
+int compute_constraints_improvement(constraints_t* old, constraints_t* new)
+{
+    //Non testé
+    int data = 0;
+
+    word_constraint_t* old_w = old->word_constraint;
+    word_constraint_t* new_w = new->word_constraint;
+    for (int i = 0; i < NB_LETTERS; i++)
+    {
+        //Un bit d'info si on apprend que le nombre de lettre est exact
+        if (old_w->is_exact_nb_occurrences_letters[i] != new_w->is_exact_nb_occurrences_letters[i]) { data++;}
+        //Un bit d'info par occurence minimum que l'on apprendq
+        if (old_w->min_nb_occurrences_letters[i] < new_w->min_nb_occurrences_letters[i]) { data+= new_w->min_nb_occurrences_letters[i] - old_w->min_nb_occurrences_letters[i];}    
+    }
+    int n = old->word_size;
+    for (int i = 0; i < n; i++)
+    {
+        emplacement_constraints_t old_empl = old->emplacement_constraints[i];
+        emplacement_constraints_t new_empl = new->emplacement_constraints[i];
+        if (old_empl.has_a_mandatory_letter != new_empl.has_a_mandatory_letter) { data++;}
+        for (int j = 0; j < NB_LETTERS; j++)
+        {
+            if (old_empl.forbidden_letters[j] != new_empl.forbidden_letters[j]) { data++;}
+        }
+    }
+    return data;
+}
+
+int evaluate_score_with_specific_combination(char *candidate_word, char *matching_word, constraints_t* constraints)
+{
+    //Non testé
+    constraints_t* new_constraint = copy_constraints(constraints);
+    attempt_t* attempt = create_attempt_and_result(candidate_word, matching_word);
+    update_constraints_with_attempts(new_constraint,attempt);
+
+    return compute_constraints_improvement(constraints, new_constraint);
+}
+

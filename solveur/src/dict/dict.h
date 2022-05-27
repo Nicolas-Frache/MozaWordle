@@ -102,7 +102,7 @@ void import_dict(int word_size);
  * @param list_words 
  * @return words_list_t* 
  */
-words_list_t* get_all_matching_wordsv2(constraints_t* constraints, words_list_t* list_words);
+words_list_t* get_all_matching_words(constraints_t* constraints, words_list_t* list_words);
 
 bool is_matching_word_constraint(constraints_t* constraint, char* word);
 
@@ -114,7 +114,7 @@ bool is_matching_word_constraint(constraints_t* constraint, char* word);
  * @param list_tries_t - list des essais precedents et des résultats associées sous formes de liste chainée
  * @return
  */
-struct words_list_t *get_all_matching_words(list_attempts_t *list_tries, struct words_list_t *list_words);
+struct words_list_t *get_all_matching_wordsv0(list_attempts_t *list_tries, struct words_list_t *list_words);
 
 /**
  * Teste si un mot peut être valide sachant une liste d'essai en particulier et leurs résultats
