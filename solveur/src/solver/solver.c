@@ -1,3 +1,6 @@
+#include <math.h>
+#include <string.h>
+#include <stdio.h>
 #include "solver.h"
 #include "attempts_tools.h"
 
@@ -40,3 +43,26 @@ int evaluate_score_with_specific_combination(char *candidate_word, char *matchin
     return compute_constraints_improvement(constraints, new_constraint); // On calcul les nouvelles informations
 }
 
+int *generate_patterns(int length) {
+
+    int NB_PATTERN = pow(3, length);
+    int *table = calloc(1, sizeof(int) * NB_PATTERN * length);
+
+    char str[length+1];
+    for (int i=0;i<NB_PATTERN;i++) {
+        sprintf(str, "%d", convert(i, 3));
+
+        //Remplissage de la table
+        for (int j = strlen(str)-1;j>=0;j--) {
+            table[i * length + strlen(str)-j-1] = str[j]-48;
+        }
+    }
+
+    return table;
+}
+
+int convert(int number,int base) {
+    if(number == 0 || base==10)
+        return number;
+    return (number % base) + 10*convert(number / base, base);
+}

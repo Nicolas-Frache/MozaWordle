@@ -49,5 +49,19 @@ int evaluate_score_with_specific_combination(char *candidate_word, char *matchin
  */ 
 int compute_constraints_improvement(struct constraints_t* old, struct constraints_t* new);
 
+/**
+ * Génère tous les patterns 012 pour les mots d'une certaine longueur
+ * @param length - longueur des mots
+ * @return
+ */
+int *generate_patterns(int length);
+
+/**
+ * Changer un entier de base
+ * @param number - entier à convertir
+ * @param base - base cible
+ * @return - l'entier converti
+ */
+int convert(int number, int base);
 
 #endif //SOLVEUR_SOLVER_H
