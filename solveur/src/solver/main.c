@@ -18,7 +18,8 @@ int game_loop(int length);
 int main() {
     print_hello();
     import_dict(5);
-    //int code_play_or_quit[2] = {0, 1};
+    
+    int number = read_word_length();
 
     bool playing = false;
 

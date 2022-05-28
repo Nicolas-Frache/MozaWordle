@@ -1,6 +1,8 @@
 #ifndef SOLVEUR_INTERFACE_H
 #define SOLVEUR_INTERFACE_H
 
+#define file_location "./src/test/wsolf.txt"
+
 #include <stdbool.h>
 /**
  * Affiche le message de bienvenue à l'utilsateur
@@ -12,6 +14,13 @@ void print_hello();
  * 
  */
 void print_begining_msg();
+
+
+/**
+ * Lit dans le fichier wsolf.txt la longueur des mots
+ * @return int 
+ */
+int read_word_length();
 
 int ask_for_word_length();
 

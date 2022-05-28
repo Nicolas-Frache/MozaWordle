@@ -25,6 +25,21 @@ int ask_for_word_length() {
     return length;
 }
 
+int read_word_length()
+{
+    FILE *file = fopen(file_location,"r");
+    if (file == NULL)
+    {
+        printf("Erreur, le fichier n'a pas pu être trouvé avec le chemin : %s\n (Il faut faire la commande dans solveur et pas solveur/bin)\n",file_location);
+        return -1;
+    }
+
+    int number;
+    fscanf(file,"%d",&number);
+    printf("Le nombre lu est : %d\n\n",number);
+    return number;
+}
+
 bool is_valid_answer(int res, int size) {
     // TODO: Vérifier que la chaine est de la bonne longueur, et bien composée de 0, 1 et 2
     return (res >= 0 && res < pow(10, size));
