@@ -56,6 +56,14 @@ describe(Dict) {
             asserteq(get_dictionary()->nb_words, 5037, "bad number of words in dictionary")
             ;asserteq(get_current_possible()->nb_words, 2264, "bad number of words detected as possible as solution")
             ;
+            int i = 1;
+            word_t *w = get_dictionary()->head;
+            while(w->next != NULL){
+                w = w->next;
+                i++;
+            }
+            asserteq(i, get_dictionary()->nb_words, "Too few words in the list")
+            ;
         }
     }
 

@@ -17,15 +17,12 @@ int game_loop(int length);
 
 int main() {
     print_hello();
-    import_dict(5);
-    
-    int number = read_word_length();
 
-    bool playing = false;
+    int word_size = read_word_length();
+    import_dict(word_size);
+    char *best_attempt = compute_next_best_attempt(word_size);
+    printf("%s", best_attempt);
 
-    while (playing) {
-        // TODO - importer le dico
-    }
     return 0;
 }
 

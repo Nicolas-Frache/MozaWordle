@@ -15,7 +15,7 @@ struct constraints_t;
  * @param constraints - les contraintes
  * @return le prochain mot à proposer
  */
-char *compute_next_best_attempt(struct words_list_t *matching_words, struct constraints_t* constraints);
+char *compute_next_best_attempt();
 
 /**
  * Pour un mot candidats donné, on parcourt tous les word qui pourraient être valides.
@@ -31,8 +31,8 @@ char *compute_next_best_attempt(struct words_list_t *matching_words, struct cons
 double evaluate_attempt_score(char *candidate_word, struct words_list_t *matching_words, struct constraints_t* constraints);
 
 /**
- * Pour un mot candidats donnée, calcul le score correspondant aux nouvelles informations qu'on
- * obtiendrait si le mot matching_word était valide.
+ * Pour un mot candidats et un pattern donnée, calcul le score correspondant aux nouvelles informations qu'on
+ * obtiendrait si après avoir saisit le mot condidat on obtient ce pattern
  *
  * @param candidate_word - le mot dont on veut évaluer le score dans cette situation
  * @param matching_word - le mot qui pourrait être valide et dont on veut savoir si candidate_word nous

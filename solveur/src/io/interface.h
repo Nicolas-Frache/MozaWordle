@@ -1,7 +1,7 @@
 #ifndef SOLVEUR_INTERFACE_H
 #define SOLVEUR_INTERFACE_H
 
-#define file_location "./src/test/wsolf.txt"
+#define file_location "../src/wsolf.txt"
 
 #include <stdbool.h>
 /**

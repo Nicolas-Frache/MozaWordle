@@ -36,7 +36,7 @@ int read_word_length()
 
     int number;
     fscanf(file,"%d",&number);
-    printf("Le nombre lu est : %d\n\n",number);
+    printf("Nombre de lettre : %d\n\n",number);
     return number;
 }
 
