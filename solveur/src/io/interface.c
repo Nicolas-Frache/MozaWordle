@@ -40,26 +40,32 @@ int read_word_length()
     return number;
 }
 
-bool is_valid_answer(int res, int size) {
-    // TODO: Vérifier que la chaine est de la bonne longueur, et bien composée de 0, 1 et 2
-    return (res >= 0 && res < pow(10, size));
+bool is_valid_answer(char *res, int size) {
+    if ((int) strlen(res) != size) {return false;}
+    for (int i=0;i<size;i++) {
+        if (res[i] != '0' && res[i] != '1' && res[i]!='2') {return false;}
+    }
+    return true;
 }
 
-void ask_for_answer(int result[], char *tried_word) {
+int *ask_for_answer(char *tried_word) {
     int taille = strlen(tried_word);
-    int res = 0;
+    int *table = calloc(1, sizeof(int) * taille);
+    char str[30];
     printf("Saisissez le résultat de la proposition : %s\n", tried_word);
-    scanf("%d", &res);
+    scanf("%s", str);
 
-    bool is_valid = is_valid_answer(res, taille);
-
+    bool is_valid = is_valid_answer(str, taille);
     while (!is_valid) {
         printf("Résultat invalide pour la proposition %s, saisissez-le à nouveau : \n", tried_word);
-        scanf("%d", &res);
-        is_valid = is_valid_answer(res, taille);
+        scanf("%s", str);
+        is_valid = is_valid_answer(str, taille);
     }
 
-    result = &res;
+    // Conversion en tableau
+    for (int i=0;i<(int)strlen(str);i++) {table[i] = str[i] - 48;}
+    
+    return table;
 }
 
 bool ask_for_play(){

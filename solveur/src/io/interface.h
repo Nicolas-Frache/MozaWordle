@@ -24,14 +24,19 @@ int read_word_length();
 
 int ask_for_word_length();
 
-bool is_valid_answer(int res, int size);
+/**
+ * Vérifie que la réponse de type 012 soit du bon format
+ * @param res - la réponse de l'utilisateur
+ * @param size - la taille attendue
+ */
+bool is_valid_answer(char *res, int size);
 
 /**
  * Demande à l'utilisateur d'indiquer la solution sous la forme "00102" ou "-1" pour quitter
- * @param result - le tableau entier qui est passée par référence puis modifiée par la méthode
  * @param tried_word - Le mot que le solveur propose
+ * @return - Le tableau rempli des 0 1 2
  */
-void ask_for_answer(int result[], char *tried_word);
+int *ask_for_answer(char *tried_word);
 
 /**
  * Demande à l'utilisateur s'il veut rejouer
