@@ -70,6 +70,51 @@ void append_word_list(words_list_t *list, char *word) {
     list->nb_words++;
 }
 
+void update_possibilites_w_attempt()
+{
+    //Non testé
+    words_list_t* liste = get_current_possible();
+
+    constraints_t* constraints = compute_constraints_from_attempts(get_previous_attempt());
+    word_t* head = liste->head;
+    while (!is_matching_word_constraints(head->word,constraints) && head != liste->tail)
+    {
+        word_t* former_head = head;
+        head = head->next;
+        free(former_head);
+    }
+
+    if (head->next == liste->tail && !is_matching_word_constraints(liste->tail->word,constraints))
+    {
+        free(liste->head);
+        free(liste->tail);
+        liste->head = NULL;
+        liste->tail = NULL;
+        printf("Il n'y a aucun mots actuellement répondant aux contraintes\n");
+        return;
+    }
+
+    liste->head = head;
+    word_t* former = head->next;
+    word_t* next = former;
+    while (next != liste->tail)
+    {
+        word_t* temp = next;
+        next = next->next;
+        free(temp);
+        if (is_matching_word_constraints(next->word,constraints))
+        {
+            former->next = next;
+            former = next;
+        }
+    }
+    if (!is_matching_word_constraints(liste->tail->word,constraints))
+    {
+        former->next = liste->head;
+        free(liste->tail);
+        liste->tail = former;
+    }
+}
 
 constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     attempt_t *attempt = attempts->head;

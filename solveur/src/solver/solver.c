@@ -7,6 +7,7 @@
 #include "attempts_tools.h"
 
 list_attempts_t *previous_attempts;
+list_attempts_t* get_previous_attempt() { return previous_attempts;}
 
 char *compute_next_best_attempt() {
     // Pour tous les mots du dictionnaire on calcul un esperance

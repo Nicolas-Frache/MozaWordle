@@ -60,6 +60,7 @@ void destroy_word_list(words_list_t* list);
 void append_word_list(words_list_t *list, char *word);
 words_list_t *get_dictionary();
 words_list_t *get_current_possible();
+void update_possibilites_w_attempt();
 
 constraints_t *create_constraints(int word_size);
 void destroy_constraints(constraints_t *constraints);
@@ -104,7 +105,7 @@ void import_dict(int word_size);
  */
 words_list_t* get_all_matching_words(constraints_t* constraints, words_list_t* list_words);
 
-bool is_matching_word_constraint(constraints_t* constraint, char* word);
+bool is_matching_word_constraints(constraints_t* constraint, char* word);
 
 #pragma region legacy
 /**
