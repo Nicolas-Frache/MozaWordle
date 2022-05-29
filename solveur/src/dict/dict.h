@@ -105,7 +105,13 @@ void import_dict(int word_size);
  */
 words_list_t* get_all_matching_words(constraints_t* constraints, words_list_t* list_words);
 
-bool is_matching_word_constraints(constraints_t* constraint, char* word);
+/**
+ * Test si un mot match avec un ensemble de contraintes liées à des attempts
+ * @param word - mot à tester
+ * @param constraints - contraintes sur le mot
+ * @return vrai si le mot peut être valide, faux sinon
+ */
+bool is_matching_word_constraints(const char *word, constraints_t *constraints);
 
 #pragma region legacy
 /**
@@ -135,18 +141,6 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
  */
 bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt);
 #pragma endregion
-
-/**
- * Test si un mot match avec un ensemble de contraintes liées à des attempts
- * @param word - mot à tester
- * @param constraints - contraintes sur le mot
- * @return vrai si le mot peut être valide, faux sinon
- */
-bool is_matching_word_constraints(const char *word, constraints_t *constraints);
-
-
-
-
 
 
 #endif //SOLVEUR_DICT_H

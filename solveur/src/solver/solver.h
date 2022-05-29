@@ -7,6 +7,8 @@ struct constraints_t;
 #include "attempts_tools.h"
 #include "../dict/dict.h"
 
+list_attempts_t* get_previous_attempt();
+
 /**
  * A partir de la liste de word qui sont conformes aux indices des tentatives précédentes "matching_words",
  * et de ces tentatives, cette méthode calcule le meilleur mot à proposer pour la tentative suivante
