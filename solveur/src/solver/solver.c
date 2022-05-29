@@ -13,53 +13,61 @@ char *compute_next_best_attempt() {
     // Pour tous les mots du dictionnaire on calcul un esperance
     words_list_t *dict = get_dictionary();
     // Le tableau a une taille déterminée durant l'exécution, il faut donc l'initialiser manuellement
+    int nb_possible_answers = get_current_possible()->nb_words;
+    word_t *current_possible_head = get_current_possible()->head;
 
+    // On déclare un maximum de truc en dehors des sous-boucles plus profondes pour gagner en temps d'exécution
     word_t *mot_candidat = dict->head;
     double max_entropy = 0;
     word_t *word_with_max_entropy = NULL;
     int *patterns = generate_patterns(dict->words_size);
+    constraints_t *new_constraints;
+    word_t *mot_possible;
 
+    double matching_word_pattern_nb, entropy_of_word, prob_x, info_x;
+    list_attempts_t *new_list_attempts = create_list_attempts(dict->words_size);
 
     for (int i = 0; i < dict->nb_words; i++) {
-        double entropy_of_word = 0;
+        entropy_of_word = 0;
+
         // Récupération de tous les patterns possibles :
-
-        // Pour tous les patterns on calcul l'entropie partielle, on les additionne au fur est à mesure pour avoir l'entropie du mot candidat
+        // Pour tous les patterns on calcul l'entropie du pattern
         for (int j = 0; j < pow(3, dict->words_size); j++) {
-            list_attempts_t *new_list_attempts = create_list_attempts(dict->words_size);
-            char *mot_candidat_cpy = malloc(strlen(mot_candidat->word) + 1 * sizeof(char));
-            strcpy(mot_candidat_cpy, mot_candidat->word);
-            int *pattern_cpy = malloc(sizeof(int) * dict->words_size);
-            memcpy(pattern_cpy, &patterns[j * dict->words_size], 1);
-            append_attempt(new_list_attempts, mot_candidat_cpy, pattern_cpy);
+            //list_attempts_t *new_list_attempts = create_list_attempts(dict->words_size);
+            //append_attempt(new_list_attempts, mot_candidat->word, &patterns[j * dict->words_size]);
+            free(new_list_attempts->head);
+            new_list_attempts->head = create_attempt(mot_candidat->word, &patterns[j * dict->words_size]);
 
-            constraints_t *new_constraints = compute_constraints_from_attempts(new_list_attempts);
+            new_constraints = compute_constraints_from_attempts(new_list_attempts);
+            mot_possible = current_possible_head;
 
-
-
-            word_t *mot_possible = get_current_possible()->head;
-            double matching_word_pattern_nb = 0;
+            matching_word_pattern_nb = 0;
             // Pour tous les mots encores possibles avec les indices precedents :
             while (mot_possible != NULL) {
-                bool match = is_matching_word_constraints(mot_possible->word, new_constraints);
-                if (match) {
+                // Il ne faut surtout ne rien mettre d'inutile ici, chaque instruction dans cette boucle est
+                // exécutée taille_dict * 3^n * nombre_mot_possible fois.
+                // Soit par exemple pour 5 lettres et la première tentative : 2.7 milliards de fois.
+                if (is_matching_word_constraints(mot_possible->word, new_constraints)) {
                     matching_word_pattern_nb++;
                 }
                 mot_possible = mot_possible->next;
             }
-            double prob_x = matching_word_pattern_nb / get_current_possible()->nb_words;
-            double info_x = log2(1 / prob_x);
-            // Calcul de l'entropie global du mot en additionnant l'entropie partielle de tous les patterns
-            entropy_of_word += prob_x * info_x;
+            if (matching_word_pattern_nb != 0) {
 
-            free(mot_candidat_cpy);
-            free(pattern_cpy);
+
+                // Probabilité que ce soit bien ce pattern qui tombe en jouant ce mot
+                prob_x = matching_word_pattern_nb / nb_possible_answers;
+                // Nombre de bit d'information que donnerait ce pattern s'il tombait
+                // Un bit correspond à une division par deux du nombre de mots possibles
+                info_x = log2(1 / prob_x);
+                // Calcul de l'entropie global du mot en sommant les produits de la proba de chaque pattern avec son entropie
+                entropy_of_word += prob_x * info_x;
+            }
             destroy_constraints(new_constraints);
-            destroy_list_attempts(new_list_attempts);
         }
 
         // Si le mot qu'on vient de tester et celui avec la plus grande entropie, on le conserve
-        if(entropy_of_word > max_entropy){
+        if (entropy_of_word > max_entropy) {
             max_entropy = entropy_of_word;
             word_with_max_entropy = mot_candidat;
         }
@@ -68,8 +76,11 @@ char *compute_next_best_attempt() {
         mot_candidat = mot_candidat->next;
     }
     free(patterns);
+    destroy_list_attempts(new_list_attempts);
 
-    printf("\n\n> Mot avec la plus grande entropie: %s, entropie: %f bits\n", word_with_max_entropy->word, max_entropy);
+    printf("\n\n> Mots avec la plus grande entropie:   %s          | %f bits\n", word_with_max_entropy->word,
+           max_entropy);
+
     return word_with_max_entropy->word;
 }
 

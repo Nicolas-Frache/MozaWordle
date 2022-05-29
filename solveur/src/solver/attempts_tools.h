@@ -18,7 +18,7 @@ typedef struct attempt_t {
 
 attempt_t* create_attempt(char* words, int* results);
 
-attempt_t* create_attempt_and_result(char *word,char* valid_word);
+attempt_t* create_attempt_and_result(char *word,const char* valid_word);
 
 list_attempts_t *create_list_attempts(int word_size);
 

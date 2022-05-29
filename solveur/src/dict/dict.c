@@ -268,7 +268,6 @@ words_list_t *get_all_matching_words(constraints_t *constraints, words_list_t *l
 
 bool is_matching_word_constraints(const char *word, constraints_t *constraints) {
     int n = constraints->word_size;
-    if (n != (int) strlen(word)) return false;
     int compteur_lettre[NB_LETTERS] = {};
     for (int i = 0; i < n; i++) {
         int indice_lettre = word[i] - 97;

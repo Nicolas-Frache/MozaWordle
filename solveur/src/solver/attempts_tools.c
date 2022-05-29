@@ -15,7 +15,7 @@ attempt_t *create_attempt(char *words, int *results) {
     return new;
 }
 
-attempt_t* create_attempt_and_result(char *word,char* valid_word)
+attempt_t* create_attempt_and_result(char *word,const char* valid_word)
 {
     attempt_t *new = (attempt_t *) malloc(sizeof(attempt_t));
     new->next = NULL;
