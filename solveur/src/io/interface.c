@@ -51,14 +51,14 @@ bool is_valid_answer(char *res, int size) {
 int *ask_for_answer(char *tried_word) {
     int taille = strlen(tried_word);
     int *table = calloc(1, sizeof(int) * taille);
-    char str[30];
+    char str[31];
     printf("Saisissez le résultat de la proposition : %s\n", tried_word);
-    scanf("%s", str);
+    scanf("%30s", str);
 
     bool is_valid = is_valid_answer(str, taille);
     while (!is_valid) {
         printf("Résultat invalide pour la proposition %s, saisissez-le à nouveau : \n", tried_word);
-        scanf("%s", str);
+        scanf("%30s", str);
         is_valid = is_valid_answer(str, taille);
     }
 
