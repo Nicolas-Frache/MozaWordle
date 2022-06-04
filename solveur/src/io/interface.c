@@ -54,11 +54,21 @@ int *ask_for_answer(char *tried_word) {
     char str[31];
     printf("Saisissez le résultat de la proposition : %s\n", tried_word);
     scanf("%30s", str);
+    if (strcmp(str, "-1") == 0) {
+        printf("Arrêt du solveur.\n");
+        table[0] = -1;
+        return table;
+    }
 
     bool is_valid = is_valid_answer(str, taille);
     while (!is_valid) {
         printf("Résultat invalide pour la proposition %s, saisissez-le à nouveau : \n", tried_word);
         scanf("%30s", str);
+        if (strcmp(str, "-1") == 0) {
+            printf("Arrêt du solveur.\n");
+            table[0] = -1;
+            return table;
+        }
         is_valid = is_valid_answer(str, taille);
     }
 
