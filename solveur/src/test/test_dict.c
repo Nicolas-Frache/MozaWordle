@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "snow.h"
 #include "../dict/dict.h"
 #define UNUSED(x) (void)(x)
@@ -11,6 +12,7 @@ void reset_attempts(list_attempts_t *attempts){
 describe(Dict) {
     list_attempts_t *attempts;
     int r_all_match_2_2_2[] = {2, 2, 2};
+    int r_all_match_2_2_2_2_2[] = {2, 2, 2, 2, 2};
     int r_none_match_0_0_0[] = {0, 0, 0};
     int r_wrong_place_1_0_0[] = {1, 0, 0};
     int r_wrong_place_0_0_1[] = {0, 0, 1};
@@ -46,6 +48,20 @@ describe(Dict) {
             asserteq(words->nb_words, 2)
             ;asserteq(words->head->word, "pomme")
             ;asserteq(words->tail->word, "poire")
+            ;asserteq(words->tail->previous->word, "pomme")
+            ;
+        }
+        it("remove element"){
+            append_word_list(words, "pomme");
+            append_word_list(words, "poire");
+            remove_word(words, words->head);
+            asserteq(words->nb_words, 1)
+            ;asserteq(words->head->word, "poire")
+            ;
+            remove_word(words, words->tail);
+            asserteq(words->nb_words, 0)
+            ;asserteq(words->head, NULL)
+            ;asserteq(words->tail, NULL)
             ;
         }
     }
@@ -53,7 +69,8 @@ describe(Dict) {
     subdesc(import_dict){
         it("import of dict from db"){
             import_dict(5);
-            asserteq(get_dictionary()->nb_words, 5037, "bad number of words in dictionary")
+            defer(destroy_dicts())
+            ;asserteq(get_dictionary()->nb_words, 5037, "bad number of words in dictionary")
             ;asserteq(get_current_possible()->nb_words, 2264, "bad number of words detected as possible as solution")
             ;
             int i = 1;
@@ -103,6 +120,23 @@ describe(Dict) {
                       "no known exact letter for second place. Even if only a word with 'a' in second place"
                       " can match previous constraints")
             ;
+        }
+        it("update_current_possible_with_attempt"){
+            // Préparation des données
+            import_dict(5);
+            /*init_previous_attempts(5);
+            list_attempts_t *previous_attempts = get_previous_attempt();
+            //destroy_list_attempts(previous_attempts);
+            //previous_attempts = create_list_attempts(5);
+            append_attempt(previous_attempts, "pomme", r_all_match_2_2_2_2_2);
+
+            // Action qu'on test
+            update_current_possible_with_attempt();
+
+            // Vérification du test
+            */
+            printf("taille dico: %d\n", get_dictionary()->nb_words);
+            destroy_dicts();
         }
     }
 

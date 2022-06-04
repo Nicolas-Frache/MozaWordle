@@ -47,7 +47,7 @@ char *compute_next_best_attempt() {
             while (mot_possible != NULL) {
                 // Il ne faut surtout ne rien mettre d'inutile ici, chaque instruction dans cette boucle est
                 // exécutée taille_dict * 3^n * nombre_mot_possible fois.
-                // Soit par exemple pour 5 lettres et la première tentative : 2.7 milliards de fois.
+                // Soit par exemple pour 5 lettres et la première tentative : 2.7 milliards de fois sans optimisation particulière
                 if (is_matching_word_constraints(mot_possible->word, new_constraints)) {
                     matching_word_pattern_nb++;
                 }

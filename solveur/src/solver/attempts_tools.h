@@ -30,6 +30,14 @@ void append_attempt(list_attempts_t *list_attempts, char *words, int *results);
 
 bool is_empty_list_attempts(list_attempts_t *list_attempts);
 
+/**
+ * Supprime un attempt de la liste et retourne l'attempt suivant ou NULL si c'est le dernier
+ * @param to_remove - attempt à supprimer
+ * @param list_attempts - liste d'attempts
+ * @return Attempt suivant ou NULL
+ */
+attempt_t *remove_attempt(list_attempts_t *list, attempt_t *to_remove);
+
 attempt_t *get_list_attempts(list_attempts_t *list_attempts, int index);
 
 #endif //SOLVEUR_LIST_TOOLS_H

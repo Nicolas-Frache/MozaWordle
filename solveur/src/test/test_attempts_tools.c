@@ -1,6 +1,5 @@
 #include "snow.h"
 #include "../solver/attempts_tools.h"
-#define UNUSED(x) (void)(x)
 
 describe(attempts_tools) {
     list_attempts_t *attempts;
@@ -52,6 +51,14 @@ describe(attempts_tools) {
         attempts = create_list_attempts(5);
         append_attempt(attempts, "melon", results_2);
         asserteq(attempts->nb_tries, 1, "List should have 1 element after deletion and insertion")
+        ;
+    }
+    it("remove_element"){
+        append_attempt(attempts, "apple", results_1);
+        append_attempt(attempts, "melon", results_2);
+        attempt_t *next = remove_attempt(attempts, attempts->head);
+        asserteq(attempts->nb_tries, 1, "List should have 1 element after deletion")
+        ;asserteq(attempts->head, next, "Second element should be the first one")
         ;
     }
     it("create and compute result")

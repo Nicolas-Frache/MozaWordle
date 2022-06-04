@@ -10,7 +10,7 @@
 
 typedef struct word_t {
     char *word;
-    struct word_t *next;
+    struct word_t *next, *previous;
 } word_t;
 
 typedef struct words_list_t {
@@ -58,14 +58,23 @@ typedef struct constraints_t {
 words_list_t* create_word_list(int word_size);
 void destroy_word_list(words_list_t* list);
 void append_word_list(words_list_t *list, char *word);
+/**
+ * Supprime le mot de la liste de mot
+ * @param list
+ * @param to_remove - mot à supprimer
+ * @return Le mot suivant ou NULL
+ */
+word_t *remove_word(words_list_t *list, word_t *to_remove);
+
 words_list_t *get_dictionary();
 words_list_t *get_current_possible();
-void update_possibilites_w_attempt();
+
+void update_current_possible_with_attempt();
 
 constraints_t *create_constraints(int word_size);
 void destroy_constraints(constraints_t *constraints);
 void destroy_word_constraint(word_constraint_t *word_constraint);
-void destroy_dict();
+void destroy_dicts();
 /**
  * Créé une copie de constraint qui est modifiable sans affecter l'original
  * @param original 
@@ -124,6 +133,7 @@ bool is_matching_word_constraints(const char *word, constraints_t *constraints);
 struct words_list_t *get_all_matching_wordsv0(list_attempts_t *list_tries, struct words_list_t *list_words);
 
 /**
+ * @for_test_only
  * Teste si un mot peut être valide sachant une liste d'essai en particulier et leurs résultats
  * @param word - mot à tester
  * @param attempts - essais et son résultats
@@ -133,6 +143,7 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
 
 
 /**
+ * @deprecated
  * Test si un mot peut être valide sachant un essai et son résultat
  * Version pas tout à fait au point et un peu lourde qu'on garde de côté pour éventuellement faire des comparaisons de performance
  * @param word - mot à  tester

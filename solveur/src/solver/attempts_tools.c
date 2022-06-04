@@ -66,7 +66,9 @@ void destroy_attempt(attempt_t *attempt) {
 }
 
 void destroy_list_attempts(list_attempts_t *list_attempts) {
-    destroy_attempt(list_attempts->head);
+    if (list_attempts == NULL) return;
+    if (list_attempts->head != NULL)
+        destroy_attempt(list_attempts->head);
     free(list_attempts);
 }
 
@@ -89,6 +91,26 @@ void append_attempt(list_attempts_t *list_attempts, char *words, int *results) {
 bool is_empty_list_attempts(list_attempts_t *pAttempts) {
     return pAttempts->head == NULL;
 }
+
+attempt_t *remove_attempt(list_attempts_t *list, attempt_t *to_remove){
+    if(is_empty_list_attempts(list))
+        return NULL;
+    if(list->head == to_remove){
+        list->head = to_remove->next;
+    } else {
+        attempt_t *current = list->head;
+        while(current->next != to_remove){
+            current = current->next;
+        }
+        current->next = to_remove->next;
+    }
+    list->nb_tries--;
+    attempt_t *res = to_remove->next;
+    free(to_remove);
+    return res;
+}
+
+
 
 attempt_t *get_list_attempts(list_attempts_t *list_attempts, int index) {
     if (is_empty_list_attempts(list_attempts) || index < 0) return NULL;

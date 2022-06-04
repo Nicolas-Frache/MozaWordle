@@ -10,8 +10,9 @@ words_list_t *dictionary = NULL;
 // Liste des mots qui sont possibles avec les indices actuels
 words_list_t *current_possibles = NULL;
 
-words_list_t *get_dictionary(){return dictionary;}
-words_list_t *get_current_possible(){return current_possibles;}
+words_list_t *get_dictionary() { return dictionary; }
+
+words_list_t *get_current_possible() { return current_possibles; }
 
 constraints_t *create_constraints(int word_size) {
     constraints_t *constraints = calloc(1, sizeof(constraints_t));
@@ -42,9 +43,32 @@ words_list_t *create_word_list(int word_size) {   //NON testé
     return new;
 }
 
+word_t *remove_word(words_list_t *list, word_t *to_remove) {
+    if (to_remove == list->head) {
+        list->head = to_remove->next;
+        if (list->head == NULL) {
+            list->tail = NULL;
+        }
+    } else {
+        if (to_remove == list->tail)
+            list->tail = to_remove->previous;
+        if (to_remove->previous != NULL)
+            to_remove->previous->next = to_remove->next;
+        if (to_remove->next != NULL)
+            to_remove->next->previous = to_remove->previous;
+    }
+    word_t *res = to_remove->next;
+    free(to_remove);
+    list->nb_words--;
+    return res;
+}
+
 void destroy_word(word_t *word) {
     if (word->next != NULL) {
         destroy_word(word->next);
+    }
+    if (word->word != NULL) {
+        free(word->word);
     }
     free(word);
 }
@@ -54,11 +78,22 @@ void destroy_word_list(words_list_t *list) {
         destroy_word(list->head);
     }
     free(list);
+
+/*
+    word_t *word = list->head;
+    while (word != NULL) {
+        word_t *next = word->next;
+        free(word->word);
+        free(word);
+        word = next;
+    }
+*/
 }
 
 void append_word_list(words_list_t *list, char *word) {
     word_t *new_word = (word_t *) malloc(sizeof(word_t));
     new_word->word = word;
+    new_word->previous = list->tail;
     new_word->next = NULL;
     if (list->head == NULL) {
         list->head = new_word;
@@ -70,50 +105,18 @@ void append_word_list(words_list_t *list, char *word) {
     list->nb_words++;
 }
 
-void update_possibilites_w_attempt()
-{
-    //Non testé
-    words_list_t* liste = get_current_possible();
-
-    constraints_t* constraints = compute_constraints_from_attempts(get_previous_attempt());
-    word_t* head = liste->head;
-    while (!is_matching_word_constraints(head->word,constraints) && head != liste->tail)
-    {
-        word_t* former_head = head;
-        head = head->next;
-        free(former_head);
-    }
-
-    if (head->next == liste->tail && !is_matching_word_constraints(liste->tail->word,constraints))
-    {
-        free(liste->head);
-        free(liste->tail);
-        liste->head = NULL;
-        liste->tail = NULL;
-        printf("Il n'y a aucun mots actuellement répondant aux contraintes\n");
-        return;
-    }
-
-    liste->head = head;
-    word_t* former = head->next;
-    word_t* next = former;
-    while (next != liste->tail)
-    {
-        word_t* temp = next;
-        next = next->next;
-        free(temp);
-        if (is_matching_word_constraints(next->word,constraints))
-        {
-            former->next = next;
-            former = next;
+void update_current_possible_with_attempt() {
+    words_list_t *liste = get_current_possible();
+    constraints_t *constraints = compute_constraints_from_attempts(get_previous_attempt());
+    word_t *current = liste->head;
+    while (current != NULL) {
+        if (!is_matching_word_constraints(current->word, constraints)) {
+            current = remove_word(liste, current);
+        } else {
+            current = current->next;
         }
     }
-    if (!is_matching_word_constraints(liste->tail->word,constraints))
-    {
-        former->next = liste->head;
-        free(liste->tail);
-        liste->tail = former;
-    }
+    destroy_constraints(constraints);
 }
 
 constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
@@ -243,6 +246,28 @@ void import_dict(int word_size) {
     sqlite3_close(db);
 }
 
+void destroy_dicts(){
+    destroy_word_list(dictionary);
+    destroy_word_list(current_possibles);
+}
+/*    word_t *word = dictionary->head;
+    while (word != NULL) {
+        word_t *next = word->next;
+        free(word->word);
+        free(word);
+        word = next;
+    }
+    free(dictionary);
+    word = current_possibles->head;
+    while (word != NULL) {
+        word_t *next = word->next;
+        free(word->word);
+        free(word);
+        word = next;
+    }
+    free(current_possibles);
+}*/
+
 words_list_t *get_all_matching_words(constraints_t *constraints, words_list_t *list_words) {
     //NON testé
     words_list_t *retour = create_word_list(constraints->word_size);
@@ -306,7 +331,7 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
     if (is_empty_list_attempts(attempts))
         return true;
 
-    // Méthode servant uniquement pour les tests car l'objectif du système de contraintes et justement
+    // Méthode servant uniquement pour les tests car l'objectif du système de contraintes est justement
     // de réutiliser les mêmes contraintes à de multiples reprises
     constraints_t *constraints = compute_constraints_from_attempts(attempts);
     bool result = is_matching_word_constraints(word, constraints);
@@ -326,6 +351,7 @@ bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
 }
 
 /**
+ * @deprecated
  * Version pas tout à fait au point et un peu lourde qu'on garde de côté pour éventuellement faire des comparaisons de performance
  */
 bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt) {
@@ -383,8 +409,6 @@ bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt) {
         }
 
     }
-
-
     return true;
 }
 
