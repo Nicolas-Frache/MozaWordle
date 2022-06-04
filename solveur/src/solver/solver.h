@@ -8,6 +8,7 @@ struct constraints_t;
 #include "../dict/dict.h"
 
 list_attempts_t* get_previous_attempt();
+void init_previous_attempts(int word_size);
 
 /**
  * A partir de la liste de word qui sont conformes aux indices des tentatives précédentes "matching_words",

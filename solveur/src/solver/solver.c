@@ -7,10 +7,11 @@
 #include "attempts_tools.h"
 
 list_attempts_t *previous_attempts;
+void init_previous_attempts(int word_size){previous_attempts = create_list_attempts(word_size);};
 list_attempts_t* get_previous_attempt() { return previous_attempts;}
 
 char *compute_next_best_attempt() {
-    // Pour tous les mots du dictionnaire on calcul un esperance
+    // Pour tous les mots du dictionnaire on calcule une espérance
     words_list_t *dict = get_dictionary();
     // Le tableau a une taille déterminée durant l'exécution, il faut donc l'initialiser manuellement
     int nb_possible_answers = get_current_possible()->nb_words;
@@ -72,7 +73,7 @@ char *compute_next_best_attempt() {
             word_with_max_entropy = mot_candidat;
         }
 
-        printf("\n> %d/%d,      %s          | %f bits", i, dict->nb_words, mot_candidat->word, entropy_of_word);
+        //printf("\n> %d/%d,      %s          | %f bits", i, dict->nb_words, mot_candidat->word, entropy_of_word);
         mot_candidat = mot_candidat->next;
     }
     free(patterns);
@@ -111,16 +112,6 @@ int compute_constraints_improvement(constraints_t *old, constraints_t *new) {
         }
     }
     return data;
-}
-
-int evaluate_score_with_specific_combination(char *candidate_word, char *matching_word, constraints_t *constraints) {
-    //Non testé
-    constraints_t *new_constraint = copy_constraints(constraints);
-    attempt_t *attempt = create_attempt_and_result(candidate_word, matching_word);
-    update_constraints_with_attempts(new_constraint,
-                                     attempt);  // On regarde les nouvelles contraintes si on propose candidate_word et que le mot valide est matching word
-
-    return compute_constraints_improvement(constraints, new_constraint); // On calcul les nouvelles informations
 }
 
 int *generate_patterns(int length) {

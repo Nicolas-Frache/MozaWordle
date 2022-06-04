@@ -20,8 +20,20 @@ int main() {
 
     int word_size = read_word_length();
     import_dict(word_size);
-    char *best_attempt = compute_next_best_attempt(word_size);
-    printf("%s", best_attempt);
+    init_previous_attempts(word_size);
+    list_attempts_t *previous_attempts = get_previous_attempt();
+
+    //char *best_attempt = compute_next_best_attempt(word_size);
+    //printf("%s", best_attempt);
+
+    while(get_current_possible()->nb_words > 1){
+        char *word_to_try = compute_next_best_attempt();
+        int *result = ask_for_answer(word_to_try);
+        append_attempt(previous_attempts, word_to_try, result);
+        update_current_possible_with_attempt();
+        printf("Il reste %d mots possibles", get_current_possible()->nb_words);
+    }
+    printf("La solution est : %s", get_current_possible()->head->word);
 
     return 0;
 }
