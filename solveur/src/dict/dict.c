@@ -46,18 +46,22 @@ words_list_t *create_word_list(int word_size) {   //NON testé
 word_t *remove_word(words_list_t *list, word_t *to_remove) {
     if (to_remove == list->head) {
         list->head = to_remove->next;
-        if (list->head == NULL) {
+        if (list->head == NULL)
             list->tail = NULL;
-        }
+        else
+            list->head->previous = NULL;
+
     } else {
         if (to_remove == list->tail)
             list->tail = to_remove->previous;
-        if (to_remove->previous != NULL)
+        if (to_remove->previous != NULL){
             to_remove->previous->next = to_remove->next;
-        if (to_remove->next != NULL)
-            to_remove->next->previous = to_remove->previous;
+            if (to_remove->next != NULL)
+                to_remove->next->previous = to_remove->previous;
+        }
     }
     word_t *res = to_remove->next;
+    //free(to_remove->word);
     free(to_remove);
     list->nb_words--;
     return res;
@@ -68,26 +72,28 @@ void destroy_word(word_t *word) {
         destroy_word(word->next);
     }
     if (word->word != NULL) {
+        printf("%s\n", word->word);
         free(word->word);
     }
     free(word);
 }
 
 void destroy_word_list(words_list_t *list) {
+/*
     if (list->head != NULL) {
         destroy_word(list->head);
     }
     free(list);
+*/
 
-/*
     word_t *word = list->head;
     while (word != NULL) {
         word_t *next = word->next;
-        free(word->word);
+        //printf("%s\n", word->word);
         free(word);
         word = next;
     }
-*/
+    free(list);
 }
 
 void append_word_list(words_list_t *list, char *word) {
@@ -137,6 +143,7 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
                     constraints->emplacement_constraints[i].mandatory_letter = attempt->word[i];
                 }
                 if (attempt->results[i] <= 1) {
+                    printf("%d\n", indice_lettre_attempt);
                     constraints->emplacement_constraints[i].forbidden_letters[indice_lettre_attempt] = true;
                 }
             }

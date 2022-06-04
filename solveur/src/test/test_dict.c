@@ -69,8 +69,7 @@ describe(Dict) {
     subdesc(import_dict){
         it("import of dict from db"){
             import_dict(5);
-            defer(destroy_dicts())
-            ;asserteq(get_dictionary()->nb_words, 5037, "bad number of words in dictionary")
+            asserteq(get_dictionary()->nb_words, 5037, "bad number of words in dictionary")
             ;asserteq(get_current_possible()->nb_words, 2264, "bad number of words detected as possible as solution")
             ;
             int i = 1;
@@ -123,20 +122,13 @@ describe(Dict) {
         }
         it("update_current_possible_with_attempt"){
             // Préparation des données
-            import_dict(5);
-            /*init_previous_attempts(5);
-            list_attempts_t *previous_attempts = get_previous_attempt();
-            //destroy_list_attempts(previous_attempts);
-            //previous_attempts = create_list_attempts(5);
-            append_attempt(previous_attempts, "pomme", r_all_match_2_2_2_2_2);
+            init_previous_attempts(5);
+            append_attempt(get_previous_attempt(), "poire", r_all_match_2_2_2_2_2);
+            words_list_t *tmp = get_current_possible();
 
-            // Action qu'on test
             update_current_possible_with_attempt();
 
-            // Vérification du test
-            */
-            printf("taille dico: %d\n", get_dictionary()->nb_words);
-            destroy_dicts();
+            printf("taille dico: %d\n", get_current_possible()->nb_words);
         }
     }
 
