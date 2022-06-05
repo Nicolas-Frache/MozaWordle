@@ -1,7 +1,7 @@
 # definition du compilateur
 CC = clang
 # definition des options de compilation pour obtenir un fichier .o
-PRODUCTFLAGS =  -Wall -Wextra -O3 -g3 -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
+PRODUCTFLAGS =  -Wall -Wextra -O1 -g3 -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls
 #PRODUCTFLAGS += -I src/dict/ -I src/solver/ -I src/io/ -I src/utils/test/
 COMPIL = $(CC) $(PRODUCTFLAGS)
 

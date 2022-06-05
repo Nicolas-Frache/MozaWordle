@@ -61,7 +61,7 @@ word_t *remove_word(words_list_t *list, word_t *to_remove) {
         }
     }
     word_t *res = to_remove->next;
-    //free(to_remove->word);
+    free(to_remove->word);
     free(to_remove);
     list->nb_words--;
     return res;
@@ -72,7 +72,6 @@ void destroy_word(word_t *word) {
         destroy_word(word->next);
     }
     if (word->word != NULL) {
-        printf("%s\n", word->word);
         free(word->word);
     }
     free(word);
@@ -90,6 +89,7 @@ void destroy_word_list(words_list_t *list) {
     while (word != NULL) {
         word_t *next = word->next;
         //printf("%s\n", word->word);
+        free(word->word);
         free(word);
         word = next;
     }
@@ -143,7 +143,6 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
                     constraints->emplacement_constraints[i].mandatory_letter = attempt->word[i];
                 }
                 if (attempt->results[i] <= 1) {
-                    printf("%d\n", indice_lettre_attempt);
                     constraints->emplacement_constraints[i].forbidden_letters[indice_lettre_attempt] = true;
                 }
             }

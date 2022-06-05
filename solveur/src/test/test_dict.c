@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include "snow.h"
 #include "../dict/dict.h"
 #define UNUSED(x) (void)(x)
@@ -26,11 +27,17 @@ describe(Dict) {
 
     subdesc(words_list){
         words_list_t *words;
+        char *pomme, *poire;
 
         before_each() {
             words = create_word_list(3);
-            defer(destroy_word_list(words))
-            ;
+            pomme = (char*)malloc(sizeof(char)*6);
+            poire = (char*)malloc(sizeof(char)*6);
+            strcpy(pomme, "pomme");
+            strcpy(poire, "poire");
+        }
+        after_each(){
+            destroy_word_list(words);
         }
 
         it("creation"){
@@ -38,13 +45,15 @@ describe(Dict) {
             ;asserteq(words->head, NULL)
             ;asserteq(words->words_size, 3)
             ;
+            free(pomme);
+            free(poire);
         }
         it("append"){
-            append_word_list(words, "pomme");
+            append_word_list(words, pomme);
             asserteq(words->nb_words, 1)
             ;asserteq(words->head->word, "pomme")
             ;
-            append_word_list(words, "poire");
+            append_word_list(words, poire);
             asserteq(words->nb_words, 2)
             ;asserteq(words->head->word, "pomme")
             ;asserteq(words->tail->word, "poire")
@@ -52,8 +61,8 @@ describe(Dict) {
             ;
         }
         it("remove element"){
-            append_word_list(words, "pomme");
-            append_word_list(words, "poire");
+            append_word_list(words, pomme);
+            append_word_list(words, poire);
             remove_word(words, words->head);
             asserteq(words->nb_words, 1)
             ;asserteq(words->head->word, "poire")
@@ -121,14 +130,12 @@ describe(Dict) {
             ;
         }
         it("update_current_possible_with_attempt"){
-            // Préparation des données
             init_previous_attempts(5);
             append_attempt(get_previous_attempt(), "poire", r_all_match_2_2_2_2_2);
-            words_list_t *tmp = get_current_possible();
-
             update_current_possible_with_attempt();
 
-            printf("taille dico: %d\n", get_current_possible()->nb_words);
+            asserteq(get_current_possible()->nb_words, 1, "Only one word should be remaining")
+            ;
         }
     }
 
