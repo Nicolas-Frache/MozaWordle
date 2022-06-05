@@ -88,7 +88,6 @@ void destroy_word_list(words_list_t *list) {
     word_t *word = list->head;
     while (word != NULL) {
         word_t *next = word->next;
-        //printf("%s\n", word->word);
         free(word->word);
         free(word);
         word = next;

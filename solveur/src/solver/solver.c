@@ -6,9 +6,16 @@
 #include "solver.h"
 #include "attempts_tools.h"
 
+#define COLOR_OFF   "\e[m"
+#define COLOR_BOLD  "\e[1m"
+#define COLOR_BOLD_BLUE  "\e[1;34m"
+
+
 list_attempts_t *previous_attempts;
-void init_previous_attempts(int word_size){previous_attempts = create_list_attempts(word_size);};
-list_attempts_t* get_previous_attempt() { return previous_attempts;}
+
+void init_previous_attempts(int word_size) { previous_attempts = create_list_attempts(word_size); };
+
+list_attempts_t *get_previous_attempt() { return previous_attempts; }
 
 char *compute_next_best_attempt() {
     // Pour tous les mots du dictionnaire on calcule une espérance
@@ -78,8 +85,8 @@ char *compute_next_best_attempt() {
     }
     free(patterns);
     destroy_list_attempts(new_list_attempts);
-
-    printf("\n\n> Mots avec la plus grande entropie:   %s          | %f bits\n", word_with_max_entropy->word,
+    printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s"COLOR_OFF"          | %f bits\n",
+           word_with_max_entropy->word,
            max_entropy);
 
     return word_with_max_entropy->word;
@@ -87,7 +94,6 @@ char *compute_next_best_attempt() {
 
 
 int compute_constraints_improvement(constraints_t *old, constraints_t *new) {
-    //Non testé
     int data = 0;
 
     word_constraint_t *old_w = old->word_constraint;
