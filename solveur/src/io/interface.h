@@ -10,19 +10,10 @@
 void print_hello();
 
 /**
- * Affiche message début de loop, avec option pour jouer ou quitter la partie
- * 
- */
-void print_begining_msg();
-
-
-/**
  * Lit dans le fichier wsolf.txt la longueur des mots
  * @return int 
  */
 int read_word_length();
-
-int ask_for_word_length();
 
 /**
  * Vérifie que la réponse de type 012 soit du bon format

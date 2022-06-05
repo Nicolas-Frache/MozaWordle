@@ -18,23 +18,34 @@ void init_previous_attempts(int word_size) { previous_attempts = create_list_att
 list_attempts_t *get_previous_attempt() { return previous_attempts; }
 
 char *compute_next_best_attempt() {
+    word_t *current_possible_head = get_current_possible()->head;
+
+    // Si on a un nombre de mots possibles <= 3 on essaie directement le premier qui vient,
+    // En effet, chercher dans l'ensemble du dictionnaire le mot qui éliminera en moyenne le plus de
+    // réponse possible n'est pas intéressant en dessous de 4 car on aura dans tous les cas 1 ou 2 essaie pour avoir la
+    // solution, donc autant avoir une chance d'y arriver du premier coup
+    if(get_current_possible()->nb_words <= 3){
+        printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF, current_possible_head->word);
+        return current_possible_head->word;
+    }
+
     // Pour tous les mots du dictionnaire on calcule une espérance
     words_list_t *dict = get_dictionary();
-    // Le tableau a une taille déterminée durant l'exécution, il faut donc l'initialiser manuellement
-    int nb_possible_answers = get_current_possible()->nb_words;
-    word_t *current_possible_head = get_current_possible()->head;
 
     // On déclare un maximum de truc en dehors des sous-boucles plus profondes pour gagner en temps d'exécution
     word_t *mot_candidat = dict->head;
-    double max_entropy = 0;
     word_t *word_with_max_entropy = NULL;
-    int *patterns = generate_patterns(dict->words_size);
-    constraints_t *new_constraints;
     word_t *mot_possible;
+    constraints_t *new_constraints;
+    double max_entropy = 0;
+    int *patterns = generate_patterns(dict->words_size);
+    int nb_possible_answers = get_current_possible()->nb_words;
 
     double matching_word_pattern_nb, entropy_of_word, prob_x, info_x;
     list_attempts_t *new_list_attempts = create_list_attempts(dict->words_size);
 
+
+    // On fait le tour des mots du dictionnaire pour trouver celui qui a la meilleure entropie en moyenne
     for (int i = 0; i < dict->nb_words; i++) {
         entropy_of_word = 0;
 
@@ -85,9 +96,11 @@ char *compute_next_best_attempt() {
     }
     free(patterns);
     destroy_list_attempts(new_list_attempts);
-    printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s"COLOR_OFF"          | %f bits\n",
-           word_with_max_entropy->word,
-           max_entropy);
+    printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF,
+//                                                                                    "          | %f bits\n",
+           word_with_max_entropy->word
+//          , max_entropy
+           );
 
     return word_with_max_entropy->word;
 }

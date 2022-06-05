@@ -30,20 +30,6 @@ void print_hello() {
     printf("\n-----------------------------------\n");
 }
 
-void print_begining_msg() {
-    int jouer;
-    printf("Bienvenue sur RELA !\n");
-    jouer = ask_for_play();
-    //TODO traiter la cas jouer/quitter
-}
-
-int ask_for_word_length() {
-    int length = 0;
-    printf("Saisissez le nombre de lettre du mot à deviner :\n");
-    scanf("%d", &length);
-    return length;
-}
-
 int read_word_length() {
     FILE *file = fopen(file_location, "r");
     if (file == NULL) {
