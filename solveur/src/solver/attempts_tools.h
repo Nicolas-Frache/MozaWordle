@@ -38,6 +38,8 @@ bool is_empty_list_attempts(list_attempts_t *list_attempts);
  */
 attempt_t *remove_attempt(list_attempts_t *list, attempt_t *to_remove);
 
+int* compute_result(char* candidate, char* word);
+
 attempt_t *get_list_attempts(list_attempts_t *list_attempts, int index);
 
 #endif //SOLVEUR_LIST_TOOLS_H

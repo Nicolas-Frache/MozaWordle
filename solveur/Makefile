@@ -34,6 +34,11 @@ dict.o: $(D)dict.c
 	$(COMPIL) -c $(D)dict.c
 
 
+score : score.o interface.o solver.o attempts_tools.o dict.o
+	$(COMPIL) -o $(B)score score.o interface.o solver.o attempts_tools.o dict.o -l sqlite3 && $(MOV)
+score.o :
+	$(COMPIL) -c $(S)score.c
+
 test: main_test.o attempts_tools.o dict.o solver.o interface.o main.o
 	$(COMPIL) $(TEST) -o $(B)test main_test.o dict.o attempts_tools.o solver.o -l sqlite3 	&& $(MOV)
 main_test.o:

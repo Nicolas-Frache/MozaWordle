@@ -49,6 +49,37 @@ attempt_t* create_attempt_and_result(char *word,const char* valid_word)
     new->results = result;
     return new;
 }
+
+int* compute_result(char* candidate, char* valid_word)
+{
+    int n = (int)strlen(candidate);
+    int *result = calloc(1, sizeof(int) * n);
+    int nb_of_occurence[NB_LETTERS] = {};
+
+    for (int i = 0; i < n; i++)
+    {
+        int indice_letter = valid_word[i] - 97;
+        nb_of_occurence[indice_letter]++;
+    }
+
+    for (int i = 0; i < n; i++) 
+    {
+        int indice_letter = candidate[i] - 97;
+        if (candidate[i] == valid_word[i])
+        {
+            result[i] = 2;
+            nb_of_occurence[indice_letter]--;
+        }
+        else if (nb_of_occurence[indice_letter] > 0)
+        {
+            result[i] = 1;
+            nb_of_occurence[indice_letter]--;
+        }
+        else {result[i] = 0;}
+    }
+    return result;
+}
+
 list_attempts_t *create_list_attempts(int word_size) {
     list_attempts_t *new = (list_attempts_t *) malloc(sizeof(list_attempts_t));
     new->nb_tries = 0;
