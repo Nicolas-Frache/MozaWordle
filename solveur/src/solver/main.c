@@ -35,17 +35,29 @@ int main() {
     init_previous_attempts(word_size);
     list_attempts_t *previous_attempts = get_previous_attempt();
 
-    // Sélection du premier mot précalculée pour gagner du tempts
+    // Sélection du premier mot précalculé pour gagner du temps
     char *first_words[5] = {"rai", "aria", "aerer", "errera", "recrire"};
     char *first_word = first_words[word_size - 3];
     printf("\n\n● Mots avec la plus grande entropie initiale :   "COLOR_BOLD_BLUE"%s"COLOR_OFF"\n",first_word);
     int *first_result = ask_for_answer(first_word);
+    if (first_result[0] == -1){
+        destroy_list_attempts(previous_attempts);
+        free(first_result);
+        return 0;
+    }
     append_attempt(previous_attempts, first_word, first_result);
     update_current_possible_with_attempt();
+    printf("Il reste " COLOR_YELLOW_BOLD "%d mots possibles" COLOR_OFF, get_current_possible()->nb_words);
 
     while(get_current_possible()->nb_words > 1){
         char *word_to_try = compute_next_best_attempt();
         int *result = ask_for_answer(word_to_try);
+        if (result[0] == -1){
+            destroy_list_attempts(previous_attempts);
+            free(first_result);
+            free(result);
+            return 0;
+        }
         append_attempt(previous_attempts, word_to_try, result);
         update_current_possible_with_attempt();
         printf("Il reste " COLOR_YELLOW_BOLD "%d mots possibles" COLOR_OFF, get_current_possible()->nb_words);
