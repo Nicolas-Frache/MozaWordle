@@ -42,7 +42,10 @@ int main() {
         update_current_possible_with_attempt();
         printf("Il reste %d mots possibles", get_current_possible()->nb_words);
     }
-    printf("\nLa solution est : %s\n", get_current_possible()->head->word);
+    if (get_current_possible()->nb_words > 0)
+        printf("\nLa solution est : %s\n", get_current_possible()->head->word);
+    else
+        printf("\n\nAucun mot du dictionnaire actuel ne correspond ...\nExit\n");
 
     return 0;
 }
