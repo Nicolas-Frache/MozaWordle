@@ -1,0 +1,41 @@
+@startuml
+Language fr
+
+printscale weekly zoom 2.5
+
+-- Application web --
+
+[Conception] as [web1] lasts 15 days
+[Développement app web] as [web2] lasts 30 days
+[Tests app web] as [web3] lasts 0 days
+
+-- Solveur --
+
+[Conception algo solveur] as [c1] lasts 10 days
+[Ecriture du solveur] as [c2] lasts 0 days
+[Tests] as [c3] lasts 0 days
+
+-- Autre --
+
+[Etude préalable] as [a2] lasts 20 days
+[Redaction rapport] as [a1] lasts 20 days
+
+Project starts the 25th of march 2022
+[web1] starts at 2022-03-25
+
+[web1] -> [web2]
+[web3] starts at 2022-04-25
+[web3] ends 2022-05-06
+
+[c1] starts at 2022-05-06
+[c1] -> [c2]
+[c2] ends 2022-06-8
+[c3] starts 2022-05-20
+[c3] ends 2022-06-8
+
+[a2] starts 2022-03-30
+[a2] ends 2022-04-15
+
+[a1] ends 2022-06-07
+
+@enduml

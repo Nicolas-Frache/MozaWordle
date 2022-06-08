@@ -20,7 +20,12 @@ void print_hello() {
            "                ||----w |\n"
            "                ||     ||");
 
-    printf("\nGroupe E32 - Valentin CHANEL, Matéo DEMANGEON, Nicolas FRACHE, Victor VOISIN.");
+
+    printf("\nGroupe E32 - "
+           "Valentin C"R"H"CO"A"Y"NE"CO"L,"
+           " Matéo D"R"EM"CO"A"Y"NG"CO"E"R"O"CO"N,"
+           " Nicolas F"Y"RA"CO"C"R"H"CO"E, "
+                                       " Victor V"Y"OI"CO"S"R"I"CO"N.");
     printf("\n-----------------------------------\n");
 }
 

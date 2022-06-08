@@ -4,11 +4,15 @@
 #define file_location "../src/wsolf.txt"
 
 #define COLOR_OFF   "\e[m"
+#define CO   "\e[m"
 #define BOLD_BLUE    "\033[1;34m"
 #define COLOR_RED_BOLD  "\e[1;31m"
 #define COLOR_BOLD_SLOW_BLINKING_YELLOW  "\e[1;6;33m"
 #define COLOR_BOLD_SLOW_BLINKING_RED  "\e[1;6;31m"
 #define COLOR_BOLD_BLUE  "\e[1;34m"
+
+#define R "\e[41;30m"
+#define Y "\e[43;30m"
 
 #include <stdbool.h>
 
