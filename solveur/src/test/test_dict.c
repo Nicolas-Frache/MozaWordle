@@ -105,6 +105,7 @@ describe(Dict) {
             ;asserteq(constraints->word_constraint->min_nb_occurrences_letters[25], 0, "bad initialization")
             ;
         }
+
         it("compute_constraints_from_attempts"){
             append_attempt(attempts, "abc", r_all_match_2_2_2);
             constraints_t *constraints = compute_constraints_from_attempts(attempts);

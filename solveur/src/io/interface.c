@@ -2,13 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 #include "interface.h"
-
-#define COLOR_OFF   "\e[m"
-#define COLOR_BOLD  "\e[1m"
-#define BOLD_BLUE    "\033[1;34m"
-#define COLOR_BOLD_SLOW_BLINKING_RED  "\e[1;6;33m"
 
 void print_hello() {
     //system("figlet -f slant Solveur ! | cowsay -n");
@@ -21,7 +15,7 @@ void print_hello() {
            "\\                                              /\n"
            " ----------------------------------------------\n"
            "        \\   ^__^\n"
-           "         \\  (" COLOR_BOLD_SLOW_BLINKING_RED "oo" COLOR_OFF ")\\_______\n"
+           "         \\  (" COLOR_BOLD_SLOW_BLINKING_YELLOW "oo" COLOR_OFF ")\\_______\n"
            "            (__)\\       )\\/\\\n"
            "                ||----w |\n"
            "                ||     ||");
@@ -33,8 +27,12 @@ void print_hello() {
 int read_word_length() {
     FILE *file = fopen(file_location, "r");
     if (file == NULL) {
-        printf("Erreur, le fichier n'a pas pu être trouvé avec le chemin : %s\n (Il faut faire la commande dans solveur et pas solveur/bin)\n",
+        printf("Erreur, le fichier n'a pas pu être trouvé avec le chemin : %s\n",
                file_location);
+        printf(COLOR_BOLD_SLOW_BLINKING_RED"❗❗! Attention !❗❗" COLOR_OFF
+               " , l'instruction d'exécution doit être exactement: "
+               COLOR_BOLD_BLUE"'./solver'"COLOR_OFF
+               " et PAS './bin/solver' ou autre\n\n");
         return -1;
     }
 

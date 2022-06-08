@@ -1,15 +1,11 @@
-#include <math.h>
 #include <string.h>
 #include <stdio.h>
-#include <string.h>
 #include <tgmath.h>
 #include "solver.h"
 #include "attempts_tools.h"
 
 #define COLOR_OFF   "\e[m"
-#define COLOR_BOLD  "\e[1m"
 #define COLOR_BOLD_BLUE  "\e[1;34m"
-
 
 list_attempts_t *previous_attempts;
 
@@ -24,8 +20,9 @@ char *compute_next_best_attempt() {
     // En effet, chercher dans l'ensemble du dictionnaire le mot qui éliminera en moyenne le plus de
     // réponse possible n'est pas intéressant en dessous de 4 car on aura dans tous les cas 1 ou 2 essaie pour avoir la
     // solution, donc autant avoir une chance d'y arriver du premier coup
-    if(get_current_possible()->nb_words <= 3){
-        printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF, current_possible_head->word);
+    if (get_current_possible()->nb_words <= 3) {
+        printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF,
+               current_possible_head->word);
         return current_possible_head->word;
     }
 
@@ -97,10 +94,8 @@ char *compute_next_best_attempt() {
     free(patterns);
     destroy_list_attempts(new_list_attempts);
     printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF,
-//                                                                                    "          | %f bits\n",
            word_with_max_entropy->word
-//          , max_entropy
-           );
+    );
 
     return word_with_max_entropy->word;
 }

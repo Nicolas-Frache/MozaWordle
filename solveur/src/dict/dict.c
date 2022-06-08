@@ -14,115 +14,6 @@ words_list_t *get_dictionary() { return dictionary; }
 
 words_list_t *get_current_possible() { return current_possibles; }
 
-constraints_t *create_constraints(int word_size) {
-    constraints_t *constraints = calloc(1, sizeof(constraints_t));
-    constraints->emplacement_constraints = calloc(1, sizeof(emplacement_constraints_t) * word_size);
-    constraints->word_constraint = calloc(1, sizeof(word_constraint_t));
-    constraints->word_size = word_size;
-    return constraints;
-}
-
-void destroy_constraints(constraints_t *constraints) {
-    free(constraints->emplacement_constraints);
-    free(constraints->word_constraint);
-    free(constraints);
-}
-
-constraints_t *copy_constraints(constraints_t *original) {
-    UNUSED(original);
-    //TODO
-    return original;
-}
-
-words_list_t *create_word_list(int word_size) {   //NON testé
-    words_list_t *new = (words_list_t *) malloc(sizeof(words_list_t));
-    new->words_size = word_size;
-    new->head = NULL;
-    new->tail = NULL;
-    new->nb_words = 0;
-    return new;
-}
-
-word_t *remove_word(words_list_t *list, word_t *to_remove) {
-    if (to_remove == list->head) {
-        list->head = to_remove->next;
-        if (list->head == NULL)
-            list->tail = NULL;
-        else
-            list->head->previous = NULL;
-
-    } else {
-        if (to_remove == list->tail)
-            list->tail = to_remove->previous;
-        if (to_remove->previous != NULL){
-            to_remove->previous->next = to_remove->next;
-            if (to_remove->next != NULL)
-                to_remove->next->previous = to_remove->previous;
-        }
-    }
-    word_t *res = to_remove->next;
-    free(to_remove->word);
-    free(to_remove);
-    list->nb_words--;
-    return res;
-}
-
-void destroy_word(word_t *word) {
-    if (word->next != NULL) {
-        destroy_word(word->next);
-    }
-    if (word->word != NULL) {
-        free(word->word);
-    }
-    free(word);
-}
-
-void destroy_word_list(words_list_t *list) {
-/*
-    if (list->head != NULL) {
-        destroy_word(list->head);
-    }
-    free(list);
-*/
-
-    word_t *word = list->head;
-    while (word != NULL) {
-        word_t *next = word->next;
-        free(word->word);
-        free(word);
-        word = next;
-    }
-    free(list);
-}
-
-void append_word_list(words_list_t *list, char *word) {
-    word_t *new_word = (word_t *) malloc(sizeof(word_t));
-    new_word->word = word;
-    new_word->previous = list->tail;
-    new_word->next = NULL;
-    if (list->head == NULL) {
-        list->head = new_word;
-        list->tail = new_word;
-    } else {
-        list->tail->next = new_word;
-        list->tail = new_word;
-    }
-    list->nb_words++;
-}
-
-void update_current_possible_with_attempt() {
-    words_list_t *liste = get_current_possible();
-    constraints_t *constraints = compute_constraints_from_attempts(get_previous_attempt());
-    word_t *current = liste->head;
-    while (current != NULL) {
-        if (!is_matching_word_constraints(current->word, constraints)) {
-            current = remove_word(liste, current);
-        } else {
-            current = current->next;
-        }
-    }
-    destroy_constraints(constraints);
-}
 
 constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     attempt_t *attempt = attempts->head;
@@ -186,11 +77,102 @@ constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts) {
     return constraints;
 }
 
-void update_constraints_with_attempts(constraints_t *old_constraints, attempt_t *attempt) {
-    // NON TESTE
-    UNUSED(attempt);
-    constraints_t *new_constraints = copy_constraints(old_constraints);
-    UNUSED(new_constraints);
+
+constraints_t *create_constraints(int word_size) {
+    constraints_t *constraints = calloc(1, sizeof(constraints_t));
+    constraints->emplacement_constraints = calloc(1, sizeof(emplacement_constraints_t) * word_size);
+    constraints->word_constraint = calloc(1, sizeof(word_constraint_t));
+    constraints->word_size = word_size;
+    return constraints;
+}
+
+void destroy_constraints(constraints_t *constraints) {
+    free(constraints->emplacement_constraints);
+    free(constraints->word_constraint);
+    free(constraints);
+}
+
+words_list_t *create_word_list(int word_size) {   //NON testé
+    words_list_t *new = (words_list_t *) malloc(sizeof(words_list_t));
+    new->words_size = word_size;
+    new->head = NULL;
+    new->tail = NULL;
+    new->nb_words = 0;
+    return new;
+}
+
+word_t *remove_word(words_list_t *list, word_t *to_remove) {
+    if (to_remove == list->head) {
+        list->head = to_remove->next;
+        if (list->head == NULL)
+            list->tail = NULL;
+        else
+            list->head->previous = NULL;
+
+    } else {
+        if (to_remove == list->tail)
+            list->tail = to_remove->previous;
+        if (to_remove->previous != NULL) {
+            to_remove->previous->next = to_remove->next;
+            if (to_remove->next != NULL)
+                to_remove->next->previous = to_remove->previous;
+        }
+    }
+    word_t *res = to_remove->next;
+    free(to_remove->word);
+    free(to_remove);
+    list->nb_words--;
+    return res;
+}
+
+void destroy_word(word_t *word) {
+    if (word->next != NULL) {
+        destroy_word(word->next);
+    }
+    if (word->word != NULL) {
+        free(word->word);
+    }
+    free(word);
+}
+
+void destroy_word_list(words_list_t *list) {
+    word_t *word = list->head;
+    while (word != NULL) {
+        word_t *next = word->next;
+        free(word->word);
+        free(word);
+        word = next;
+    }
+    free(list);
+}
+
+void append_word_list(words_list_t *list, char *word) {
+    word_t *new_word = (word_t *) malloc(sizeof(word_t));
+    new_word->word = word;
+    new_word->previous = list->tail;
+    new_word->next = NULL;
+    if (list->head == NULL) {
+        list->head = new_word;
+        list->tail = new_word;
+    } else {
+        list->tail->next = new_word;
+        list->tail = new_word;
+    }
+    list->nb_words++;
+}
+
+void update_current_possible_with_attempt() {
+    words_list_t *liste = get_current_possible();
+    constraints_t *constraints = compute_constraints_from_attempts(get_previous_attempt());
+    word_t *current = liste->head;
+    while (current != NULL) {
+        if (!is_matching_word_constraints(current->word, constraints)) {
+            current = remove_word(liste, current);
+        } else {
+            current = current->next;
+        }
+    }
+    destroy_constraints(constraints);
 }
 
 /**
@@ -234,9 +216,13 @@ void import_dict(int word_size) {
     rc = sqlite3_open("file:../src/dict/database.db?mode=ro&cache=private", &db);
     if (rc != 0) {
         fprintf(stderr, "Erreur avec base de donnée: %s\n", sqlite3_errmsg(db));
-        printf("❗❗ Attention ❗❗ , l'instruction d'exécution doit être exactement: './solver' et PAS './bin/solver' ou autre\n\n");
+        printf(COLOR_RED_BOLD"❗❗ Attention ❗❗" COLOR_OFF
+               " , l'instruction d'exécution doit être exactement: "
+               COLOR_BOLD_BLUE"'./solver'"COLOR_OFF
+               " et PAS './bin/solver' ou autre\n\n");
         sqlite3_close(db);
         return;
+
     }
 
     /* Create SQL statement */
@@ -251,30 +237,12 @@ void import_dict(int word_size) {
     sqlite3_close(db);
 }
 
-void destroy_dicts(){
+void destroy_dicts() {
     destroy_word_list(dictionary);
     destroy_word_list(current_possibles);
 }
-/*    word_t *word = dictionary->head;
-    while (word != NULL) {
-        word_t *next = word->next;
-        free(word->word);
-        free(word);
-        word = next;
-    }
-    free(dictionary);
-    word = current_possibles->head;
-    while (word != NULL) {
-        word_t *next = word->next;
-        free(word->word);
-        free(word);
-        word = next;
-    }
-    free(current_possibles);
-}*/
 
 words_list_t *get_all_matching_words(constraints_t *constraints, words_list_t *list_words) {
-    //NON testé
     words_list_t *retour = create_word_list(constraints->word_size);
     retour->words_size = constraints->word_size;
     word_t *last;
@@ -282,14 +250,14 @@ words_list_t *get_all_matching_words(constraints_t *constraints, words_list_t *l
     word_t *current = list_words->head;
     while (current->next != NULL) {
         if (is_matching_word_constraints(current->word, constraints)) {
-            if (last == NULL) { last = current; }
-            else {
-                last->next = current;   // je crois que ca pose pas de probleme pour itérer sur list_words
+            if (last == NULL) {
+                last = current;
+            } else {
+                last->next = current;
                 last = current;
             }
         }
         current = current->next;
-
     }
     retour->head = last;
     return retour;
@@ -330,91 +298,14 @@ bool is_matching_word_constraints(const char *word, constraints_t *constraints) 
     return true;
 }
 
-#pragma region legacy
-
 bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts) {
-    if (is_empty_list_attempts(attempts))
-        return true;
-
     // Méthode servant uniquement pour les tests car l'objectif du système de contraintes est justement
     // de réutiliser les mêmes contraintes à de multiples reprises
+    if (is_empty_list_attempts(attempts)) {
+        return true;
+    }
     constraints_t *constraints = compute_constraints_from_attempts(attempts);
     bool result = is_matching_word_constraints(word, constraints);
     destroy_constraints(constraints);
     return result;
-
-    // Méthode précèdente, qu'on garde de côté en vue d'éventuels comparaison de performances à venir
-    /*
-    attempt_t *current = attempts->head;
-    bool result = is_matching_word_one_specific_attempt_v1(word, current);
-    while (current->next != NULL && result) {
-        current = current->next;
-        result &= is_matching_word_one_specific_attempt_v1(word, current);
-    }
-    return result;
-     */
 }
-
-/**
- * @deprecated
- * Version pas tout à fait au point et un peu lourde qu'on garde de côté pour éventuellement faire des comparaisons de performance
- */
-bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt) {
-    int len = (int) strlen(word);
-    for (int i = 0; i < len; i++) {
-
-        // On vérifie que toute les lettres dont connait la place directement (code 2),
-        // sont bien au bon endroit
-        if (attempt->results[i] == 2 && word[i] != attempt->word[i]) {
-            return false;
-        }
-
-        // On vérifie que toutes les lettres dont on sait qu'elles sont à la mauvaise place (code 1),
-        // sont bien présentes en bon nombre dans le mot.
-        // Par exemple : Si on a le mot "aaa...." et le result "210....0", on sait qu'il y a exactement 2 a dans le mot à trouver.
-        if (attempt->results[i] == 1) {
-            char current_char = attempt->word[i];
-            if (current_char == word[i]) {
-                // Si on sait qu'une lettre est dans le mot, mais pas à la place n, alors
-                // si on la trouve à la place n le mot ne match pas
-                return false;
-            }
-            int min_number_of_occurrence = 0;
-            int number_of_occurrence = 0;
-            bool has_a_exact_number_of_occurrence = false;
-            for (int j = 0; j < len; j++) {
-                // On compte cb de fois une lettre doit apparaitre au minimum et on compare au
-                // nombre d'apparitions effectives. Si la lettre n'apparait pas assez de
-                // fois dans le mot, on renvoie false.
-                if (attempt->word[j] == current_char) {
-                    if (attempt->results[j] >= 1) {
-                        min_number_of_occurrence++;
-                    }
-                    if (attempt->results[j] == 0) {
-                        // Si pour une des occurrences de la lettre dans le mot testé on a un code "0", cela signifie
-                        // qu'on peut determiner le nombre exact de fois qu'elle apparait dans le mot.
-                        has_a_exact_number_of_occurrence = true;
-                    }
-                }
-                if (word[j] == current_char) {
-                    // on compte le nombre occurrence effective dans le mot
-                    number_of_occurrence++;
-                }
-            }
-            if ((has_a_exact_number_of_occurrence && min_number_of_occurrence != number_of_occurrence) ||
-                min_number_of_occurrence > number_of_occurrence) {
-                return false;
-            }
-        }
-
-        // Si on sait qu'une lettre ne doit pas être dans le mot à une place donnée (code 0)
-        // alors on ne peut évidemment pas le match
-        if (attempt->results[i] == 0 && attempt->word[i] == word[i]) {
-            return false;
-        }
-
-    }
-    return true;
-}
-
-#pragma endregion

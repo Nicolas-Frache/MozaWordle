@@ -1,11 +1,7 @@
-#include <stdio.h>
-#include <assert.h>
 #include <string.h>
 #include "attempts_tools.h"
 
 #define NB_LETTERS 26
-
-bool is_empty_list_tries(list_attempts_t *pAttempts);
 
 attempt_t *create_attempt(char *words, int *results) {
     attempt_t *new = (attempt_t *) malloc(sizeof(attempt_t));
@@ -140,8 +136,6 @@ attempt_t *remove_attempt(list_attempts_t *list, attempt_t *to_remove){
     free(to_remove);
     return res;
 }
-
-
 
 attempt_t *get_list_attempts(list_attempts_t *list_attempts, int index) {
     if (is_empty_list_attempts(list_attempts) || index < 0) return NULL;

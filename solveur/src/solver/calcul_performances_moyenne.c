@@ -3,12 +3,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <string.h>
-#include <stdbool.h>
 
+/**
+ * @work_in_progress
+ * Fichier permettant de trouver le score moyen de notre solveur pour les différentes
+ * longueurs de mot. Non terminée
+ */
 int main()
 {
-    // NON FONCTIONELLE
+    // NON FONCTIONELLEs
 
 
     print_hello();

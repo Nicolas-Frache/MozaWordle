@@ -3,7 +3,15 @@
 
 #define file_location "../src/wsolf.txt"
 
+#define COLOR_OFF   "\e[m"
+#define BOLD_BLUE    "\033[1;34m"
+#define COLOR_RED_BOLD  "\e[1;31m"
+#define COLOR_BOLD_SLOW_BLINKING_YELLOW  "\e[1;6;33m"
+#define COLOR_BOLD_SLOW_BLINKING_RED  "\e[1;6;31m"
+#define COLOR_BOLD_BLUE  "\e[1;34m"
+
 #include <stdbool.h>
+
 /**
  * Affiche le message de bienvenue à l'utilsateur
  */
@@ -28,12 +36,5 @@ bool is_valid_answer(char *res, int size);
  * @return - Le tableau rempli des 0 1 2
  */
 int *ask_for_answer(char *tried_word);
-
-/**
- * Demande à l'utilisateur s'il veut rejouer
- * @return true si l'utilisateur veut rejouer, false sinon
- */
-bool ask_for_play();
-
 
 #endif //SOLVEUR_INTERFACE_H

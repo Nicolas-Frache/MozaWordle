@@ -6,7 +6,9 @@
 #include "../solver/attempts_tools.h"
 
 #define NB_LETTERS 26
-#define MAX_WORD_LENGTH 20
+#define COLOR_RED_BOLD  "\e[1;31m"
+#define COLOR_BOLD_BLUE  "\e[1;34m"
+#define COLOR_OFF   "\e[m"
 
 typedef struct word_t {
     char *word;
@@ -55,9 +57,12 @@ typedef struct constraints_t {
     bool global_forbidden_letters[NB_LETTERS];
 } constraints_t;
 
-words_list_t* create_word_list(int word_size);
-void destroy_word_list(words_list_t* list);
+words_list_t *create_word_list(int word_size);
+
+void destroy_word_list(words_list_t *list);
+
 void append_word_list(words_list_t *list, char *word);
+
 /**
  * Supprime le mot de la liste de mot
  * @param list
@@ -67,20 +72,16 @@ void append_word_list(words_list_t *list, char *word);
 word_t *remove_word(words_list_t *list, word_t *to_remove);
 
 words_list_t *get_dictionary();
+
 words_list_t *get_current_possible();
 
 void update_current_possible_with_attempt();
 
 constraints_t *create_constraints(int word_size);
+
 void destroy_constraints(constraints_t *constraints);
-void destroy_word_constraint(word_constraint_t *word_constraint);
+
 void destroy_dicts();
-/**
- * Créé une copie de constraint qui est modifiable sans affecter l'original
- * @param original 
- * @return constraints_t* 
- */
-constraints_t* copy_constraints(constraints_t* original);
 
 /**
  * Crée la structure représentant les contraintes associées au mot à trouver à partir de la liste d'essaie
@@ -88,15 +89,6 @@ constraints_t* copy_constraints(constraints_t* original);
  * @return
  */
 constraints_t *compute_constraints_from_attempts(list_attempts_t *attempts);
-
-
-/**
- * Met à jour une contrainte en fonction d'un nouvelle essai.
- * 
- * @param constraints - la contrainte précédente
- * @param attempt - le nouvelle essai
- */
-void update_constraints_with_attempts(constraints_t* constraints, attempt_t* attempt);
 
 /**
  * Génère le dictionnaire de word d'une longueur donnée
@@ -107,12 +99,12 @@ void import_dict(int word_size);
 
 
 /**
- * Retourne les word qui sont compatible avec les contraintes passé en arguments
+ * Retourne les mots qui sont compatibles avec les contraintes passées en arguments
  * @param constraints 
  * @param list_words 
  * @return words_list_t* 
  */
-words_list_t* get_all_matching_words(constraints_t* constraints, words_list_t* list_words);
+words_list_t *get_all_matching_words(constraints_t *constraints, words_list_t *list_words);
 
 /**
  * Test si un mot match avec un ensemble de contraintes liées à des attempts
@@ -122,36 +114,13 @@ words_list_t* get_all_matching_words(constraints_t* constraints, words_list_t* l
  */
 bool is_matching_word_constraints(const char *word, constraints_t *constraints);
 
-#pragma region legacy
-/**
- * Retourne les word qui pourraient éventuellement être bons parmi un liste,
- * sachant la liste d'essai et de resultats en paramètre
- * @param list_tries - Essai précèdent et leur resultat
- * @param list_tries_t - list des essais precedents et des résultats associées sous formes de liste chainée
- * @return
- */
-struct words_list_t *get_all_matching_wordsv0(list_attempts_t *list_tries, struct words_list_t *list_words);
-
 /**
  * @for_test_only
  * Teste si un mot peut être valide sachant une liste d'essai en particulier et leurs résultats
  * @param word - mot à tester
- * @param attempts - essais et son résultats
+ * @param attempts - essais et son résultat
  * @return true si le mot peut être valide, false sinon
  */
 bool is_matching_word_specific_attempts(char *word, list_attempts_t *attempts);
-
-
-/**
- * @deprecated
- * Test si un mot peut être valide sachant un essai et son résultat
- * Version pas tout à fait au point et un peu lourde qu'on garde de côté pour éventuellement faire des comparaisons de performance
- * @param word - mot à  tester
- * @param attempt - un seul essai
- * @return true si le mot peut être valide, false sinon
- */
-bool is_matching_word_one_specific_attempt_v1(char *word, attempt_t *attempt);
-#pragma endregion
-
 
 #endif //SOLVEUR_DICT_H
