@@ -43,7 +43,12 @@ int main() {
     }
     append_attempt(previous_attempts, first_word, first_result);
     update_current_possible_with_attempt();
-    printf("Il reste " COLOR_YELLOW_BOLD "%d mots possibles" COLOR_OFF, get_current_possible()->nb_words);
+    if(get_current_possible()->nb_words > 1) {
+        printf("Il reste " COLOR_YELLOW_BOLD "%d mots possibles" COLOR_OFF ".", get_current_possible()->nb_words);
+    }
+    else {
+        printf("Il reste " COLOR_YELLOW_BOLD "%d mot possible" COLOR_OFF " !", get_current_possible()->nb_words);
+    }
     while(get_current_possible()->nb_words > 1){
         char *word_to_try = compute_next_best_attempt();
         int *result = ask_for_answer(word_to_try);
@@ -55,7 +60,12 @@ int main() {
         }
         append_attempt(previous_attempts, word_to_try, result);
         update_current_possible_with_attempt();
-        printf("Il reste " COLOR_YELLOW_BOLD "%d mots possibles" COLOR_OFF, get_current_possible()->nb_words);
+        if(get_current_possible()->nb_words > 1) {
+            printf("Il reste " COLOR_YELLOW_BOLD "%d mots possibles" COLOR_OFF ".", get_current_possible()->nb_words);
+        }
+        else {
+            printf("Il reste " COLOR_YELLOW_BOLD "%d mot possible" COLOR_OFF " !", get_current_possible()->nb_words);
+        }
     }
     if(get_current_possible()->nb_words == 0){
         printf(COLOR_RED_BOLD"\n\nLe solveur a perdu:"COLOR_OFF" Le dictionnaire du solveur ne contient aucun mot répondant aux contraintes\n\n");
