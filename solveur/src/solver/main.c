@@ -27,14 +27,14 @@ int main() {
     int word_size = read_word_length();
     if (word_size < 3 || word_size > 7) {printf("Longueur sélectionnée invalide.\n"); return 0;}
     import_dict(word_size);
-    printf("Nombre de mots possible : "COLOR_YELLOW_BOLD"%d\n\n" COLOR_OFF, get_current_possible()->nb_words);
+    printf("Nombre de mots possibles : "COLOR_YELLOW_BOLD"%d\n\n" COLOR_OFF, get_current_possible()->nb_words);
     init_previous_attempts(word_size);
     list_attempts_t *previous_attempts = get_previous_attempt();
 
     // Sélection du premier mot précalculé pour gagner du temps
     char *first_words[5] = {"rai", "aria", "aerer", "errera", "recrire"};
     char *first_word = first_words[word_size - 3];
-    printf("\n\n● Mots avec la plus grande entropie initiale :   "COLOR_BOLD_BLUE"%s"COLOR_OFF"\n",first_word);
+    printf("\n\n● Mot avec la plus grande entropie initiale :   "COLOR_BOLD_BLUE"%s"COLOR_OFF"\n",first_word);
     int *first_result = ask_for_answer(first_word);
     if (first_result[0] == -1){
         destroy_list_attempts(previous_attempts);

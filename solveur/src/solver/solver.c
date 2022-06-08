@@ -21,7 +21,7 @@ char *compute_next_best_attempt() {
     // réponse possible n'est pas intéressant en dessous de 4 car on aura dans tous les cas 1 ou 2 essaie pour avoir la
     // solution, donc autant avoir une chance d'y arriver du premier coup
     if (get_current_possible()->nb_words <= 3) {
-        printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF,
+        printf("\n\n● Mot avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF,
                current_possible_head->word);
         return current_possible_head->word;
     }
@@ -93,7 +93,7 @@ char *compute_next_best_attempt() {
     }
     free(patterns);
     destroy_list_attempts(new_list_attempts);
-    printf("\n\n● Mots avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF,
+    printf("\n\n● Mot avec la plus grande entropie:   "COLOR_BOLD_BLUE"%s\n"COLOR_OFF,
            word_with_max_entropy->word
     );
 
