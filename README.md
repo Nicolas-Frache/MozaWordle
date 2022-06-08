@@ -59,14 +59,16 @@ Puis dans un second temps, d'un solveur en C qui mettra à contribution des stru
 
 - Compilateur clang : ````sudo apt install clang````
 - Bibliothèque sqlite3 pour C : ````sudo apt-get install libsqlite3-dev````
-- Bibliothèques pour l'affichage dans le terminal : ````sudo apt-get install cowsay````
-  et ````sudo apt-get install figlet````
 
 ### Compilation et execution
 
 - Pour génerer les executables de l'application et des tests, se déplacer dans le dossier solveur
   puis : ````make solver```` et ````make test````.
 - Executer les tests et l'application en se déplaçant dans "/bin", puis avec : ````./solver```` ou ````./test````
+
+### Choix d'un mot à utiliser contre le solveur
+
+- Notre dictionnaire provient de la base de données très complête Lexique3. Donc n'importe quel lemme de la langue française est devinable par notre programme.
 
 ## Conventions pour les messages de commits
 
