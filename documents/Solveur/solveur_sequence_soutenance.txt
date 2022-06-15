@@ -1,0 +1,56 @@
+
+@startuml
+
+title Calcul du meilleur mot
+
+
+actor user
+participant interface.c as ui
+participant main.c as main
+participant solver.c as solver
+participant dict.h as dict
+database db
+
+activate main #DarkSalmon
+
+
+== Essai 1  ==
+
+main -> solver : compute_next_best_attempt(…)
+
+loop //Pour tous les mots "I" du dictionnaire//
+    activate solver #FFBBBB
+    loop <i>Pour tous les (3^n) patterns "<i>x</i>" possiblement résultants de ce mot"
+
+
+        solver -> dict : compute_constraints_from_attempts(attempts)
+        activate dict #FFBBBB
+        solver <-- dict : constraints
+        deactivate dict
+        loop Pour tous les mots "<i>c</i>" possiblement valides
+            solver -> dict : is_matching_word_constraints(w, constraints)
+            activate dict #FFBBBB
+            solver <-- dict : true|false
+            deactivate dict
+        end loop
+        note over solver
+            <math>p(x)="nombre de mots éliminés avec le pattern x"/"nombre de mots possibles"</math>
+        end note
+    end
+        note over solver
+            <latex>E[I]=\sum_{x} p(x)\cdot \log_{2}(1/p(x))</latex>
+        end note
+end
+main <-- solver : mot_avec_la_meilleur_esperance
+deactivate solver
+
+ui <- main : ask_for_answer(mot)
+activate ui #FFBBBB
+user <- ui : demande coloration\npour la tentative
+activate user #FFBBBB
+user --> ui : //01020//
+deactivate user
+ui --> main : [0, 1, 0, 2, 0]
+deactivate ui
+
+@enduml
